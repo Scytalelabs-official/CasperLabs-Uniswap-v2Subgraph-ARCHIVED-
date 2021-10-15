@@ -2,10 +2,9 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLList
 } = require("graphql");
-
-var liquidityPosition=require('./liquidityPosition');
 
 const userType = new GraphQLObjectType({
   
@@ -15,7 +14,7 @@ const userType = new GraphQLObjectType({
   
         _id: {type: GraphQLID },
         id: {type: GraphQLString},// user address
-        liquidityPositions: [liquidityPosition], // @derivedFrom(field: "user")
+        liquidityPositions: {type: GraphQLList(GraphQLString)},
         usdSwapped: {type: GraphQLInt}
   })
 });

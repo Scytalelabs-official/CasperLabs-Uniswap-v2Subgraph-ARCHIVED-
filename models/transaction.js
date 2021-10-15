@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var mint=require('./mint');
-var burn=require('./burn');
-var swap=require('./swap');
 
 const transactionSchema = new Schema({
 
@@ -20,9 +17,10 @@ const transactionSchema = new Schema({
 
     // This is not the reverse of Mint.transaction; it is only used to
     // track incomplete mints (similar for burns and swaps)
-    mints: [mint],
-    burns: [burn],
-    swaps: [swap]
+
+    mints: [{ type : String}],
+    burns: [{ type : String}],
+    swaps: [{ type : String}]
     
 });
 

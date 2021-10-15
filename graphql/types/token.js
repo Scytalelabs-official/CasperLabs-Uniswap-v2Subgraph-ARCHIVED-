@@ -2,12 +2,10 @@ const {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList
 } = require("graphql");
 
-var tokenDayData= require('./tokenDayData');
-var pairDayData= require('./pairDayData');
-var pair= require('./pair');
 
 const tokenType = new GraphQLObjectType({
 
@@ -29,13 +27,7 @@ const tokenType = new GraphQLObjectType({
     txCount: {type: GraphQLInt},//transactions across all pairs
     totalLiquidity: {type: GraphQLInt},//liquidity across all pairs
     derivedETH: {type: GraphQLInt},//derived prices
-
-    // derived fields
-    tokenDayData:[tokenDayData], // @derivedFrom(field: "token")
-    pairDayDataBase: [pairDayData], //@derivedFrom(field: "token0")
-    pairDayDataQuote: [pairDayData], //@derivedFrom(field: "token1")
-    pairBase: [pair], //@derivedFrom(field: "token0")
-    pairQuote: [pair], //@derivedFrom(field: "token1")
+    mostLiquidPairs: {type: GraphQLList(GraphQLString)}
 
   })
 });

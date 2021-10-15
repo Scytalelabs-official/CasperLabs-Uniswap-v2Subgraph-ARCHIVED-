@@ -1,48 +1,51 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var token=require('./token');
 
 const tokenDayDataSchema = new Schema({
 
-  id:{
-    type:String
-  },
+    id:{
+      type:String
+    },
 
-  date: {
+    date: {
+        type:Number
+    },
+
+    token: { 
+      type : String
+    },
+
+    // volume stats
+    dailyVolumeToken: {
       type:Number
-  },
+    },
+    dailyVolumeETH: {
+      type:Number
+    },
+    dailyVolumeUSD: {
+      type:Number
+    },
+    dailyTxns: {
+      type:Number
+    },
 
-  token: token,
-
-  // volume stats
-  dailyVolumeToken: {
-    type:Number
-  },
-  dailyVolumeETH: {
-    type:Number
-  },
-  dailyVolumeUSD: {
-    type:Number
-  },
-  dailyTxns: {
-    type:Number
-  },
-
-  // liquidity stats
-  totalLiquidityToken: {
-    type:Number
-  },
-  totalLiquidityETH: {
-    type:Number
-  },
-  totalLiquidityUSD: {
-    type:Number
-  },
-  
-  // price stats
-  priceUSD: {
-    type:Number
-  }
+    // liquidity stats
+    totalLiquidityToken: {
+      type:Number
+    },
+    totalLiquidityETH: {
+      type:Number
+    },
+    totalLiquidityUSD: {
+      type:Number
+    },
+    
+    // price stats
+    priceUSD: {
+      type:Number
+    },
+    
+    mostLiquidPairs : [{ type : String}]
 
 });
 

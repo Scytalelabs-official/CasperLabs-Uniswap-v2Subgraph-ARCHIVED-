@@ -3,6 +3,7 @@ const {
   GraphQLID,
   GraphQLString,
   GraphQLInt,
+  GraphQLList
 } = require("graphql");
 
 const uniswapFactoryType = new GraphQLObjectType({
@@ -15,9 +16,10 @@ const uniswapFactoryType = new GraphQLObjectType({
     totalVolumeUSD: {type: GraphQLInt},// total volume
     totalVolumeETH: {type: GraphQLInt},
     untrackedVolumeUSD: {type: GraphQLInt},//untracked values - less confident USD scores
-    totalLiquidityUSD: {type: GraphQLInt,},//total liquidity
-    totalLiquidityETH: {type: GraphQLInt,},
-    txCount: {type: GraphQLInt}//transactions
+    totalLiquidityUSD: {type: GraphQLInt},//total liquidity
+    totalLiquidityETH: {type: GraphQLInt},
+    txCount: {type: GraphQLInt},//transactions
+    mostLiquidTokens: {type: GraphQLList(GraphQLString)}
 
   })
 });

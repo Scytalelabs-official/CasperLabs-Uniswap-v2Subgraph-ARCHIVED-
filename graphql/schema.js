@@ -2,7 +2,38 @@
 const { GraphQLSchema, GraphQLObjectType } = require("graphql");
 
 // Import queries
-const {} = require("./queries");
+const {
+  users,
+  user,
+  uniswapfactorys,
+  uniswapfactory,
+  pairs,
+  pair,
+  tokens,
+  token,
+  bundles,
+  bundle,
+  transactions,
+  transaction,
+  liquiditypositions,
+  liquidityposition,
+  liquiditypositionsnapshots,
+  liquiditypositionsnapshot,
+  mints,
+  mint,
+  burns,
+  burn,
+  swaps,
+  swap,
+  uniswapdaydatas,
+  uniswapdaydata,
+  pairdaydatas,
+  pairdaydata,
+  pairhourdatas,
+  pairhourdata,
+  tokendaydatas,
+  tokendaydata,
+} = require("./queries");
 
 // Import mutations
 const {
@@ -11,13 +42,49 @@ const {
   updatePairDayData,
   updatePairHourData,
   updateTokenDayData,
+  handleTransfer,
+  handleSync,
+  handleMint,
+  handleBurn,
+  handleSwap,
 } = require("./mutations");
 
 // Define QueryType
 const QueryType = new GraphQLObjectType({
   name: "QueryType",
   description: "Queries",
-  fields: {},
+  fields: {
+    users,
+    user,
+    uniswapfactorys,
+    uniswapfactory,
+    pairs,
+    pair,
+    tokens,
+    token,
+    bundles,
+    bundle,
+    transactions,
+    transaction,
+    liquiditypositions,
+    liquidityposition,
+    liquiditypositionsnapshots,
+    liquiditypositionsnapshot,
+    mints,
+    mint,
+    burns,
+    burn,
+    swaps,
+    swap,
+    uniswapdaydatas,
+    uniswapdaydata,
+    pairdaydatas,
+    pairdaydata,
+    pairhourdatas,
+    pairhourdata,
+    tokendaydatas,
+    tokendaydata,
+  },
 });
 
 // Define MutationType
@@ -30,6 +97,11 @@ const MutationType = new GraphQLObjectType({
     updatePairDayData,
     updatePairHourData,
     updateTokenDayData,
+    handleTransfer,
+    handleSync,
+    handleMint,
+    handleBurn,
+    handleSwap,
   },
 });
 

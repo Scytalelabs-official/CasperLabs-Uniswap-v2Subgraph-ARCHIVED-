@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var user=require('./user');
-var pair=require('./pair');
-var liquidityPosition=require('./liquidityPosition');
 
 const liquidityPositionSnapshotSchema = new Schema({
 
@@ -10,7 +7,7 @@ const liquidityPositionSnapshotSchema = new Schema({
         type: String,
     },
 
-    liquidityPosition: liquidityPosition,
+    liquidityPosition: [{ type : String}],
 
     timestamp:{
         type: Number,
@@ -20,9 +17,13 @@ const liquidityPositionSnapshotSchema = new Schema({
         type: Number,
     },// saved for fast historical lookups
 
-    user: user, // reference to user
+    user: { 
+        type : String
+    }, // reference to user
 
-    pair: pair, // reference to pair
+    pair: { 
+        type : String
+    }, // reference to pair
 
     token0PriceUSD:{
         type: Number,

@@ -5,7 +5,6 @@ const {
     GraphQLInt
 } = require("graphql");
   
-var pair = require('./pair');
 
 const pairHourDataType = new GraphQLObjectType({
   
@@ -16,7 +15,7 @@ const pairHourDataType = new GraphQLObjectType({
         _id: {type: GraphQLID },
         id:{type:GraphQLString},
         hourStartUnix: {type:GraphQLInt},// unix timestamp for start of hour
-        pair: pair,
+        pair: {type:GraphQLString},
         // reserves
         reserve0: {type:GraphQLInt},
         reserve1: {type:GraphQLInt},

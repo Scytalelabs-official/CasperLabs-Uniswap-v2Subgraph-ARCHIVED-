@@ -5,8 +5,6 @@ const {
   GraphQLInt
 } = require("graphql");
 
-var token=require('./token');
-
 const pairDayDataType = new GraphQLObjectType({
 
   name: "PairDayData",
@@ -17,8 +15,8 @@ const pairDayDataType = new GraphQLObjectType({
       id:{type:GraphQLString},
       date: {type:GraphQLInt},
       pairAddress:{type:GraphQLString},
-      token0: token,
-      token1: token,
+      token0: {type:GraphQLString},
+      token1:{type: GraphQLString},
       // reserves
       reserve0: {type:GraphQLInt},
       reserve1: {type:GraphQLInt},

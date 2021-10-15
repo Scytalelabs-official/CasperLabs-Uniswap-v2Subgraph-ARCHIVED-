@@ -1,12 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var token=require('./token');
-var pairHourData=require('./pairHourData');
-var liquidityPosition=require('./liquidityPosition');
-var liquidityPositionSnapshot=require('./liquidityPositionSnapshot');
-var mint=require('./mint');
-var burn=require('./burn');
-var swap=require('./swap');
+
 
 const pairSchema = new Schema({
 
@@ -16,8 +10,13 @@ const pairSchema = new Schema({
     },
 
     // mirrored from the smart contract
-    token0: token,
-    token1: token,
+    
+    token0: { 
+        type : String
+    },
+    token1: { 
+        type : String
+    },
 
     reserve0: {
         type: Number,
@@ -78,14 +77,6 @@ const pairSchema = new Schema({
     liquidityProviderCount: {
         type: Number,
     }, // used to detect new exchanges
-
-    // derived fields
-    pairHourData: [pairHourData], //@derivedFrom(field: "pair")
-    liquidityPositions: [liquidityPosition], //@derivedFrom(field: "pair")
-    liquidityPositionSnapshots: [liquidityPositionSnapshot], //@derivedFrom(field: "pair")
-    mints: [mint], //@derivedFrom(field: "pair")
-    burns: [burn], //@derivedFrom(field: "pair")
-    swaps: [swap], //@derivedFrom(field: "pair")
 
 });
 

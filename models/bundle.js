@@ -3,13 +3,13 @@ var Schema = mongoose.Schema;
 
 const bundleSchema = new Schema({
 
-  id:{
-    type:String
-  },
+    id:{
+      type:String
+    },
 
-  ethPrice:{
-    type:Number
-  } // price of ETH usd
+    ethPrice:{
+      type:Number
+    } // price of ETH usd
   
 });
 

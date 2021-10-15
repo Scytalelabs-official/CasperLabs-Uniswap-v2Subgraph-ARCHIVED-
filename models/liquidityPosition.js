@@ -1,16 +1,18 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var user=require('./user');
-var pair=require('./pair');
 
 const liquidityPositionSchema = new Schema({
 
     id: {
         type: String,
     },
-    user: user,
+    user: { 
+        type : String
+    },
 
-    pair: pair,
+    pair: { 
+        type : String
+    },
     
     liquidityTokenBalance:{
         type: Number,

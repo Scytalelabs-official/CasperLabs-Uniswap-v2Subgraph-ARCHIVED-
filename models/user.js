@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var liquidityPosition=require('./liquidityPosition');
 
 const userSchema = new Schema({
 
@@ -8,10 +7,12 @@ const userSchema = new Schema({
     id: {
         type: String,
     },
-    liquidityPositions: [liquidityPosition], // @derivedFrom(field: "user")
     usdSwapped: {
         type: Number,
     },
+    liquidityPositions: [{
+        type: String
+    }]
 });
 
 var user = mongoose.model("user", userSchema);
