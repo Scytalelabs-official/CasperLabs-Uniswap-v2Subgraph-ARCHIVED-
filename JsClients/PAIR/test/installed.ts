@@ -17,10 +17,7 @@ const {
   NODE_ADDRESS,
   EVENT_STREAM_ADDRESS,
   CHAIN_NAME,
-  WASM_PATH,
-  MASTER_KEY_PAIR_PATH,
-  RECEIVER_ACCOUNT_ONE,
-  INSTALL_PAYMENT_AMOUNT,
+  PAIR_MASTER_KEY_PAIR_PATH,
   INITIALIZE_PAYMENT_AMOUNT,
   MINT_PAYMENT_AMOUNT,
   BURN_PAYMENT_AMOUNT,
@@ -37,46 +34,48 @@ const {
   FACTORY_CONTRACT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
-  CONTRACT_NAME
+  PAIR_CONTRACT_NAME
 } = process.env;
 
 // const TOKEN_META = new Map(parseTokenMeta(process.env.TOKEN_META!));
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
+  `${PAIR_MASTER_KEY_PAIR_PATH}/public_key.pem`,
+  `${PAIR_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
-const test = async () => {
-  const pair = new PAIRClient(
-    NODE_ADDRESS!,
-    CHAIN_NAME!,
-    EVENT_STREAM_ADDRESS!
-  );
+const pair = new PAIRClient(
+  NODE_ADDRESS!,
+  CHAIN_NAME!,
+  EVENT_STREAM_ADDRESS!
+);
 
-  const listener = pair.onEvent(
-    [
-      PAIREvents.Approve,
-      PAIREvents.Transfer,
-      PAIREvents.TransferFrom,
-      PAIREvents.Mint,
-      PAIREvents.Burn,
-      PAIREvents.Permit,
-      PAIREvents.Skim,
-      PAIREvents.Sync,
-      PAIREvents.Swap,
-    ],
-    (eventName, deploy, result) => {
-      if (deploy.success) {
-        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(result.value());
-      } else {
-        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(`Error: ${deploy.error}`);
-      }
+const listener = pair.onEvent(
+  [
+    PAIREvents.Approve,
+    PAIREvents.Transfer,
+    PAIREvents.TransferFrom,
+    PAIREvents.Mint,
+    PAIREvents.Burn,
+    PAIREvents.Permit,
+    PAIREvents.Skim,
+    PAIREvents.Sync,
+    PAIREvents.Swap,
+  ],
+  (eventName, deploy, result) => {
+    if (deploy.success) {
+      console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+      console.log(result.value());
+    } else {
+      console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+      console.log(`Error: ${deploy.error}`);
     }
-  );
+  }
+);
 
+
+const test = async () => {
+  
   await sleep(5 * 1000);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
@@ -86,7 +85,7 @@ const test = async () => {
 
   const contractHash = await utils.getAccountNamedKeyValue(
     accountInfo,
-    `${CONTRACT_NAME!}_contract_hash`
+    `${PAIR_CONTRACT_NAME!}_contract_hash`
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
@@ -319,4 +318,20 @@ const test = async () => {
 
 };
 
-test();
+//test();
+
+export const balanceOf = async (contractHash:string,key:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await pair.setContractHash(contractHash.slice(5));
+
+ //balanceof
+ let balance = await pair.balanceOf(key);
+ //console.log(`... Balance of account ${key.toAccountHashStr()}`);
+ console.log(`... Balance: ${balance}`);
+
+  return balance;
+  
+};

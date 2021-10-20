@@ -11,19 +11,19 @@ const {
   NODE_ADDRESS,
   EVENT_STREAM_ADDRESS,
   CHAIN_NAME,
-  WASM_PATH,
-  MASTER_KEY_PAIR_PATH,
+  ERC20_WASM_PATH,
+  ERC20_MASTER_KEY_PAIR_PATH,
   INSTALL_PAYMENT_AMOUNT,
-  CONTRACT_NAME,
-  TOKEN_NAME,
-  TOKEN_SYMBOL,
-  DECIMALS,
-  TOTAL_SUPPLY
+  ERC20_CONTRACT_NAME,
+  ERC20_TOKEN_NAME,
+  ERC20_TOKEN_SYMBOL,
+  ERC20_DECIMALS,
+  ERC20_TOTAL_SUPPLY
 } = process.env;
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
+  `${ERC20_MASTER_KEY_PAIR_PATH}/public_key.pem`,
+  `${ERC20_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
 const test = async () => {
@@ -35,13 +35,13 @@ const test = async () => {
 
   const installDeployHash = await erc20.install(
     KEYS,
-    TOKEN_NAME!,
-    TOKEN_SYMBOL!,
-    DECIMALS!,
-    TOTAL_SUPPLY!,
-    CONTRACT_NAME!,
+    ERC20_TOKEN_NAME!,
+    ERC20_TOKEN_SYMBOL!,
+    ERC20_DECIMALS!,
+    ERC20_TOTAL_SUPPLY!,
+    ERC20_CONTRACT_NAME!,
     INSTALL_PAYMENT_AMOUNT!,
-    WASM_PATH!
+    ERC20_WASM_PATH!
   );
 
   console.log(`... Contract installation deployHash: ${installDeployHash}`);
@@ -57,7 +57,7 @@ const test = async () => {
 
   const contractHash = await utils.getAccountNamedKeyValue(
     accountInfo,
-    `${CONTRACT_NAME!}_contract_hash`
+    `${ERC20_CONTRACT_NAME!}_contract_hash`
   );
 
   console.log(`... Contract Hash: ${contractHash}`);

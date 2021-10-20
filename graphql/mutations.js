@@ -29,10 +29,10 @@ const Transaction = require("../models/transaction");
 const LiquidityPosition = require("../models/liquidityPosition");
 
 const {
-  //   fetchTokenDecimals,
-  //   fetchTokenName,
-  //   fetchTokenSymbol,
-  //   fetchTokenTotalSupply,
+  fetchTokenDecimals,
+  fetchTokenName,
+  fetchTokenSymbol,
+  fetchTokenTotalSupply,
   ZERO_BD,
   ZERO_BI,
   ONE_BI,
@@ -44,10 +44,7 @@ const {
   createLiquiditySnapshot,
 } = require("./helpers");
 
-// const {
-//   PairContract,
-
-// } = require("./Jsclients/PAIR");
+var PairContract = require("../JsClients/PAIR/test/installed.ts");
 
 const {
   getEthPriceInUSD,
@@ -100,9 +97,9 @@ const handleNewPair = {
 
       // fetch info if null
       if (token0 === null) {
-        //let Decimals = fetchTokenDecimals(process.env.token0);
+        let Decimals = fetchTokenDecimals(process.env.token0);
 
-        let Decimals = 18;
+        //let Decimals = 18;
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           console.log("mybug the decimal on token 0 was null", []);
@@ -114,10 +111,12 @@ const handleNewPair = {
           // symbol: fetchTokenSymbol(process.env.token0),
           // name: fetchTokenName(process.env.token0),
           // totalSupply: fetchTokenTotalSupply(process.env.token0),
-
-          symbol: "Erc20",
-          name: "token0",
-          totalSupply: 1000,
+          symbol: fetchTokenSymbol(process.env.token0),
+          name: fetchTokenName(process.env.token0),
+          totalSupply: fetchTokenTotalSupply(process.env.token0),
+          // symbol: "Erc20",
+          // name: "token0",
+          // totalSupply: 1000,
           decimals: Decimals,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,
@@ -130,9 +129,9 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        //let Decimals = fetchTokenDecimals(process.env.token1);
+        let Decimals = fetchTokenDecimals(process.env.token1);
 
-        let Decimals = 18;
+        //let Decimals = 18;
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
@@ -140,13 +139,12 @@ const handleNewPair = {
         }
         token1 = new Token({
           id: process.env.token1,
-          // symbol: fetchTokenSymbol(process.env.token1),
-          // name: fetchTokenName(process.env.token1),
-          // totalSupply: fetchTokenTotalSupply(process.env.token1),
-
-          symbol: "Erc20",
-          name: "token1",
-          totalSupply: 1000,
+          symbol: fetchTokenSymbol(process.env.token1),
+          name: fetchTokenName(process.env.token1),
+          totalSupply: fetchTokenTotalSupply(process.env.token1),
+          // symbol: "Erc20",
+          // name: "token1",
+          // totalSupply: 1000,
           decimals: Decimals,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,
@@ -613,7 +611,7 @@ const handleTransfer = {
       if (from != ADDRESS_ZERO && from != pair.id) {
         createLiquidityPosition(address, from, args.value);
         // fromUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(
-        //   pairContract.balanceOf(from),
+        //   pairContract.balanceOf(event.address,from),
         //   BI_18
         // );
         let fromUserLiquidityPosition = null;
@@ -629,7 +627,7 @@ const handleTransfer = {
       if (to != ADDRESS_ZERO && to != pair.id) {
         createLiquidityPosition(address, to, args.value);
         // toUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(
-        //   pairContract.balanceOf(to),
+        //   pairContract.balanceOf(event.address,to),
         //   BI_18
         // );
         let toUserLiquidityPosition = null;

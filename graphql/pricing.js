@@ -1,10 +1,11 @@
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
+var factory = require('../JsClients/FACTORY/test/installed.ts');
+require("dotenv").config();
 
 const {
   ZERO_BD,
-  //factoryContract,
   ADDRESS_ZERO,
   ONE_BD,
   //UNTRACKED_PAIRS
@@ -89,7 +90,8 @@ async function findEthPerToken(token) {
   }
   // loop through whitelist and check if paired with any
   for (let i = 0; i < WHITELIST.length; ++i) {
-    //let pairAddress = factoryContract.getPair(Address.fromString(token.id), Address.fromString(WHITELIST[i]));
+    //let pairAddress = factoryContract.getPair(process.env.FACTORY_ADDRESS,Address.fromString(token.id), Address.fromString(WHITELIST[i]));
+    
     let pairAddress =
       "hash-0000000000000000000000000000000000000000000000000000000000000000";
     if (pairAddress != ADDRESS_ZERO) {

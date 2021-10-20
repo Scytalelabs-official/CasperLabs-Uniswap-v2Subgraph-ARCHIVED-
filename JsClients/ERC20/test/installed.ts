@@ -17,11 +17,8 @@ const {
   NODE_ADDRESS,
   EVENT_STREAM_ADDRESS,
   CHAIN_NAME,
-  WASM_PATH,
-  MASTER_KEY_PAIR_PATH,
-  RECEIVER_ACCOUNT_ONE,
-  INSTALL_PAYMENT_AMOUNT,
-  CONTRACT_NAME,
+  ERC20_MASTER_KEY_PAIR_PATH,
+  ERC20_CONTRACT_NAME,
   MINT_PAYMENT_AMOUNT,
   MINT_AMOUNT,
   BURN_PAYMENT_AMOUNT,
@@ -36,35 +33,36 @@ const {
 
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
+  `${ERC20_MASTER_KEY_PAIR_PATH}/public_key.pem`,
+  `${ERC20_MASTER_KEY_PAIR_PATH}/secret_key.pem`
+);
+
+const erc20 = new ERC20Client(
+  NODE_ADDRESS!,
+  CHAIN_NAME!,
+  EVENT_STREAM_ADDRESS!
+);
+
+const listener = erc20.onEvent(
+  [
+    ERC20Events.Approve,
+    ERC20Events.Transfer,
+    ERC20Events.TransferFrom,
+    ERC20Events.Mint,
+  ],
+  (eventName, deploy, result) => {
+    if (deploy.success) {
+      console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+      console.log(result.value());
+    } else {
+      console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+      console.log(`Error: ${deploy.error}`);
+    }
+  }
 );
 
 const test = async () => {
-  const erc20 = new ERC20Client(
-    NODE_ADDRESS!,
-    CHAIN_NAME!,
-    EVENT_STREAM_ADDRESS!
-  );
-
-  const listener = erc20.onEvent(
-    [
-      ERC20Events.Approve,
-      ERC20Events.Transfer,
-      ERC20Events.TransferFrom,
-      ERC20Events.Mint,
-    ],
-    (eventName, deploy, result) => {
-      if (deploy.success) {
-        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(result.value());
-      } else {
-        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(`Error: ${deploy.error}`);
-      }
-    }
-  );
-
+  
   await sleep(5 * 1000);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
@@ -74,7 +72,7 @@ const test = async () => {
 
   const contractHash = await utils.getAccountNamedKeyValue(
     accountInfo,
-    `${CONTRACT_NAME!}_contract_hash`
+    `${ERC20_CONTRACT_NAME!}_contract_hash`
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
@@ -178,4 +176,66 @@ const test = async () => {
 
 };
 
-test();
+//test();
+
+
+export const getName = async (contractHash:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash.slice(5));
+
+  //name
+  const name = await erc20.name();
+  console.log(`... Contract name: ${name}`);
+
+  return name;
+  
+};
+
+export const getSymbol = async (contractHash:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash.slice(5));
+
+  //symbol
+  const symbol = await erc20.symbol();
+  console.log(`... Contract symbol: ${symbol}`);
+
+  return symbol;
+  
+};
+
+export const getDecimals = async (contractHash:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash.slice(5));
+
+  //decimal
+  //const decimal = await erc20.decimal();
+  const decimal = 18;
+  console.log(`... Contract decimal: ${decimal}`);
+
+  return decimal;
+  
+};
+
+export const getTotalSupply = async (contractHash:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash.slice(5));
+
+   //totalsupply
+   let totalSupply = await erc20.totalSupply();
+   console.log(`... Total supply: ${totalSupply}`);
+
+  return totalSupply;
+  
+};

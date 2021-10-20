@@ -1,8 +1,5 @@
-// const  ERC20  = require('./Jsclients/ERC20');
-// const  ERC20SymbolBytes = require('./Jsclients/ERC20SymbolBytes');
-// const  ERC20NameBytes = require('./Jsclients/ERC20NameBytes');
-// const  FactoryContract = require('../Jsclients/FACTORY');
-// const  TokenDefinition = require('./tokenDefinition');
+var  ERC20  = require('../Jsclients/ERC20/test/installed.ts');
+var TokenDefinition = require('./tokenDefinition');
 
 const User = require("../models/user");
 const LiquidityPosition = require("../models/liquidityPosition");
@@ -21,7 +18,6 @@ let ZERO_BD = 0;
 let ONE_BD = 1;
 let BI_18 = 18;
 
-// let factoryContract = FactoryContract.bind(process.env.FACTORY_ADDRESS);
 
 // // rebass tokens, dont count in tracked volume
 let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
@@ -62,88 +58,48 @@ let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
 //   return value == '0x0000000000000000000000000000000000000000000000000000000000000001';
 // }
 
-// function fetchTokenSymbol(tokenAddress) {
-//   // static definitions overrides
-//   let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
-//   if(staticDefinition != null) {
-//     return (staticDefinition).symbol;
-//   }
+function fetchTokenName(tokenAddress) {
+  //static definitions overrides
+  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
+  if(staticDefinition != null) {
+    return (staticDefinition).symbol;
+  }
 
-//   let contract = ERC20.bind(tokenAddress);
-//   let contractSymbolBytes = ERC20SymbolBytes.bind(tokenAddress);
+  let contractname = 'unknown';
+  contractname = ERC20.getName(tokenAddress);
+  return contractname;
 
-//   // try types string and bytes32 for symbol
-//   let symbolValue = 'unknown';
-//   let symbolResult = contract.try_symbol();
-//   if (symbolResult.reverted) {
-//     let symbolResultBytes = contractSymbolBytes.try_symbol();
-//     if (!symbolResultBytes.reverted) {
-//       // for broken pairs that have no symbol function exposed
-//       if (!isNullEthValue(symbolResultBytes.value.toHexString())) {
-//         symbolValue = symbolResultBytes.value.toString();
-//       }
-//     }
-//   } else {
-//     symbolValue = symbolResult.value;
-//   }
+}
 
-//   return symbolValue;
-// }
+function fetchTokenSymbol(tokenAddress){
+  // static definitions overrides
+  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
+  if(staticDefinition != null) {
+    return (staticDefinition).name;
+  }
 
-// function fetchTokenName(tokenAddress){
-//   // static definitions overrides
-//   let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
-//   if(staticDefinition != null) {
-//     return (staticDefinition).name;
-//   }
+  let contractsymbol = 'unknown';
+  contractsymbol = ERC20.getSymbol(tokenAddress);
+  return contractsymbol;
+}
 
-//   let contract = ERC20.bind(tokenAddress);
-//   let contractNameBytes = ERC20NameBytes.bind(tokenAddress);
+function fetchTokenTotalSupply(tokenAddress){
+  let contracttotalsupply = 'unknown';
+  contracttotalsupply = ERC20.getTotalSupply(tokenAddress);
+  return contracttotalsupply;
+}
 
-//   // try types string and bytes32 for name
-//   let nameValue = 'unknown';
-//   let nameResult = contract.try_name();
-//   if (nameResult.reverted) {
-//     let nameResultBytes = contractNameBytes.try_name();
-//     if (!nameResultBytes.reverted) {
-//       // for broken exchanges that have no name function exposed
-//       if (!isNullEthValue(nameResultBytes.value.toHexString())) {
-//         nameValue = nameResultBytes.value.toString();
-//       }
-//     }
-//   } else {
-//     nameValue = nameResult.value;
-//   }
+function fetchTokenDecimals(tokenAddress) {
+  // static definitions overrides
+  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
+  if(staticDefinition != null) {
+    return (staticDefinition).decimals;
+  }
 
-//   return nameValue;
-// }
-
-// function fetchTokenTotalSupply(tokenAddress){
-//   let contract = ERC20.bind(tokenAddress);
-//   let totalSupplyValue = null;
-//   let totalSupplyResult = contract.try_totalSupply();
-//   if (!totalSupplyResult.reverted) {
-//     totalSupplyValue = totalSupplyResult;
-//   }
-//   return BigInt.fromI32(totalSupplyValue);
-// }
-
-// function fetchTokenDecimals(tokenAddress) {
-//   // static definitions overrides
-//   let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
-//   if(staticDefinition != null) {
-//     return (staticDefinition).decimals;
-//   }
-
-//   let contract = ERC20.bind(tokenAddress);
-//   // try types uint8 for decimals
-//   let decimalValue = null;
-//   let decimalResult = contract.try_decimals();
-//   if (!decimalResult.reverted) {
-//     decimalValue = decimalResult.value;
-//   }
-//   return BigInt.fromI32(decimalValue);
-// }
+  let contractdecimal = 'unknown';
+  contractdecimal = ERC20.getDecimals(tokenAddress);
+  return contractdecimal;
+}
 
 async function createLiquidityPosition(exchange, user, value) {
   try {
@@ -240,10 +196,10 @@ module.exports = {
   //     convertEthToDecimal,
   //     equalToZero,
   //     isNullEthValue,
-  //     fetchTokenSymbol,
-  //     fetchTokenName,
-  //     fetchTokenTotalSupply,
-  //     fetchTokenDecimals,
+  fetchTokenSymbol,
+  fetchTokenName,
+  fetchTokenTotalSupply,
+  fetchTokenDecimals,
   createLiquidityPosition,
   createUser,
   createLiquiditySnapshot,
