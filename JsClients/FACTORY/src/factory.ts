@@ -21,8 +21,8 @@ import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
 
 class FACTORYClient {
-  private contractHash: string;
-  private contractPackageHash: string;
+  private contractHash: string="factory";
+  private contractPackageHash: string="factory";
 
   private isListening = false;
   private pendingDeploys: IPendingDeploy[] = [];

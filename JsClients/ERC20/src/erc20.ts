@@ -23,24 +23,28 @@ import { RecipientType, IPendingDeploy } from "./types";
 
 class ERC20Client {
   private contractName: string = "erc20";
-  private contractHash: string;
-  private contractPackageHash: string;
-  private namedKeys: {
-    balances: string;
-    metadata: string;
-    nonces: string;
-    allowances: string;
-    ownedTokens: string;
-    owners: string;
-    paused: string;
-  };
+  private contractHash: string= "erc20";
+  private contractPackageHash: string= "erc20";
+  // private namedKeys: {
+  //   balances:string;
+  //   metadata: string;
+  //   nonces: string;
+  //   allowances: string;
+  //   ownedTokens: string;
+  //   owners: string;
+  //   paused: string;
+    
+  // };
+
   private isListening = false;
   private pendingDeploys: IPendingDeploy[] = [];
 
   constructor(
+
     private nodeAddress: string,
     private chainName: string,
-    private eventStreamAddress?: string
+    private eventStreamAddress?: string,
+    
   ) { }
 
   public async install(
@@ -133,7 +137,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.balances
+     'balances'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -144,7 +148,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.nonces
+      'nonces'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -157,7 +161,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.allowances
+      'allowances'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();

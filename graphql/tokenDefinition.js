@@ -1,5 +1,5 @@
 // Initialize a Token Definition with the attributes
-export class TokenDefinition {
+class TokenDefinition {
   address;
   symbol;
   name;

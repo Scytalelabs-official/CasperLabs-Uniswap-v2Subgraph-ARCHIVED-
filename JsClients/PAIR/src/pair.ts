@@ -22,17 +22,17 @@ import { RecipientType, IPendingDeploy } from "./types";
 
 class PAIRClient {
   private contractName: string = "pair";
-  private contractHash: string;
-  private contractPackageHash: string;
-  private namedKeys: {
-    balances: string;
-    metadata: string;
-    nonces: string;
-    allowances: string;
-    ownedTokens: string;
-    owners: string;
-    paused: string;
-  };
+  private contractHash: string= "pair";
+  private contractPackageHash: string= "pair";
+  // private namedKeys: {
+  //   balances: string;
+  //   metadata: string;
+  //   nonces: string;
+  //   allowances: string;
+  //   ownedTokens: string;
+  //   owners: string;
+  //   paused: string;
+  // };
   private isListening = false;
   private pendingDeploys: IPendingDeploy[] = [];
 
@@ -147,7 +147,7 @@ class PAIRClient {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.balances
+      'balances'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -159,7 +159,7 @@ class PAIRClient {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.nonces
+      'nonces'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -172,7 +172,7 @@ class PAIRClient {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      this.namedKeys.allowances
+      'allowances'
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
