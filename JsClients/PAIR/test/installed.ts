@@ -320,13 +320,15 @@ const test = async () => {
 
 //test();
 
-export const balanceOf = async (contractHash:string,key:string) => {
+export const balanceOf = async (contractHash:string, key:string) => {
   
   console.log(`... Contract Hash: ${contractHash}`);
 
   // We don't need hash- prefix so i'm removing it
-  await pair.setContractHash(contractHash.slice(5));
+  await pair.setContractHash(contractHash);
 
+  //how to convert string into AccountHash
+  
  //balanceof
  //let balance = await pair.balanceOf(key);
  //console.log(`... Balance of account ${key.toAccountHashStr()}`);

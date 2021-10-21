@@ -414,11 +414,9 @@ const handleTransfer = {
       }
 
       if (from != ADDRESS_ZERO && from != pair.id) {
+        //let Balance =await PairContract.balanceOf(event.address,from);
         createLiquidityPosition(address, from, args.value);
-        // fromUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(
-        //   pairContract.balanceOf(event.address,from),
-        //   BI_18
-        // );
+        
         let fromUserLiquidityPosition = null;
         while (fromUserLiquidityPosition == null) {
           fromUserLiquidityPosition = await LiquidityPosition.findOne({
@@ -430,11 +428,9 @@ const handleTransfer = {
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
+        //let Balance = await PairContract.balanceOf(event.address,to);
         createLiquidityPosition(address, to, args.value);
-        // toUserLiquidityPosition.liquidityTokenBalance = convertTokenToDecimal(
-        //   pairContract.balanceOf(event.address,to),
-        //   BI_18
-        // );
+        
         let toUserLiquidityPosition = null;
         while (toUserLiquidityPosition == null) {
           toUserLiquidityPosition = await LiquidityPosition.findOne({

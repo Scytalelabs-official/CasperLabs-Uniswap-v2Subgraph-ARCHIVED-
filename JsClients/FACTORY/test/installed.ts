@@ -149,7 +149,7 @@ export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_
   console.log(`... Contract Hash: ${contractHash}`);
 
   // We don't need hash- prefix so i'm removing it
-  await factory.setContractHash(contractHash.slice(5));
+  await factory.setContractHash(contractHash);
 
   //pair
   let pair = await factory.getPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT);
