@@ -38,10 +38,6 @@ const {
 // Import mutations
 const {
   handleNewPair,
-  updateUniswapDayData,
-  updatePairDayData,
-  updatePairHourData,
-  updateTokenDayData,
   handleTransfer,
   handleSync,
   handleMint,
@@ -93,10 +89,6 @@ const MutationType = new GraphQLObjectType({
   description: "Mutations",
   fields: {
     handleNewPair,
-    updateUniswapDayData,
-    updatePairDayData,
-    updatePairHourData,
-    updateTokenDayData,
     handleTransfer,
     handleSync,
     handleMint,

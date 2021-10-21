@@ -6,27 +6,22 @@ const {
   GraphQLBoolean,
 } = require("graphql");
 
-const mongoose = require("mongoose");
 require("dotenv").config();
-
-const { uniswapDayDataType } = require("./types/uniswapDayData");
-const { pairDayDataType } = require("./types/pairDayData");
-const { pairHourDataType } = require("./types/pairHourData");
-const { tokenDayDataType } = require("./types/tokenDayData");
 
 const UniswapFactory = require("../models/uniswapFactory");
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
-const PairDayData = require("../models/pairDayData");
-const PairHourData = require("../models/pairHourData");
-const UniswapDayData = require("../models/uniswapDayData");
-const TokenDayData = require("../models/tokenDayData");
 const MintEvent = require("../models/mint");
 const BurnEvent = require("../models/burn");
 const SwapEvent = require("../models/swap");
 const Transaction = require("../models/transaction");
 const LiquidityPosition = require("../models/liquidityPosition");
+let pairDayData = require("../models/pairDayData");
+let pairHourData = require("../models/pairHourData");
+let uniswapDayData = require("../models/uniswapDayData");
+let token0DayData = require("../models/tokenDayData");
+let token1DayData = require("../models/tokenDayData");
 
 const {
   fetchTokenDecimals,
@@ -43,6 +38,16 @@ const {
   BI_18,
   createLiquiditySnapshot,
 } = require("./helpers");
+
+const {
+
+  updateUniswapDayData,
+  updatePairDayData,
+  updatePairHourData,
+  updateTokenDayData
+
+} = require("./dayUpdates");
+
 
 var PairContract = require("../JsClients/PAIR/test/installed.ts");
 
@@ -186,203 +191,6 @@ const handleNewPair = {
       await factory.save();
 
       return true;
-    } catch (error) {
-      throw new Error(error);
-    }
-  },
-};
-
-const updateUniswapDayData = {
-  type: uniswapDayDataType,
-  description: "Update Uniswap Day Data",
-  args: {
-    UniswapDayData: { type: GraphQLBoolean },
-  },
-  async resolve(parent, args, context) {
-    try {
-      let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
-      });
-      //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
-      let dayID = timestamp / 86400;
-      let dayStartTimestamp = dayID * 86400;
-      let uniswapDayData = await UniswapDayData.findOne({
-        id: dayID.toString(),
-      });
-      if (uniswapDayData === null) {
-        uniswapDayData = new UniswapDayData({
-          id: dayID.toString(),
-          date: dayStartTimestamp,
-          dailyVolumeUSD: ZERO_BD,
-          dailyVolumeETH: ZERO_BD,
-          totalVolumeUSD: ZERO_BD,
-          totalVolumeETH: ZERO_BD,
-          dailyVolumeUntracked: ZERO_BD,
-        });
-      }
-      uniswapDayData.totalLiquidityUSD = uniswap.totalLiquidityUSD;
-      uniswapDayData.totalLiquidityETH = uniswap.totalLiquidityETH;
-      uniswapDayData.txCount = uniswap.txCount;
-      await uniswapDayData.save();
-
-      return uniswapDayData;
-    } catch (error) {
-      throw new Error(error);
-    }
-  },
-};
-
-const updatePairDayData = {
-  type: pairDayDataType,
-  description: "Update Pair Day Data",
-  args: {
-    PairDayData: { type: GraphQLBoolean },
-  },
-  async resolve(parent, args, context) {
-    try {
-      //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
-      let dayID = timestamp / 86400;
-      let dayStartTimestamp = dayID * 86400;
-      let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
-      // let dayPairID = event.address
-      //   .toHexString()
-      //   .concat('-')
-      //   .concat(BigInt.fromI32(dayID).toString());
-      let dayPairID =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
-      //let pair = Pir.load(event.address.toHexString());
-      let pair = await Pair.findOne({ id: address });
-      let pairDayData = await PairDayData.findOne({ id: dayPairID });
-      if (pairDayData === null) {
-        pairDayData = new PairDayData({
-          id: dayPairID,
-          date: dayStartTimestamp,
-          token0: pair.token0,
-          token1: pair.token1,
-          //pairAddress : event.address.toHexString(),
-          pairAddress: address,
-          dailyVolumeToken0: ZERO_BD,
-          dailyVolumeToken1: ZERO_BD,
-          dailyVolumeUSD: ZERO_BD,
-          dailyTxns: ZERO_BI,
-        });
-      }
-
-      pairDayData.totalSupply = pair.totalSupply;
-      pairDayData.reserve0 = pair.reserve0;
-      pairDayData.reserve1 = pair.reserve1;
-      pairDayData.reserveUSD = pair.reserveUSD;
-      pairDayData.dailyTxns = pairDayData.dailyTxns + ONE_BI;
-      await pairDayData.save();
-
-      return pairDayData;
-    } catch (error) {
-      throw new Error(error);
-    }
-  },
-};
-
-const updatePairHourData = {
-  type: pairHourDataType,
-  description: "Update Pair Hour Data",
-  args: {
-    PairHourData: { type: GraphQLBoolean },
-  },
-  async resolve(parent, args, context) {
-    try {
-      //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
-      let hourIndex = timestamp / 3600; // get unique hour within unix history
-      let hourStartUnix = hourIndex * 3600; // want the rounded effect
-      let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
-      // let hourPairID = event.address
-      //   .toHexString()
-      //   .concat('-')
-      //   .concat(BigInt.fromI32(hourIndex).toString());
-      let hourPairID =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
-
-      //let pair = Pair.load(event.address.toHexString())
-      let pair = await Pair.findOne({ id: address });
-      let pairHourData = await PairHourData.findOne({ id: hourPairID });
-      if (pairHourData === null) {
-        pairHourData = new PairHourData({
-          id: hourPairID,
-          hourStartUnix: hourStartUnix,
-          //pair : event.address.toHexString(),
-          pair: address,
-          hourlyVolumeToken0: ZERO_BD,
-          hourlyVolumeToken1: ZERO_BD,
-          hourlyVolumeUSD: ZERO_BD,
-          hourlyTxns: ZERO_BI,
-        });
-      }
-
-      pairHourData.totalSupply = pair.totalSupply;
-      pairHourData.reserve0 = pair.reserve0;
-      pairHourData.reserve1 = pair.reserve1;
-      pairHourData.reserveUSD = pair.reserveUSD;
-      pairHourData.hourlyTxns = pairHourData.hourlyTxns + ONE_BI;
-      await pairHourData.save();
-
-      return pairHourData;
-    } catch (error) {
-      throw new Error(error);
-    }
-  },
-};
-
-const updateTokenDayData = {
-  type: tokenDayDataType,
-  description: "Update Token Day Data",
-  args: {
-    TokenDayData: { type: GraphQLBoolean },
-    token: { type: GraphQLString },
-  },
-  async resolve(parent, args, context) {
-    try {
-      let bundle = await Bundle.findOne({ id: "1" });
-      //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
-      let dayID = timestamp / 86400;
-      let dayStartTimestamp = dayID * 86400;
-      // let tokenDayID = args.token
-      //   .toString()
-      //   .concat("-")
-      //   .concat(BigInt.fromI32(dayID).toString());
-
-      let tokenDayID = args.token;
-
-      //let tokenDayData = TokenDayData.load(tokenDayID);
-      let tokenDayData = await TokenDayData.findOne({ id: tokenDayID });
-      let tokendata = await Token.findOne({ id: args.token });
-      if (tokenDayData === null) {
-        tokenDayData = new TokenDayData({
-          id: tokenDayID,
-          date: dayStartTimestamp,
-          token: args.token,
-          priceUSD: tokendata.derivedETH * bundle.ethPrice,
-          dailyVolumeToken: ZERO_BD,
-          dailyVolumeETH: ZERO_BD,
-          dailyVolumeUSD: ZERO_BD,
-          dailyTxns: ZERO_BI,
-          totalLiquidityUSD: ZERO_BD,
-        });
-      }
-      tokenDayData.priceUSD = tokendata.derivedETH * bundle.ethPrice;
-      tokenDayData.totalLiquidityToken = tokendata.totalLiquidity;
-      tokenDayData.totalLiquidityETH =
-        tokendata.totalLiquidity * tokendata.derivedETH;
-      tokenDayData.totalLiquidityUSD =
-        tokenDayData.totalLiquidityETH * bundle.ethPrice;
-      tokenDayData.dailyTxns = tokenDayData.dailyTxns + ONE_BI;
-      await tokenDayData.save();
-
-      return tokenDayData;
     } catch (error) {
       throw new Error(error);
     }
@@ -754,6 +562,7 @@ const handleMint = {
       // let transaction = await Transaction.findOne({
       //   id: event.transaction.hash.toHexString(),
       // });
+
       let transactionHash = "sampletransactionHash";
       let transaction = await Transaction.findOne({
         id: transactionHash,
@@ -768,7 +577,7 @@ const handleMint = {
         return false;
       }
       let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
+        "0000000000000000000000000000000000000000000000000000000000000000";
       let pair = await Pair.findOne({ id: address });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
@@ -836,6 +645,13 @@ const handleMint = {
       //updateUniswapDayData(event);
       //updateTokenDayData(token0);
       //updateTokenDayData(token1);
+
+      updatePairDayData(true);
+      updatePairHourData(true);
+      updateUniswapDayData(true);
+      updateTokenDayData(process.env.token0,true);
+      updateTokenDayData(process.env.token1,true);
+
       return true;
     } catch (error) {
       throw new Error(error);
@@ -873,7 +689,7 @@ const handleBurn = {
         return false;
       }
       let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
+        "0000000000000000000000000000000000000000000000000000000000000000";
       let pair = await Pair.findOne({ id: address });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
@@ -940,6 +756,13 @@ const handleBurn = {
       //updateUniswapDayData(event);
       //updateTokenDayData(token0, event);
       //updateTokenDayData(token1, event);
+
+      updatePairDayData(true);
+      updatePairHourData(true);
+      updateUniswapDayData(true);
+      updateTokenDayData(process.env.token0,true);
+      updateTokenDayData(process.env.token1,true);
+
       return true;
     } catch (error) {
       throw new Error(error);
@@ -964,7 +787,7 @@ const handleSwap = {
   async resolve(parent, args, context) {
     try {
       // let pair = await Pair.findOne({ id: event.address.toHexString() });
-      let address="hash-0000000000000000000000000000000000000000000000000000000000000000";
+      let address="11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59";
       let pair = await Pair.findOne({ id: address });
       let token0 = await Token.findOne({ id: pair.token0 });
       let token1 = await Token.findOne({ id: pair.token1 });
@@ -1124,52 +947,58 @@ const handleSwap = {
       // let token0DayData = updateTokenDayData(token0, event);
       // let token1DayData = updateTokenDayData(token1, event);
 
-      // // swap specific updating
-      // uniswapDayData.dailyVolumeUSD =
-      //   uniswapDayData.dailyVolumeUSD + trackedAmountUSD;
-      // uniswapDayData.dailyVolumeETH =
-      //   uniswapDayData.dailyVolumeETH + trackedAmountETH;
-      // uniswapDayData.dailyVolumeUntracked =
-      //   uniswapDayData.dailyVolumeUntracked + derivedAmountUSD;
-      // await uniswapDayData.save();
+      pairDayData = await updatePairDayData(true);
+      pairHourData = await updatePairHourData(true);
+      uniswapDayData = await updateUniswapDayData(true);
+      token0DayData = await updateTokenDayData(process.env.token0, true);
+      token1DayData = await updateTokenDayData(process.env.token1, true);
 
-      // // swap specific updating for pair
-      // pairDayData.dailyVolumeToken0 =
-      //   pairDayData.dailyVolumeToken0 + amount0Total;
-      // pairDayData.dailyVolumeToken1 =
-      //   pairDayData.dailyVolumeToken1 + amount1Total;
-      // pairDayData.dailyVolumeUSD =
-      //   pairDayData.dailyVolumeUSD + trackedAmountUSD;
-      // await pairDayData.save();
+      // swap specific updating
+      uniswapDayData.dailyVolumeUSD =
+        uniswapDayData.dailyVolumeUSD + trackedAmountUSD;
+      uniswapDayData.dailyVolumeETH =
+        uniswapDayData.dailyVolumeETH + trackedAmountETH;
+      uniswapDayData.dailyVolumeUntracked =
+        uniswapDayData.dailyVolumeUntracked + derivedAmountUSD;
+      await uniswapDayData.save();
 
-      // // update hourly pair data
-      // pairHourData.hourlyVolumeToken0 =
-      //   pairHourData.hourlyVolumeToken0 + amount0Total;
-      // pairHourData.hourlyVolumeToken1 =
-      //   pairHourData.hourlyVolumeToken1 + amount1Total;
-      // pairHourData.hourlyVolumeUSD =
-      //   pairHourData.hourlyVolumeUSD + trackedAmountUSD;
-      // await pairHourData.save();
+      // swap specific updating for pair
+      pairDayData.dailyVolumeToken0 =
+        pairDayData.dailyVolumeToken0 + amount0Total;
+      pairDayData.dailyVolumeToken1 =
+        pairDayData.dailyVolumeToken1 + amount1Total;
+      pairDayData.dailyVolumeUSD =
+        pairDayData.dailyVolumeUSD + trackedAmountUSD;
+      await pairDayData.save();
 
-      // // swap specific updating for token0
-      // token0DayData.dailyVolumeToken =
-      //   token0DayData.dailyVolumeToken + amount0Total;
-      // token0DayData.dailyVolumeETH =
-      //   token0DayData.dailyVolumeETH + amount0Total*(token0.derivedETH);
-      // token0DayData.dailyVolumeUSD =
-      //   token0DayData.dailyVolumeUSD +
-      //   amount0Total*(token0.derivedETH)*(bundle.ethPrice);
-      // await token0DayData.save();
+      // update hourly pair data
+      pairHourData.hourlyVolumeToken0 =
+        pairHourData.hourlyVolumeToken0 + amount0Total;
+      pairHourData.hourlyVolumeToken1 =
+        pairHourData.hourlyVolumeToken1 + amount1Total;
+      pairHourData.hourlyVolumeUSD =
+        pairHourData.hourlyVolumeUSD + trackedAmountUSD;
+      await pairHourData.save();
 
-      // // swap specific updating
-      // token1DayData.dailyVolumeToken =
-      //   token1DayData.dailyVolumeToken + amount1Total;
-      // token1DayData.dailyVolumeETH =
-      //   token1DayData.dailyVolumeETH + amount1Total*(token1.derivedETH);
-      // token1DayData.dailyVolumeUSD =
-      //   token1DayData.dailyVolumeUSD +
-      //   amount1Total*(token1.derivedETH)*(bundle.ethPrice);
-      // await token1DayData.save();
+      // swap specific updating for token0
+      token0DayData.dailyVolumeToken =
+        token0DayData.dailyVolumeToken + amount0Total;
+      token0DayData.dailyVolumeETH =
+        token0DayData.dailyVolumeETH + amount0Total*(token0.derivedETH);
+      token0DayData.dailyVolumeUSD =
+        token0DayData.dailyVolumeUSD +
+        amount0Total*(token0.derivedETH)*(bundle.ethPrice);
+      await token0DayData.save();
+
+      // swap specific updating
+      token1DayData.dailyVolumeToken =
+        token1DayData.dailyVolumeToken + amount1Total;
+      token1DayData.dailyVolumeETH =
+        token1DayData.dailyVolumeETH + amount1Total*(token1.derivedETH);
+      token1DayData.dailyVolumeUSD =
+        token1DayData.dailyVolumeUSD +
+        amount1Total*(token1.derivedETH)*(bundle.ethPrice);
+      await token1DayData.save();
 
       return true;
     } catch (error) {
