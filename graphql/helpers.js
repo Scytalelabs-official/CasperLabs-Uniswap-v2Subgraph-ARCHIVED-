@@ -62,37 +62,37 @@ let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
 function fromAddress(tokenAddress) {
   let staticDefinitions = [
     {
-      address: "0xe0b7927c4af23765cb51314a0e0521a9645f0e2a", // Add DGD
+      address: "52718191a7a3561a4731bdfe8a6c5cdb5b461f3ff4f108d992631e6546b6cf46", // Add DGD
       symbol: "DGD",
       name: "DGD",
       decimals: 9,
     },
     {
-      address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9", // Add AAVE
+      address: "fa38deb158ea1726452ccbbc9dc04ef591f4796efa710962e561ecb92e8194ff", // Add AAVE
       symbol: "AAVE",
       name: "Aave Token",
       decimals: 18,
     },
     {
-      address: "0xeb9951021698b42e4399f9cbb6267aa35f82d59d", // Add LIF
+      address: "0f744d1f61294f0ae3ed5d42383ebb2c5e7d4c0c815083538783007686175d8d", // Add LIF
       symbol: "LIF",
       name: "Lif",
       decimals: 18,
     },
     {
-      address: "0xbdeb4b83251fb146687fa19d1c660f99411eefe3", // Add SVD
+      address: "8e0645dd0bf4c13d9f06ee1833168a2db4af7d34226138a5029e04516e8c07b9", // Add SVD
       symbol: "SVD",
       name: "savedroid",
       decimals: 18,
     },
     {
-      address: "0xbb9bc244d798123fde783fcc1c72d3bb8c189413", //Add THEDAO
+      address: "5b28b445ad942a24bb5c540deb016a13a86fd1e13e9a4d3f711daa214b0fb595", //Add THEDAO
       symbol: "THEDAO",
       name: "THEDAO",
       decimals: 16,
     },
     {
-      address: "0x38c6a68304cdefb9bec48bbfaaba5c5b47818bb2", //ADD HPB
+      address: "10bf7479c48e961c3852acdf9f08ed96acefbc30e4b999e3aad73d22c69785ea", //ADD HPB
       symbol: "HPB",
       name: "HPBCoin",
       decimals: 18,

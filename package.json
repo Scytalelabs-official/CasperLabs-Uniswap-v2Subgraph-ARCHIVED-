@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ts-node ./bin/www"
+    "start": "ts-node ./bin/www",
+    "test:install": "ts-node JsClients/ERC20/test/install.ts"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
