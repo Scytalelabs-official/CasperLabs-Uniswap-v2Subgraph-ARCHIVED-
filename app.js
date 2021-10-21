@@ -47,7 +47,7 @@ connect.then(
 );
 
 app.get("/", (req, res) => {
-  res.json({ msg: "GraphQL Demo Server" });
+  res.json({ msg: "Uniswap V2 GraphQL Server" });
 });
 
 app.use('/graphql', graphqlHTTP({

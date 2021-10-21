@@ -89,8 +89,8 @@ const test = async () => {
   console.log(`... Contract symbol: ${symbol}`);
 
   //decimal
-  // const decimal = await erc20.decimal();
-  // console.log(`... Contract decimal: ${decimal}`);
+  const decimal = await erc20.decimal();
+  console.log(`... Contract decimal: ${decimal}`);
 
   //totalsupply
   let totalSupply = await erc20.totalSupply();
@@ -181,14 +181,12 @@ const test = async () => {
 
 export const getName = async (contractHash:string) => {
   
-  console.log(`... Contract Hash: ${contractHash}`);
-
   // We don't need hash- prefix so i'm removing it
-  await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(contractHash);
 
   //name
   const name = await erc20.name();
-  console.log(`... Contract name: ${name}`);
+  console.log(contractHash +` =... Contract name: ${name}`);
 
   return name;
   
@@ -196,14 +194,12 @@ export const getName = async (contractHash:string) => {
 
 export const getSymbol = async (contractHash:string) => {
   
-  console.log(`... Contract Hash: ${contractHash}`);
-
   // We don't need hash- prefix so i'm removing it
-  await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(contractHash);
 
   //symbol
   const symbol = await erc20.symbol();
-  console.log(`... Contract symbol: ${symbol}`);
+  console.log(contractHash +` =... Contract symbol: ${symbol}`);
 
   return symbol;
   
@@ -211,15 +207,12 @@ export const getSymbol = async (contractHash:string) => {
 
 export const getDecimals = async (contractHash:string) => {
   
-  console.log(`... Contract Hash: ${contractHash}`);
-
   // We don't need hash- prefix so i'm removing it
-  await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(contractHash);
 
   //decimal
-  //const decimal = await erc20.decimal();
-  const decimal = 18;
-  console.log(`... Contract decimal: ${decimal}`);
+  const decimal = await erc20.decimal();
+  console.log(contractHash +" =... Contract decimal: ", decimal);
 
   return decimal;
   
@@ -227,14 +220,12 @@ export const getDecimals = async (contractHash:string) => {
 
 export const getTotalSupply = async (contractHash:string) => {
   
-  console.log(`... Contract Hash: ${contractHash}`);
-
   // We don't need hash- prefix so i'm removing it
-  await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(contractHash);
 
    //totalsupply
    let totalSupply = await erc20.totalSupply();
-   console.log(`... Total supply: ${totalSupply}`);
+   console.log(contractHash +` = ... Total supply: ${totalSupply}`);
 
   return totalSupply;
   

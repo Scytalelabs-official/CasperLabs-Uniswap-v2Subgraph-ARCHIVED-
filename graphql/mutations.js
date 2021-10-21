@@ -97,26 +97,23 @@ const handleNewPair = {
 
       // fetch info if null
       if (token0 === null) {
-        let Decimals = fetchTokenDecimals(process.env.token0);
-
-        //let Decimals = 18;
+        let Decimals = await fetchTokenDecimals(process.env.token0);
+        
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           console.log("mybug the decimal on token 0 was null", []);
           return;
         }
 
+        let TokenName=await fetchTokenName(process.env.token0);
+        let TokenSymbol=await fetchTokenSymbol(process.env.token0);
+        let TokenTotalSupply=await fetchTokenTotalSupply(process.env.token0);
+
         token0 = new Token({
           id: process.env.token0,
-          // symbol: fetchTokenSymbol(process.env.token0),
-          // name: fetchTokenName(process.env.token0),
-          // totalSupply: fetchTokenTotalSupply(process.env.token0),
-          symbol: fetchTokenSymbol(process.env.token0),
-          name: fetchTokenName(process.env.token0),
-          totalSupply: fetchTokenTotalSupply(process.env.token0),
-          // symbol: "Erc20",
-          // name: "token0",
-          // totalSupply: 1000,
+          symbol: TokenSymbol,
+          name: TokenName,
+          totalSupply:TokenTotalSupply,
           decimals: Decimals,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,
@@ -129,22 +126,22 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        let Decimals = fetchTokenDecimals(process.env.token1);
-
-        //let Decimals = 18;
+        let Decimals = await fetchTokenDecimals(process.env.token1);
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           return;
         }
+
+        let TokenName=await fetchTokenName(process.env.token1);
+        let TokenSymbol=await fetchTokenSymbol(process.env.token1);
+        let TokenTotalSupply=await fetchTokenTotalSupply(process.env.token1);
+
         token1 = new Token({
           id: process.env.token1,
-          symbol: fetchTokenSymbol(process.env.token1),
-          name: fetchTokenName(process.env.token1),
-          totalSupply: fetchTokenTotalSupply(process.env.token1),
-          // symbol: "Erc20",
-          // name: "token1",
-          // totalSupply: 1000,
+          symbol: TokenSymbol,
+          name: TokenName,
+          totalSupply:TokenTotalSupply,
           decimals: Decimals,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,

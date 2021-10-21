@@ -1,5 +1,5 @@
-var  ERC20  = require('../Jsclients/ERC20/test/installed.ts');
-var TokenDefinition = require('./tokenDefinition');
+var ERC20 = require("../Jsclients/ERC20/test/installed.ts");
+//var TokenDefinition = require('./tokenDefinition');
 
 const User = require("../models/user");
 const LiquidityPosition = require("../models/liquidityPosition");
@@ -17,7 +17,6 @@ let ONE_BI = 1;
 let ZERO_BD = 0;
 let ONE_BD = 1;
 let BI_18 = 18;
-
 
 // // rebass tokens, dont count in tracked volume
 let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
@@ -58,46 +57,97 @@ let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
 //   return value == '0x0000000000000000000000000000000000000000000000000000000000000001';
 // }
 
-function fetchTokenName(tokenAddress) {
-  //static definitions overrides
-  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
+// NOTE: tokenDefination Class Converted to Array
+
+function fromAddress(tokenAddress) {
+  let staticDefinitions = [
+    {
+      address: "0xe0b7927c4af23765cb51314a0e0521a9645f0e2a", // Add DGD
+      symbol: "DGD",
+      name: "DGD",
+      decimals: 9,
+    },
+    {
+      address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9", // Add AAVE
+      symbol: "AAVE",
+      name: "Aave Token",
+      decimals: 18,
+    },
+    {
+      address: "0xeb9951021698b42e4399f9cbb6267aa35f82d59d", // Add LIF
+      symbol: "LIF",
+      name: "Lif",
+      decimals: 18,
+    },
+    {
+      address: "0xbdeb4b83251fb146687fa19d1c660f99411eefe3", // Add SVD
+      symbol: "SVD",
+      name: "savedroid",
+      decimals: 18,
+    },
+    {
+      address: "0xbb9bc244d798123fde783fcc1c72d3bb8c189413", //Add THEDAO
+      symbol: "THEDAO",
+      name: "THEDAO",
+      decimals: 16,
+    },
+    {
+      address: "0x38c6a68304cdefb9bec48bbfaaba5c5b47818bb2", //ADD HPB
+      symbol: "HPB",
+      name: "HPBCoin",
+      decimals: 18,
+    },
+  ];
+  let tokenAddressHex = tokenAddress;
+
+  // Search the definition using the address
+  for (let i = 0; i < staticDefinitions.length; i++) {
+    let staticDefinition = staticDefinitions[i];
+    if (staticDefinition.address == tokenAddressHex) {
+      return staticDefinition;
+    }
+  }
+
+  // If not found, return null
+  return null;
+}
+
+async function fetchTokenName(tokenAddress) {
+  // definitions overrides
+
+  let staticDefinition = fromAddress(tokenAddress);
+  if (staticDefinition != null) {
+    return staticDefinition.name;
+  }
+
+  let contractname = await ERC20.getName(tokenAddress);
+  return contractname;
+}
+
+async function fetchTokenSymbol(tokenAddress) {
+  // static definitions overrides
+  let staticDefinition = fromAddress(tokenAddress);
   if(staticDefinition != null) {
     return (staticDefinition).symbol;
   }
 
-  let contractname = 'unknown';
-  contractname = ERC20.getName(tokenAddress);
-  return contractname;
-
-}
-
-function fetchTokenSymbol(tokenAddress){
-  // static definitions overrides
-  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
-  if(staticDefinition != null) {
-    return (staticDefinition).name;
-  }
-
-  let contractsymbol = 'unknown';
-  contractsymbol = ERC20.getSymbol(tokenAddress);
+  let contractsymbol = await ERC20.getSymbol(tokenAddress);
   return contractsymbol;
 }
 
-function fetchTokenTotalSupply(tokenAddress){
-  let contracttotalsupply = 'unknown';
-  contracttotalsupply = ERC20.getTotalSupply(tokenAddress);
+async function fetchTokenTotalSupply(tokenAddress) {
+  let contracttotalsupply = await ERC20.getTotalSupply(tokenAddress);
   return contracttotalsupply;
 }
 
-function fetchTokenDecimals(tokenAddress) {
+async function fetchTokenDecimals(tokenAddress) {
   // static definitions overrides
-  let staticDefinition = TokenDefinition.fromAddress(tokenAddress);
+  let staticDefinition = fromAddress(tokenAddress);
   if(staticDefinition != null) {
     return (staticDefinition).decimals;
   }
 
-  let contractdecimal = 'unknown';
-  contractdecimal = ERC20.getDecimals(tokenAddress);
+  let contractdecimal = await ERC20.getDecimals(tokenAddress);
   return contractdecimal;
 }
 

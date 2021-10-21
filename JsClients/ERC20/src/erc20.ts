@@ -132,6 +132,15 @@ class ERC20Client {
     return result.value();
   }
 
+  public async decimal() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["decimals"]
+    );
+    return result.value();
+  }
+
   public async balanceOf(account: CLPublicKey) {
     const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
     const result = await utils.contractDictionaryGetter(
