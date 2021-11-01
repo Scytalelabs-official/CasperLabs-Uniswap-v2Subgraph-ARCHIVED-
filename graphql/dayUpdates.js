@@ -15,14 +15,14 @@ const {
  
 } = require("./helpers");
 
-async function updateUniswapDayData (uniswapdaydata) {
+async function updateUniswapDayData (timeStamp) {
   
     try {
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
       });
       //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
+      let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
       let uniswapDayData = await UniswapDayData.findOne({
@@ -52,23 +52,22 @@ async function updateUniswapDayData (uniswapdaydata) {
 
 }
 
-async function updatePairDayData (pairdaydata){
+async function updatePairDayData (timeStamp,pairAddress){
  
     try {
       //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
+      let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
-      let address =
-        "11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59";
+     
       // let dayPairID = event.address
       //   .toHexString()
       //   .concat('-')
       //   .concat(BigInt.fromI32(dayID).toString());
-      let dayPairID =
-        "0000000000000000000000000000000000000000000000000000000000000000";
+
+      let dayPairID = pairAddress + "-" + dayID;
       //let pair = Pir.load(event.address.toHexString());
-      let pair = await Pair.findOne({ id: address });
+      let pair = await Pair.findOne({ id: pairAddress });
       let pairDayData = await PairDayData.findOne({ id: dayPairID });
       if (pairDayData === null) {
         pairDayData = new PairDayData({
@@ -77,7 +76,7 @@ async function updatePairDayData (pairdaydata){
           token0: pair.token0,
           token1: pair.token1,
           //pairAddress : event.address.toHexString(),
-          pairAddress: address,
+          pairAddress: pairAddress,
           dailyVolumeToken0: ZERO_BD,
           dailyVolumeToken1: ZERO_BD,
           dailyVolumeUSD: ZERO_BD,
@@ -99,31 +98,28 @@ async function updatePairDayData (pairdaydata){
 
 }
 
-async function updatePairHourData (pairhourdata){
+async function updatePairHourData (timeStamp,pairAddress){
   
     try {
       //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
+      let timestamp = timeStamp;
       let hourIndex = timestamp / 3600; // get unique hour within unix history
       let hourStartUnix = hourIndex * 3600; // want the rounded effect
-      let address =
-        "11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59";
+     
       // let hourPairID = event.address
       //   .toHexString()
       //   .concat('-')
       //   .concat(BigInt.fromI32(hourIndex).toString());
-      let hourPairID =
-        "0000000000000000000000000000000000000000000000000000000000000000";
-
+      let hourPairID = pairAddress + "-" + hourIndex;
       //let pair = Pair.load(event.address.toHexString())
-      let pair = await Pair.findOne({ id: address });
+      let pair = await Pair.findOne({ id: pairAddress });
       let pairHourData = await PairHourData.findOne({ id: hourPairID });
       if (pairHourData === null) {
         pairHourData = new PairHourData({
           id: hourPairID,
           hourStartUnix: hourStartUnix,
           //pair : event.address.toHexString(),
-          pair: address,
+          pair: pairAddress,
           hourlyVolumeToken0: ZERO_BD,
           hourlyVolumeToken1: ZERO_BD,
           hourlyVolumeUSD: ZERO_BD,
@@ -145,11 +141,11 @@ async function updatePairHourData (pairhourdata){
 
 }
 
-async function updateTokenDayData (token,tokendaydata) {
+async function updateTokenDayData (token,timeStamp) {
     try {
       let bundle = await Bundle.findOne({ id: "1" });
       //let timestamp = event.block.timestamp.toI32();
-      let timestamp = 100000;
+      let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
       // let tokenDayID = args.token
@@ -157,16 +153,16 @@ async function updateTokenDayData (token,tokendaydata) {
       //   .concat("-")
       //   .concat(BigInt.fromI32(dayID).toString());
 
-      let tokenDayID = token;
+      let tokenDayID = token.id+ "-"+ dayID.toString();
 
       //let tokenDayData = TokenDayData.load(tokenDayID);
       let tokenDayData = await TokenDayData.findOne({ id: tokenDayID });
-      let tokendata = await Token.findOne({ id: token });
+      let tokendata = await Token.findOne({ id: token.id });
       if (tokenDayData === null) {
         tokenDayData = new TokenDayData({
           id: tokenDayID,
           date: dayStartTimestamp,
-          token: token,
+          token: token.id,
           priceUSD: tokendata.derivedETH * bundle.ethPrice,
           dailyVolumeToken: ZERO_BD,
           dailyVolumeETH: ZERO_BD,

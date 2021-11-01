@@ -58,4 +58,4 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
 };
 
-//test();
+test();

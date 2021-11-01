@@ -25,16 +25,16 @@ class ERC20Client {
   private contractName: string = "erc20";
   private contractHash: string= "erc20";
   private contractPackageHash: string= "erc20";
-  // private namedKeys: {
-  //   balances:string;
-  //   metadata: string;
-  //   nonces: string;
-  //   allowances: string;
-  //   ownedTokens: string;
-  //   owners: string;
-  //   paused: string;
+  private namedKeys: {
+    balances:string
+    metadata: string;
+    nonces: string;
+    allowances: string;
+    ownedTokens: string;
+    owners: string;
+    paused: string;
     
-  // };
+  };
 
   private isListening = false;
   private pendingDeploys: IPendingDeploy[] = [];
@@ -45,7 +45,18 @@ class ERC20Client {
     private chainName: string,
     private eventStreamAddress?: string,
     
-  ) { }
+  ) 
+  {
+    this.namedKeys= {
+      balances:"null",
+      metadata: "null",
+      nonces: "null",
+      allowances: "null",
+      ownedTokens: "null",
+      owners: "null",
+      paused: "null"
+    }; 
+  }
 
   public async install(
     keys: Keys.AsymmetricKey,
@@ -146,7 +157,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-     'balances'
+      this.namedKeys.balances
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -157,7 +168,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      'nonces'
+      this.namedKeys.nonces
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -170,7 +181,7 @@ class ERC20Client {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      'allowances'
+      this.namedKeys.allowances
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -209,7 +220,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Approve, deployHash);
+      this.addPendingDeploy(ERC20Events.Approval, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -301,7 +312,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Mint, deployHash);
+      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -331,7 +342,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Burn, deployHash);
+      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -369,7 +380,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Permit, deployHash);
+      this.addPendingDeploy(ERC20Events.Approval, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

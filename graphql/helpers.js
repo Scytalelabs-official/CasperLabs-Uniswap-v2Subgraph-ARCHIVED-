@@ -10,7 +10,7 @@ const Bundle = require("../models/bundle");
 require("dotenv").config();
 
 const ADDRESS_ZERO =
-  "account-hash-0000000000000000000000000000000000000000000000000000000000000000";
+  "0000000000000000000000000000000000000000000000000000000000000000";
 
 let ZERO_BI = 0;
 let ONE_BI = 1;
@@ -155,14 +155,14 @@ async function createLiquidityPosition(exchange, user, value) {
   try {
     // let liquidityTokenBalance = await LiquidityPosition.findOne({id: exchange.toHexString().concat('-').concat(user.toHexString())});
     let liquidityTokenBalance = await LiquidityPosition.findOne({
-      id: exchange + " - " + user,
+      id: exchange + "-" + user,
     });
     if (liquidityTokenBalance === null) {
       let pair = await Pair.findOne({ id: exchange });
       pair.liquidityProviderCount = pair.liquidityProviderCount + ONE_BI;
       liquidityTokenBalance = new LiquidityPosition({
         // id:exchange.toHexString().concat('-').concat(user.toHexString()),
-        id: exchange + " - " + user,
+        id: exchange + "-" + user,
         liquidityTokenBalance: value,
         pair: exchange,
         user: user,
@@ -195,7 +195,7 @@ async function createUser(address) {
   }
 }
 
-async function createLiquiditySnapshot(position, event) {
+async function createLiquiditySnapshot(position, timeStamp, blockHash) {
   try {
     // let timestamp = event.block.timestamp.toI32();
     let timestamp = 1000;
@@ -208,11 +208,11 @@ async function createLiquiditySnapshot(position, event) {
     // create new snapshot
     let snapshot = new LiquidityPositionSnapshot({
       // id:position.id.concat(timestamp.toString()),
-      id: position.id + timestamp.toString(),
+      id: position.id + timeStamp.toString(),
       liquidityPosition: position.id,
-      timestamp: timestamp,
-      // block : event.block.number.toI32(),
-      block: 599,
+      timestamp: timeStamp,
+      block : blockHash,
+     // block: 599,
       user: position.user,
       pair: position.pair,
       token0PriceUSD: token0.derivedETH * bundle.ethPrice,

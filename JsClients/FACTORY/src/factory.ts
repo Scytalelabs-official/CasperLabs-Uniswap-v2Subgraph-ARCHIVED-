@@ -154,7 +154,6 @@ class FACTORYClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(FACTORYEvents.SetFeeTo, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -181,7 +180,6 @@ class FACTORYClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(FACTORYEvents.SetFeeToSetter, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -217,7 +215,7 @@ class FACTORYClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(FACTORYEvents.CreatePair, deployHash);
+      this.addPendingDeploy(FACTORYEvents.PairCreated, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

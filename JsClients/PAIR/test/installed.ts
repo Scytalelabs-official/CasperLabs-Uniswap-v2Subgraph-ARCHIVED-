@@ -2,6 +2,7 @@ import { config } from "dotenv";
 config();
 import { PAIRClient, utils, constants } from "../src";
 import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { request } from 'graphql-request';
 
 import {
   CLValueBuilder,
@@ -50,32 +51,57 @@ const pair = new PAIRClient(
   EVENT_STREAM_ADDRESS!
 );
 
-const listener = pair.onEvent(
-  [
-    PAIREvents.Approve,
-    PAIREvents.Transfer,
-    PAIREvents.TransferFrom,
-    PAIREvents.Mint,
-    PAIREvents.Burn,
-    PAIREvents.Permit,
-    PAIREvents.Skim,
-    PAIREvents.Sync,
-    PAIREvents.Swap,
-  ],
-  (eventName, deploy, result) => {
-    if (deploy.success) {
-      console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-      console.log(result.value());
-    } else {
-      console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-      console.log(`Error: ${deploy.error}`);
-    }
-  }
-);
-
 
 const test = async () => {
   
+  const listener = pair.onEvent(
+    [
+      PAIREvents.Approval,
+      PAIREvents.Transfer,
+      PAIREvents.Mint,
+      PAIREvents.Burn,
+      PAIREvents.Sync,
+      PAIREvents.Swap,
+    ],
+    async (eventName, deploy, result) => {
+      if (deploy.success) {
+        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+          const [timestamp,gasPrice,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+          console.log("... Deployhash: ",  deploy.deployHash);
+          console.log("... Timestamp: ", timestamp);
+          //console.log("... GasPrice: ", gasPrice);
+          console.log("... Block hash: ", block_hash);
+  
+          let newData = JSON.parse(JSON.stringify(result.value()));
+          
+          console.log(eventName+ " Event result: ");
+          console.log(newData[0][0].data + " = " + newData[0][1].data);
+          console.log(newData[1][0].data + " = " + newData[1][1].data);
+          console.log(newData[2][0].data + " = " + newData[2][1].data);
+          console.log(newData[3][0].data + " = " + newData[3][1].data);
+          console.log(newData[4][0].data + " = " + newData[4][1].data);
+          console.log(newData[5][0].data + " = " + newData[5][1].data);
+
+          // if(eventName=="transfer")
+          // {
+          //   request('http://localhost:3000/graphql', `mutation handleTransfer($from: String!, $to: String!, $value: Int!, $pair: String!) {
+          //   createUser(email: $email, password: $password) {
+          //     id
+          //     email
+          //   }
+          //   }`, {email: 'john.doe@mail.com', password: 'Pa$$w0rd'})
+          //   .then(data => console.info(data))
+          //   .catch(error => console.error(error));
+
+          // }
+          
+      } else {
+        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+        console.log(`Error: ${deploy.error}`);
+      }
+    }
+  );
+
   await sleep(5 * 1000);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);

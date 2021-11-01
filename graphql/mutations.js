@@ -23,6 +23,7 @@ let uniswapDayData = require("../models/uniswapDayData");
 let token0DayData = require("../models/tokenDayData");
 let token1DayData = require("../models/tokenDayData");
 
+const {bundleType} = require("./types/bundle");
 const {
   fetchTokenDecimals,
   fetchTokenName,
@@ -57,12 +58,18 @@ const {
   getTrackedVolumeUSD,
   getTrackedLiquidityUSD,
 } = require("./pricing");
+const bundle = require("../models/bundle");
 
 const handleNewPair = {
-  type: GraphQLBoolean,
+  type: bundleType,
   description: "Handle New Pair",
   args: {
-    PairCreated: { type: GraphQLBoolean },
+    token0: { type: GraphQLString },
+    token1: { type:GraphQLString  },
+    pair: { type: GraphQLString  },
+    all_pairs_length: { type: GraphQLInt },
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString  }
   },
   async resolve(parent, args, context) {
     try {
@@ -97,12 +104,12 @@ const handleNewPair = {
       // let token1 = Token.load(event.params.token1.toHexString());
 
       // create the tokens
-      let token0 = await Token.findOne({ id: process.env.token0 });
-      let token1 = await Token.findOne({ id: process.env.token1 });
+      let token0 = await Token.findOne({ id: args.token0 });
+      let token1 = await Token.findOne({ id: args.token1 });
 
       // fetch info if null
       if (token0 === null) {
-        let Decimals = await fetchTokenDecimals(process.env.token0);
+        let Decimals = await fetchTokenDecimals(args.token0);
         
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
@@ -110,12 +117,12 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName=await fetchTokenName(process.env.token0);
-        let TokenSymbol=await fetchTokenSymbol(process.env.token0);
-        let TokenTotalSupply=await fetchTokenTotalSupply(process.env.token0);
+        let TokenName=await fetchTokenName(args.token0);
+        let TokenSymbol=await fetchTokenSymbol(args.token0);
+        let TokenTotalSupply=await fetchTokenTotalSupply(args.token0);
 
         token0 = new Token({
-          id: process.env.token0,
+          id: args.token0,
           symbol: TokenSymbol,
           name: TokenName,
           totalSupply:TokenTotalSupply,
@@ -131,19 +138,19 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        let Decimals = await fetchTokenDecimals(process.env.token1);
+        let Decimals = await fetchTokenDecimals(args.token1);
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           return;
         }
 
-        let TokenName=await fetchTokenName(process.env.token1);
-        let TokenSymbol=await fetchTokenSymbol(process.env.token1);
-        let TokenTotalSupply=await fetchTokenTotalSupply(process.env.token1);
+        let TokenName=await fetchTokenName(args.token1);
+        let TokenSymbol=await fetchTokenSymbol(args.token1);
+        let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
 
         token1 = new Token({
-          id: process.env.token1,
+          id: args.token1,
           symbol: TokenSymbol,
           name: TokenName,
           totalSupply:TokenTotalSupply,
@@ -158,14 +165,12 @@ const handleNewPair = {
       }
 
       let pair = new Pair({
-        id: process.env.pair,
+        id: args.pair,
         token0: token0.id,
         token1: token1.id,
         liquidityProviderCount: ZERO_BI,
-
-        //createdAtTimestamp : event.block.timestamp,
-        //createdAtBlockNumber : event.block.number,
-
+        createdAtTimestamp : args.timeStamp,
+        createdAtBlockNumber :args.blockHash,
         txCount: ZERO_BI,
         reserve0: ZERO_BD,
         reserve1: ZERO_BD,
@@ -189,8 +194,9 @@ const handleNewPair = {
       await token1.save();
       await pair.save();
       await factory.save();
-
-      return true;
+      
+      let bundle = await Bundle.findOne({ id: "1" });
+      return bundle;
     } catch (error) {
       throw new Error(error);
     }
@@ -208,13 +214,16 @@ async function isCompleteMint(mintId) {
 }
 
 const handleTransfer = {
-  type: GraphQLBoolean,
+  type: bundleType,
   description: "handle Transfer ",
   args: {
-    Transfer: { type: GraphQLBoolean },
-    to: { type: GraphQLString },
+    pairAddress: { type: GraphQLString },
     from: { type: GraphQLString },
+    to: { type: GraphQLString },
     value: { type: GraphQLInt },
+    deployHash: { type: GraphQLString },
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
@@ -235,7 +244,7 @@ const handleTransfer = {
       });
 
       // let transactionHash = event.transaction.hash.toHexString();
-      let transactionHash = "sampletransactionHash";
+      let transactionHash = args.deployHash;
 
       // user stats
       //let from = event.params.from;
@@ -246,11 +255,10 @@ const handleTransfer = {
       let to = args.to;
       createUser(to);
 
-      let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
+      //let address ="hash-0000000000000000000000000000000000000000000000000000000000000000";
       // get pair and load contract
       //let pair = await Pair.findOne({ id: event.address.toHexString() });
-      let pair = await Pair.findOne({ id: address });
+      let pair = await Pair.findOne({ id: args.pairAddress });
 
       //let pairContract = PairContract.bind(event.address);
 
@@ -262,10 +270,10 @@ const handleTransfer = {
       if (transaction === null) {
         transaction = new Transaction({
           id: transactionHash,
-          // blockNumber: event.block.number,
-          // timestamp: event.block.timestamp,
-          blockNumber: 599,
-          timestamp: 1222,
+          blockNumber: args.blockHash,
+          timestamp: args.timeStamp,
+          //blockNumber: 599,
+          //timestamp: 1222,
           mints: [],
           burns: [],
           swaps: [],
@@ -286,7 +294,8 @@ const handleTransfer = {
             //   .toHexString()
             //   .concat("-")
             //   .concat(BigInt.fromI32(mints.length).toString()),
-            id: transactionHash,
+            id: transactionHash + "-" + mints.length,
+            //id: transactionHash,
             transaction: transaction.id,
             pair: pair.id,
             to: to,
@@ -314,7 +323,8 @@ const handleTransfer = {
           //   .toHexString()
           //   .concat("-")
           //   .concat(BigInt.fromI32(burns.length).toString()),
-          id: transactionHash,
+          id: transactionHash + "-" + burns.length,
+          //id: transactionHash,
           transaction: transaction.id,
           pair: pair.id,
           liquidity: args.value,
@@ -356,7 +366,8 @@ const handleTransfer = {
               //   .toHexString()
               //   .concat("-")
               //   .concat(BigInt.fromI32(burns.length).toString()),
-              id: transactionHash,
+              id: transactionHash + "-" + burns.length,
+              //id: transactionHash,
               transaction: transaction.id,
               needsComplete: false,
               pair: pair.id,
@@ -371,7 +382,8 @@ const handleTransfer = {
             //   .toHexString()
             //   .concat("-")
             //   .concat(BigInt.fromI32(burns.length).toString()),
-            id: transactionHash,
+            id: transactionHash + "-" + burns.length,
+            //id: transactionHash,
             transaction: transaction.id,
             needsComplete: false,
             pair: pair.id,
@@ -415,33 +427,36 @@ const handleTransfer = {
 
       if (from != ADDRESS_ZERO && from != pair.id) {
         //let Balance =await PairContract.balanceOf(event.address,from);
-        createLiquidityPosition(address, from, args.value);
+        let Balance =await PairContract.balanceOf(args.pairAddress,from);
+        createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
         while (fromUserLiquidityPosition == null) {
           fromUserLiquidityPosition = await LiquidityPosition.findOne({
-            id: address + " - " + from,
+            id: args.pairAddress + "-" + from,
           });
         }
 
-        createLiquiditySnapshot(fromUserLiquidityPosition, "event");
+        createLiquiditySnapshot(fromUserLiquidityPosition, args.timeStamp,args.blockHash);
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         //let Balance = await PairContract.balanceOf(event.address,to);
-        createLiquidityPosition(address, to, args.value);
+        let Balance = await PairContract.balanceOf(args.pairAddress,to);
+        createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;
         while (toUserLiquidityPosition == null) {
           toUserLiquidityPosition = await LiquidityPosition.findOne({
-            id: address + " - " + to,
+            id: args.pairAddress + "-" + to,
           });
         }
-        createLiquiditySnapshot(toUserLiquidityPosition, "event");
+        createLiquiditySnapshot(toUserLiquidityPosition, args.timeStamp,args.blockHash);
       }
 
       await transaction.save();
-      return true;
+      let bundle = await Bundle.findOne({ id: "1" });
+      return bundle;
     } catch (error) {
       throw new Error(error);
     }
@@ -453,13 +468,15 @@ const handleSync = {
   description: "handle Sync",
   args: {
     Sync: { type: GraphQLBoolean },
+    pairAddress: { type: GraphQLString },
+    reserve0: { type: GraphQLString },
+    reserve1: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let address =
-        "hash-0000000000000000000000000000000000000000000000000000000000000000";
+      //let address ="hash-0000000000000000000000000000000000000000000000000000000000000000";
       // let pair = await Pair.findOne({ id: event.address.toHex() });
-      let pair = await Pair.findOne({ id: address });
+      let pair = await Pair.findOne({ id: args.pairAddress });
       let token0 = await Token.findOne({ id: pair.token0 });
       let token1 = await Token.findOne({ id: pair.token1 });
       let uniswap = await UniswapFactory.findOne({
@@ -483,6 +500,9 @@ const handleSync = {
       //   token1.decimals
       // );
 
+      pair.reserve0 = args.reserve0;
+      pair.reserve1 = args.reserve1;
+
       if (pair.reserve1 != ZERO_BD)
         pair.token0Price = pair.reserve0 / pair.reserve1;
       else pair.token0Price = ZERO_BD;
@@ -500,8 +520,8 @@ const handleSync = {
 
       // token0.derivedETH = findEthPerToken(token0);
       // token1.derivedETH = findEthPerToken(token1);
-      token0.derivedETH = 0;
-      token1.derivedETH = 0;
+      token0.derivedETH = 0; //passing zero Because Casper don't have the feature right now
+      token1.derivedETH = 0; //passing zero Because Casper don't have the feature right now
       await token0.save();
       await token1.save();
 
@@ -511,7 +531,7 @@ const handleSync = {
         // trackedLiquidityETH =
         //   getTrackedLiquidityUSD(pair.reserve0, token0, pair.reserve1, token1) /
         //   bundle.ethPrice;
-        trackedLiquidityETH = 0;
+        trackedLiquidityETH = 0; //passing zero Because Casper don't have the feature right now
       } else {
         trackedLiquidityETH = ZERO_BD;
       }
@@ -547,11 +567,14 @@ const handleMint = {
   type: GraphQLBoolean,
   description: "handle Mint",
   args: {
-    Mint: { type: GraphQLBoolean },
     amount0: { type: GraphQLInt },
     amount1: { type: GraphQLInt },
     sender: { type: GraphQLString },
-    logIndex: { type: GraphQLInt },
+    deployHash:{ type: GraphQLString},
+    pairAddress:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString },
+    logIndex: { type: GraphQLInt }, //we don't have logIndex in Casper yet
   },
   async resolve(parent, args, context) {
     try {
@@ -559,7 +582,7 @@ const handleMint = {
       //   id: event.transaction.hash.toHexString(),
       // });
 
-      let transactionHash = "sampletransactionHash";
+      let transactionHash = args.deployHash;
       let transaction = await Transaction.findOne({
         id: transactionHash,
       });
@@ -572,9 +595,8 @@ const handleMint = {
       if (mint === null) {
         return false;
       }
-      let address =
-        "0000000000000000000000000000000000000000000000000000000000000000";
-      let pair = await Pair.findOne({ id: address });
+      //let address ="0000000000000000000000000000000000000000000000000000000000000000";
+      let pair = await Pair.findOne({ id: args.pairAddress });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
       });
@@ -626,14 +648,14 @@ const handleMint = {
       await mint.save();
 
       // update the LP position
-      createLiquidityPosition(address, mint.to);
+      createLiquidityPosition(args.pairAddress, mint.to);
       let liquidityPosition = null;
       while (liquidityPosition == null) {
         liquidityPosition = await LiquidityPosition.findOne({
-          id: address + " - " + mint.to,
+          id: args.pairAddress + "-" + mint.to,
         });
       }
-      createLiquiditySnapshot(liquidityPosition, "event");
+      createLiquiditySnapshot(liquidityPosition, args.timeStamp.args.blockHash);
 
       // update day entities
       //updatePairDayData(event);
@@ -642,11 +664,11 @@ const handleMint = {
       //updateTokenDayData(token0);
       //updateTokenDayData(token1);
 
-      updatePairDayData(true);
-      updatePairHourData(true);
-      updateUniswapDayData(true);
-      updateTokenDayData(process.env.token0,true);
-      updateTokenDayData(process.env.token1,true);
+      updatePairDayData(args.timeStamp,args.pairAddress);
+      updatePairHourData(args.timeStamp,args.pairAddress);
+      updateUniswapDayData(args.timeStamp);
+      updateTokenDayData(token0,args.timeStamp);
+      updateTokenDayData(token1,args.timeStamp);
 
       return true;
     } catch (error) {
@@ -659,18 +681,22 @@ const handleBurn = {
   type: GraphQLBoolean,
   description: "handle Burn",
   args: {
-    Burn: { type: GraphQLBoolean },
     amount0: { type: GraphQLInt },
     amount1: { type: GraphQLInt },
     sender: { type: GraphQLString },
-    logIndex: { type: GraphQLInt },
+    deployHash:{ type: GraphQLString},
+    pairAddress:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString },
+    logIndex: { type: GraphQLInt }, //we don't have logIndex in Casper yet
+    to: { type: GraphQLString}
   },
   async resolve(parent, args, context) {
     try {
       // let transaction = await Transaction.findOne({
       //   id: event.transaction.hash.toHexString(),
       // });
-      let transactionHash = "sampletransactionHash";
+      let transactionHash = args.deployHash;
       let transaction = await Transaction.findOne({
         id: transactionHash,
       });
@@ -684,9 +710,8 @@ const handleBurn = {
       if (burn === null) {
         return false;
       }
-      let address =
-        "0000000000000000000000000000000000000000000000000000000000000000";
-      let pair = await Pair.findOne({ id: address });
+      //let address ="0000000000000000000000000000000000000000000000000000000000000000";
+      let pair = await Pair.findOne({ id: args.pairAaddress });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
       });
@@ -732,19 +757,20 @@ const handleBurn = {
       burn.amount0 = token0Amount;
       burn.amount1 = token1Amount;
       // burn.to = event.params.to
+      burn.to = args.to;
       burn.logIndex = args.logIndex;
       burn.amountUSD = amountTotalUSD;
       await burn.save();
 
       // update the LP position
-      createLiquidityPosition(address, burn.sender);
+      createLiquidityPosition(args.pairAddress, burn.sender);
       let liquidityPosition = null;
       while (liquidityPosition == null) {
         liquidityPosition = await LiquidityPosition.findOne({
-          id: address + " - " + burn.sender,
+          id: args.pairAddress + "-" + burn.sender,
         });
       }
-      createLiquiditySnapshot(liquidityPosition, "event");
+      createLiquiditySnapshot(liquidityPosition, args.timeStamp,args.blockHash);
 
       // update day entities
       //updatePairDayData(event);
@@ -753,11 +779,11 @@ const handleBurn = {
       //updateTokenDayData(token0, event);
       //updateTokenDayData(token1, event);
 
-      updatePairDayData(true);
-      updatePairHourData(true);
-      updateUniswapDayData(true);
-      updateTokenDayData(process.env.token0,true);
-      updateTokenDayData(process.env.token1,true);
+      updatePairDayData(args.timeStamp,args.pairAddress);
+      updatePairHourData(args.timeStamp,args.pairAddress);
+      updateUniswapDayData(args.timeStamp);
+      updateTokenDayData(token0,args.timeStamp);
+      updateTokenDayData(token1,args.timeStamp);
 
       return true;
     } catch (error) {
@@ -770,21 +796,23 @@ const handleSwap = {
   type: GraphQLBoolean,
   description: "handle Swap",
   args: {
-    Swap: { type: GraphQLBoolean },
     amount0In: { type: GraphQLInt },
     amount1In: { type: GraphQLInt },
     amount0Out: { type: GraphQLInt },
     amount1Out: { type: GraphQLInt },
+    deployHash:{ type: GraphQLString},
+    pairAddress:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString },
     to: { type: GraphQLString },
     from: { type: GraphQLString },
     sender: { type: GraphQLString },
-    logIndex: { type: GraphQLInt },
+    logIndex: { type: GraphQLInt } //we don't have logIndex in Casper yet
   },
   async resolve(parent, args, context) {
     try {
       // let pair = await Pair.findOne({ id: event.address.toHexString() });
-      let address="11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59";
-      let pair = await Pair.findOne({ id: address });
+      let pair = await Pair.findOne({ id: args.pairAddress });
       let token0 = await Token.findOne({ id: pair.token0 });
       let token1 = await Token.findOne({ id: pair.token1 });
 
@@ -831,7 +859,7 @@ const handleSwap = {
       //   token1,
       //   pair
       // );
-      let trackedAmountUSD = 0;
+      let trackedAmountUSD = 0; //passing zero Because Casper don't have the feature right now
 
       let trackedAmountETH;
       if (bundle.ethPrice == ZERO_BD) {
@@ -881,7 +909,7 @@ const handleSwap = {
       // let transaction = await Transaction.fineOne({
       //   id: event.transaction.hash.toHexString(),
       // });
-      let transactionHash = "sampletransactionHash";
+      let transactionHash = args.deployHash;
       let transaction = await Transaction.findOne({
         id: transactionHash,
       });
@@ -889,10 +917,10 @@ const handleSwap = {
         transaction = new Transaction({
           // id: event.transaction.hash.toHexString(),
           id: transactionHash,
-          // blockNumber: event.block.number,
-          // timestamp: event.block.timestamp,
-          blockNumber: 499,
-          timestamp: 1334,
+          blockNumber: args.blockHash,
+          timestamp: args.timeStamp,
+          //blockNumber: 499,
+          //timestamp: 1334,
           mints: [],
           swaps: [],
           burns: [],
@@ -904,7 +932,8 @@ const handleSwap = {
         //   .toHexString()
         //   .concat("-")
         //   .concat(BigInt.fromI32(swaps.length).toString()),
-        id: transactionHash,
+        id: transactionHash+ "-"+ (swaps.length),
+        //id: transactionHash,
         // update swap event
         transaction: transaction.id,
         pair: pair.id,
@@ -943,11 +972,11 @@ const handleSwap = {
       // let token0DayData = updateTokenDayData(token0, event);
       // let token1DayData = updateTokenDayData(token1, event);
 
-      pairDayData = await updatePairDayData(true);
-      pairHourData = await updatePairHourData(true);
-      uniswapDayData = await updateUniswapDayData(true);
-      token0DayData = await updateTokenDayData(process.env.token0, true);
-      token1DayData = await updateTokenDayData(process.env.token1, true);
+      pairDayData = await updatePairDayData(args.timeStamp,args.pairAddress);
+      pairHourData = await updatePairHourData(args.timeStamp,args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(args.timeStamp);
+      token0DayData = await updateTokenDayData(token0,args.timeStamp);
+      token1DayData = await updateTokenDayData(token1,args.timeStamp);
 
       // swap specific updating
       uniswapDayData.dailyVolumeUSD =

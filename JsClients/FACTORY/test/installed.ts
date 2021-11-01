@@ -2,6 +2,7 @@ import { config } from "dotenv";
 config();
 import { FACTORYClient, utils, constants } from "../src";
 import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { request } from 'graphql-request';
 
 import {
   CLValueBuilder,
@@ -38,25 +39,47 @@ const factory = new FACTORYClient(
   EVENT_STREAM_ADDRESS!
 );
 
-const listener = factory.onEvent(
-  [
-    FACTORYEvents.SetFeeTo,
-    FACTORYEvents.SetFeeToSetter,
-    FACTORYEvents.CreatePair
-  ],
-  (eventName, deploy, result) => {
-    if (deploy.success) {
-      console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-      console.log(result.value());
-    } else {
-      console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-      console.log(`Error: ${deploy.error}`);
-    }
-  }
-);
-
 const test = async () => {
   
+  const listener = factory.onEvent(
+    [
+      FACTORYEvents.PairCreated
+    ],
+    async (eventName, deploy, result) => {
+      if (deploy.success) {
+        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+        const [timestamp,gasPrice,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+        console.log("... Deployhash: ",  deploy.deployHash);
+        console.log("... Timestamp: ", timestamp);
+        console.log("... Block hash: ", block_hash);
+
+        let newData = JSON.parse(JSON.stringify(result.value()));
+        
+        console.log(eventName+ " Event result: ");
+        console.log(newData[0][0].data + " = " + newData[0][1].data);
+        console.log(newData[1][0].data + " = " + newData[1][1].data);
+        console.log(newData[2][0].data + " = " + newData[2][1].data);
+        console.log(newData[3][0].data + " = " + newData[3][1].data);
+        console.log(newData[4][0].data + " = " + newData[4][1].data);
+        console.log(newData[5][0].data + " = " + newData[5][1].data);
+
+        request('http://localhost:3000/graphql',
+        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
+         handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+           id
+         }
+       
+        }`,
+         {token0:'51254d70d183f4b1e59ee5d5b0c76d3c3a81d0366278beecc05b546d49a9835c', token1: '96b0431770a34f5b651a43c830f3c8537e7c44f2cb8191d7efbcca2379785cda', pair: '11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59', all_pairs_length: 5, timeStamp:1000, blockHash:'0000000000000000000000000000000000000000000000000000000000000000'})
+         .then(data => console.log(data))
+         .catch(error => console.error(error));
+
+      } else {
+        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+        console.log(`Error: ${deploy.error}`);
+      }
+    }
+  );
 
   await sleep(5 * 1000);
 

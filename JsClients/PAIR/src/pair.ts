@@ -24,15 +24,15 @@ class PAIRClient {
   private contractName: string = "pair";
   private contractHash: string= "pair";
   private contractPackageHash: string= "pair";
-  // private namedKeys: {
-  //   balances: string;
-  //   metadata: string;
-  //   nonces: string;
-  //   allowances: string;
-  //   ownedTokens: string;
-  //   owners: string;
-  //   paused: string;
-  // };
+  private namedKeys: {
+    balances: string;
+    metadata: string;
+    nonces: string;
+    allowances: string;
+    ownedTokens: string;
+    owners: string;
+    paused: string;
+  };
   private isListening = false;
   private pendingDeploys: IPendingDeploy[] = [];
 
@@ -40,7 +40,17 @@ class PAIRClient {
     private nodeAddress: string,
     private chainName: string,
     private eventStreamAddress?: string
-  ) { }
+  ) {
+    this.namedKeys= {
+      balances:"null",
+      metadata: "null",
+      nonces: "null",
+      allowances: "null",
+      ownedTokens: "null",
+      owners: "null",
+      paused: "null"
+    }; 
+   }
 
   public async install(
     keys: Keys.AsymmetricKey,
@@ -141,6 +151,7 @@ class PAIRClient {
     );
     return result.value();
   }
+
   public async decimal() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
@@ -149,12 +160,13 @@ class PAIRClient {
     );
     return result.value();
   }
+
   public async balanceOf(account: CLPublicKey) {
     const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      'balances'
+      this.namedKeys.balances
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -166,7 +178,7 @@ class PAIRClient {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      'nonces'
+      this.namedKeys.nonces
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -179,7 +191,7 @@ class PAIRClient {
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,
-      'allowances'
+      this.namedKeys.allowances
     );
     const maybeValue = result.value().unwrap();
     return maybeValue.value().toString();
@@ -242,7 +254,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Approve, deployHash);
+      this.addPendingDeploy(PAIREvents.Approval, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -333,6 +345,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
+      this.addPendingDeploy(PAIREvents.Sync, deployHash);
       this.addPendingDeploy(PAIREvents.Mint, deployHash);
       return deployHash;
     } else {
@@ -346,7 +359,7 @@ class PAIRClient {
   ) {
 
     const runtimeArgs = RuntimeArgs.fromMap({
-      from: utils.createRecipientAddress(to),
+      to: utils.createRecipientAddress(to),
     });
 
     const deployHash = await contractCall({
@@ -360,6 +373,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
+      this.addPendingDeploy(PAIREvents.Sync, deployHash);
       this.addPendingDeploy(PAIREvents.Burn, deployHash);
       return deployHash;
     } else {
@@ -398,7 +412,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Permit, deployHash);
+      this.addPendingDeploy(PAIREvents.Approval, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -426,7 +440,6 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Skim, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -457,7 +470,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Mint, deployHash);
+      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -520,6 +533,7 @@ class PAIRClient {
 
     if (deployHash !== null) {
       this.addPendingDeploy(PAIREvents.Sync, deployHash);
+      this.addPendingDeploy(PAIREvents.Swap, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -555,7 +569,6 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Approve, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -587,7 +600,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Mint, deployHash);
+      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -616,7 +629,6 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Sync, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

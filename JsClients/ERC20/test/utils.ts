@@ -17,7 +17,8 @@ export const getDeploy = async (NODE_URL: string, deployHash: string) => {
       if (raw.execution_results.length !== 0){
           // @ts-ignore
           if (raw.execution_results[0].result.Success) {
-              return deploy;
+           
+              return [deploy.header.timestamp,deploy.header.gasPrice,raw.execution_results[0].block_hash];
           } else {
               // @ts-ignore
               throw Error("Contract execution: " + raw.execution_results[0].result.Failure.error_message);
