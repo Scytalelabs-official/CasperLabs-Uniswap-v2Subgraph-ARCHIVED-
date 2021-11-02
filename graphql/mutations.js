@@ -8,6 +8,7 @@ const {
 
 require("dotenv").config();
 
+const Response = require("../models/response");
 const UniswapFactory = require("../models/uniswapFactory");
 const Pair = require("../models/pair");
 const Token = require("../models/token");
@@ -23,7 +24,8 @@ let uniswapDayData = require("../models/uniswapDayData");
 let token0DayData = require("../models/tokenDayData");
 let token1DayData = require("../models/tokenDayData");
 
-const {bundleType} = require("./types/bundle");
+const {responseType} = require("./types/response");
+
 const {
   fetchTokenDecimals,
   fetchTokenName,
@@ -58,10 +60,9 @@ const {
   getTrackedVolumeUSD,
   getTrackedLiquidityUSD,
 } = require("./pricing");
-const bundle = require("../models/bundle");
 
 const handleNewPair = {
-  type: bundleType,
+  type: responseType,
   description: "Handle New Pair",
   args: {
     token0: { type: GraphQLString },
@@ -195,8 +196,17 @@ const handleNewPair = {
       await pair.save();
       await factory.save();
       
-      let bundle = await Bundle.findOne({ id: "1" });
-      return bundle;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -214,13 +224,13 @@ async function isCompleteMint(mintId) {
 }
 
 const handleTransfer = {
-  type: bundleType,
+  type: responseType,
   description: "handle Transfer ",
   args: {
-    pairAddress: { type: GraphQLString },
     from: { type: GraphQLString },
     to: { type: GraphQLString },
     value: { type: GraphQLInt },
+    pairAddress: { type: GraphQLString },
     deployHash: { type: GraphQLString },
     timeStamp: { type: GraphQLInt  },
     blockHash: { type: GraphQLString }
@@ -455,8 +465,17 @@ const handleTransfer = {
       }
 
       await transaction.save();
-      let bundle = await Bundle.findOne({ id: "1" });
-      return bundle;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -464,13 +483,12 @@ const handleTransfer = {
 };
 
 const handleSync = {
-  type: GraphQLBoolean,
+  type: responseType,
   description: "handle Sync",
   args: {
-    Sync: { type: GraphQLBoolean },
-    pairAddress: { type: GraphQLString },
     reserve0: { type: GraphQLString },
     reserve1: { type: GraphQLString },
+    pairAddress: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
@@ -556,7 +574,17 @@ const handleSync = {
       await uniswap.save();
       await token0.save();
       await token1.save();
-      return true;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -564,17 +592,17 @@ const handleSync = {
 };
 
 const handleMint = {
-  type: GraphQLBoolean,
+  type: responseType,
   description: "handle Mint",
   args: {
     amount0: { type: GraphQLInt },
     amount1: { type: GraphQLInt },
     sender: { type: GraphQLString },
-    deployHash:{ type: GraphQLString},
-    pairAddress:{ type: GraphQLString},
-    timeStamp: { type: GraphQLInt  },
-    blockHash: { type: GraphQLString },
     logIndex: { type: GraphQLInt }, //we don't have logIndex in Casper yet
+    pairAddress:{ type: GraphQLString},
+    deployHash:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
@@ -670,7 +698,17 @@ const handleMint = {
       updateTokenDayData(token0,args.timeStamp);
       updateTokenDayData(token1,args.timeStamp);
 
-      return true;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -678,18 +716,18 @@ const handleMint = {
 };
 
 const handleBurn = {
-  type: GraphQLBoolean,
+  type: responseType,
   description: "handle Burn",
   args: {
     amount0: { type: GraphQLInt },
     amount1: { type: GraphQLInt },
     sender: { type: GraphQLString },
-    deployHash:{ type: GraphQLString},
-    pairAddress:{ type: GraphQLString},
-    timeStamp: { type: GraphQLInt  },
-    blockHash: { type: GraphQLString },
     logIndex: { type: GraphQLInt }, //we don't have logIndex in Casper yet
-    to: { type: GraphQLString}
+    to: { type: GraphQLString},
+    pairAddress:{ type: GraphQLString},
+    deployHash:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
@@ -785,7 +823,17 @@ const handleBurn = {
       updateTokenDayData(token0,args.timeStamp);
       updateTokenDayData(token1,args.timeStamp);
 
-      return true;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }
@@ -793,21 +841,21 @@ const handleBurn = {
 };
 
 const handleSwap = {
-  type: GraphQLBoolean,
+  type: responseType,
   description: "handle Swap",
   args: {
     amount0In: { type: GraphQLInt },
     amount1In: { type: GraphQLInt },
     amount0Out: { type: GraphQLInt },
     amount1Out: { type: GraphQLInt },
-    deployHash:{ type: GraphQLString},
-    pairAddress:{ type: GraphQLString},
-    timeStamp: { type: GraphQLInt  },
-    blockHash: { type: GraphQLString },
     to: { type: GraphQLString },
     from: { type: GraphQLString },
     sender: { type: GraphQLString },
-    logIndex: { type: GraphQLInt } //we don't have logIndex in Casper yet
+    logIndex: { type: GraphQLInt }, //we don't have logIndex in Casper yet
+    pairAddress:{ type: GraphQLString},
+    deployHash:{ type: GraphQLString},
+    timeStamp: { type: GraphQLInt  },
+    blockHash: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
@@ -1025,7 +1073,17 @@ const handleSwap = {
         amount1Total*(token1.derivedETH)*(bundle.ethPrice);
       await token1DayData.save();
 
-      return true;
+      let response = await Response.findOne({ id: "1" });
+      if(response=== null)
+      {
+        // create new response
+        response = new Response({
+          id: "1",
+          result: true
+        });
+        await response.save();
+      }
+      return response;
     } catch (error) {
       throw new Error(error);
     }

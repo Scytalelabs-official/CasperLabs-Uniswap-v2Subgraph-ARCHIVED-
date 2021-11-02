@@ -35,7 +35,8 @@ const {
   FACTORY_CONTRACT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
-  PAIR_CONTRACT_NAME
+  PAIR_CONTRACT_NAME,
+  GRAPHQL
 } = process.env;
 
 // const TOKEN_META = new Map(parseTokenMeta(process.env.TOKEN_META!));
@@ -66,14 +67,13 @@ const test = async () => {
     async (eventName, deploy, result) => {
       if (deploy.success) {
         console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-          const [timestamp,gasPrice,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+          const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
           console.log("... Deployhash: ",  deploy.deployHash);
           console.log("... Timestamp: ", timestamp);
-          //console.log("... GasPrice: ", gasPrice);
           console.log("... Block hash: ", block_hash);
-  
-          let newData = JSON.parse(JSON.stringify(result.value()));
           
+          let newData = JSON.parse(JSON.stringify(result.value()));
+
           console.log(eventName+ " Event result: ");
           console.log(newData[0][0].data + " = " + newData[0][1].data);
           console.log(newData[1][0].data + " = " + newData[1][1].data);
@@ -81,19 +81,77 @@ const test = async () => {
           console.log(newData[3][0].data + " = " + newData[3][1].data);
           console.log(newData[4][0].data + " = " + newData[4][1].data);
           console.log(newData[5][0].data + " = " + newData[5][1].data);
+          console.log(newData[6][0].data + " = " + newData[6][1].data);
+          console.log(newData[7][0].data + " = " + newData[7][1].data);
+          console.log(newData[8][0].data + " = " + newData[8][1].data);
+          console.log(newData[9][0].data + " = " + newData[9][1].data);
 
-          // if(eventName=="transfer")
-          // {
-          //   request('http://localhost:3000/graphql', `mutation handleTransfer($from: String!, $to: String!, $value: Int!, $pair: String!) {
-          //   createUser(email: $email, password: $password) {
-          //     id
-          //     email
-          //   }
-          //   }`, {email: 'john.doe@mail.com', password: 'Pa$$w0rd'})
-          //   .then(data => console.info(data))
-          //   .catch(error => console.error(error));
-
-          // }
+          if(eventName=="transfer")
+          {
+            request(GRAPHQL!,
+              `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
+              handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                 result
+               }
+             
+              }`,
+               {from:newData[2][1].data, to: newData[3][1].data, value: newData[4][1].data, pairAddress: newData[5][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
+               .then(data => console.log(data))
+               .catch(error => console.error(error));
+          }
+          else if (eventName=="mint")
+          {
+            request(GRAPHQL!,
+              `mutation handleMint( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
+                handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
+               
+                }`,
+                 {amount0:newData[3][1].data, amount1: newData[4][1].data, sender: newData[2][1].data,logIndex:0, pairAddress: newData[5][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
+          }
+          else if (eventName=="burn")
+          {
+            request(GRAPHQL!,
+              `mutation handleBurn( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
+                handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
+               
+                }`,
+                 {amount0:newData[3][1].data, amount1: newData[4][1].data, sender: newData[2][1].data,logIndex:0, to:newData[5][1].data,pairAddress: newData[6][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
+          }
+          else if (eventName=="sync")
+          {
+            request(GRAPHQL!,
+              `mutation handleSync( $reserve0: String!, $reserve1: String!, $pairAddress: String!){
+               handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
+                result
+               }
+             
+              }`,
+               {reserve0:newData[2][1].data, reserve1: newData[3][1].data, pairAddress: newData[4][1].data})
+               .then(data => console.log(data))
+               .catch(error => console.error(error));
+          }
+          else if (eventName=="swap")
+          {
+            request(GRAPHQL!,
+              `mutation handleSwap( $amount0In: String!, $amount1In: String!, $amount0Out: String!, $amount1Out: String!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
+                handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
+               
+                }`,
+                 {amount0In:newData[3][1].data, amount1In: newData[4][1].data,amount0Out:newData[5][1].data, amount1Out: newData[6][1].data,to:newData[7][1].data,from:newData[8][1].data, sender: newData[2][1].data,logIndex:0,pairAddress: newData[9][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
+          }
+          
           
       } else {
         console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
