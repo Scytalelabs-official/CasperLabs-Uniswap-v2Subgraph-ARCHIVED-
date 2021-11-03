@@ -45,7 +45,7 @@
 
 // console.log("data: ",data[0][1].data);
 
-const { request } = require('graphql-request');
+//const { request } = require('graphql-request');
 
 // request('http://localhost:3000/graphql',
 //  `mutation handleTransfer( $pairAddress: String!, $from: String!, $to: String!, $value: Int!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
@@ -58,14 +58,22 @@ const { request } = require('graphql-request');
 //   .then(data => console.log(data))
 //   .catch(error => console.error(error));
 
-request('http://localhost:3000/graphql',
- `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
-  handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
-    id
-  }
+// request('http://localhost:3000/graphql',
+//  `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
+//   handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+//     id
+//   }
 
- }`,
-  {token0:'51254d70d183f4b1e59ee5d5b0c76d3c3a81d0366278beecc05b546d49a9835c', token1: '96b0431770a34f5b651a43c830f3c8537e7c44f2cb8191d7efbcca2379785cda', pair: '11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59', all_pairs_length: 5, timeStamp:1000, blockHash:'0000000000000000000000000000000000000000000000000000000000000000'})
-  .then(data => console.log(data))
-  .catch(error => console.error(error));
+//  }`,
+//   {token0:'51254d70d183f4b1e59ee5d5b0c76d3c3a81d0366278beecc05b546d49a9835c', token1: '96b0431770a34f5b651a43c830f3c8537e7c44f2cb8191d7efbcca2379785cda', pair: '11f6e1b2d9566ab6d796f026b1d4bd36b71664c4ee8805fbc9cdca406607cd59', all_pairs_length: 5, timeStamp:1000, blockHash:'0000000000000000000000000000000000000000000000000000000000000000'})
+//   .then(data => console.log(data))
+//   .catch(error => console.error(error));
 
+
+var data="Key::hash(45d8a07febaf15b0b0c5ace02533c9d278fd2b6e31b84e7a7abd0c7478e57ea2)";
+var from=data.split('(');
+var from1=from[1].split(')');
+console.log("from: ", from1[0]);
+var data1="1";
+
+console.log("from: ", parseInt(data1));

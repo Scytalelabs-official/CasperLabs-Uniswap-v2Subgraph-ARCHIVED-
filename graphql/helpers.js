@@ -198,7 +198,6 @@ async function createUser(address) {
 async function createLiquiditySnapshot(position, timeStamp, blockHash) {
   try {
     // let timestamp = event.block.timestamp.toI32();
-    let timestamp = 1000;
     let bundle = await Bundle.findOne({ id: "1" });
     let pair = await Pair.findOne({ id: position.pair });
     //let pair = await Pair.findOne({ id: "hash-0000000000000000000000000000000000000000000000000000000000000000" });

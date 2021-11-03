@@ -26,6 +26,7 @@ const {
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
   PAIR_CONTRACT,
+  FACTORY_CONTRACT,
   GRAPHQL
 } = process.env;
 
@@ -63,17 +64,18 @@ const test = async () => {
         console.log(newData[4][0].data + " = " + newData[4][1].data);
         console.log(newData[5][0].data + " = " + newData[5][1].data);
         
-
-        request(GRAPHQL!,
-        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
-         handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
-           result
-         }
+        // (newData[2][1].data);
+        // var token0=(newData[2][1].data).split(')');
+        // request(GRAPHQL!,
+        // `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
+        //  handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+        //    result
+        //  }
        
-        }`,
-         {token0:newData[2][1].data, token1: newData[3][1].data, pair: newData[4][1].data, all_pairs_length: newData[5][1].data, timeStamp:timestamp, blockHash:block_hash})
-         .then(data => console.log(data))
-         .catch(error => console.error(error));
+        // }`,
+        //  {token0:newData[2][1].data, token1: newData[3][1].data, pair: newData[4][1].data, all_pairs_length: newData[5][1].data, timeStamp:timestamp, blockHash:block_hash})
+        //  .then(data => console.log(data))
+        //  .catch(error => console.error(error));
 
       } else {
         console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
@@ -97,16 +99,16 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
 
   // We don't need hash- prefix so i'm removing it
-  await factory.setContractHash(contractHash.slice(5));
+  // await factory.setContractHash(contractHash.slice(5));
+  await factory.setContractHash( FACTORY_CONTRACT!);
 
+  // //feetosetter
+  // const feetosetter = await factory.feeToSetter();
+  // console.log(`... Contract feetosetter: ${feetosetter.toString()}`);
 
-  //feetosetter
-  const feetosetter = await factory.feeToSetter();
-  console.log(`... Contract feetosetter: ${feetosetter.toString()}`);
-
-  //allpairs
-  const allpairs = await factory.allPairs();
-  console.log(`... Contract allpairs: ${allpairs}`);
+  // //allpairs
+  // const allpairs = await factory.allPairs();
+  // console.log(`... Contract allpairs: ${allpairs}`);
 
   //createpair
   const createpairDeployHash = await factory.createPair(
@@ -122,51 +124,51 @@ const test = async () => {
   console.log("... Pair created successfully");
 
 
-  //allpairs
-  const allPairs = await factory.allPairs();
-  console.log(`... Contract allpairs: ${allPairs}`);
-  // //allpairslength
-  const allpairslength = await factory.allPairsLength();
-  console.log(`... Contract allpairslength: ${allpairslength}`);
+  // //allpairs
+  // const allPairs = await factory.allPairs();
+  // console.log(`... Contract allpairs: ${allPairs}`);
+  // // //allpairslength
+  // const allpairslength = await factory.allPairsLength();
+  // console.log(`... Contract allpairslength: ${allpairslength}`);
 
-  //pair
-  let pair = await factory.getPair(TOKEN0_CONTRACT!, TOKEN1_CONTRACT!);
-  console.log(`... Pair: ${pair}`);
+  // //pair
+  // let pair = await factory.getPair(TOKEN0_CONTRACT!, TOKEN1_CONTRACT!);
+  // console.log(`... Pair: ${pair}`);
 
-  //setfeeto
-  const setfeetoDeployHash = await factory.setFeeTo(
-    KEYS,
-    KEYS.publicKey,
-    SET_FEE_TO_PAYMENT_AMOUNT!
-  );
-  console.log("... Setfeeto deploy hash: ", setfeetoDeployHash);
+  // //setfeeto
+  // const setfeetoDeployHash = await factory.setFeeTo(
+  //   KEYS,
+  //   KEYS.publicKey,
+  //   SET_FEE_TO_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Setfeeto deploy hash: ", setfeetoDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, setfeetoDeployHash);
-  console.log("... Setfeeto functionality successfull");
+  // await getDeploy(NODE_ADDRESS!, setfeetoDeployHash);
+  // console.log("... Setfeeto functionality successfull");
 
 
-  // feeto
-  const feeto = await factory.feeTo();
-  console.log(`... Contract feeto: ${feeto.toString()}`);
+  // // feeto
+  // const feeto = await factory.feeTo();
+  // console.log(`... Contract feeto: ${feeto.toString()}`);
 
-  //setfeetosetter
-  const setfeetosetterDeployHash = await factory.setFeeToSetter(
-    KEYS,
-    KEYS.publicKey,
-    SET_FEE_TO_SETTER_PAYMENT_AMOUNT!
-  );
-  console.log("... SetfeetosetterDeployHash deploy hash: ", setfeetosetterDeployHash);
+  // //setfeetosetter
+  // const setfeetosetterDeployHash = await factory.setFeeToSetter(
+  //   KEYS,
+  //   KEYS.publicKey,
+  //   SET_FEE_TO_SETTER_PAYMENT_AMOUNT!
+  // );
+  // console.log("... SetfeetosetterDeployHash deploy hash: ", setfeetosetterDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, setfeetosetterDeployHash);
-  console.log("... SetfeetoSetter functionality successfull");
+  // await getDeploy(NODE_ADDRESS!, setfeetosetterDeployHash);
+  // console.log("... SetfeetoSetter functionality successfull");
 
-  //feetosetter
-  const feeTosSetter = await factory.feeToSetter();
-  console.log(`... Contract feetosetter: ${feeTosSetter.toString()}`);
+  // //feetosetter
+  // const feeTosSetter = await factory.feeToSetter();
+  // console.log(`... Contract feetosetter: ${feeTosSetter.toString()}`);
 
 };
 
-//test();
+test();
 
 export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   

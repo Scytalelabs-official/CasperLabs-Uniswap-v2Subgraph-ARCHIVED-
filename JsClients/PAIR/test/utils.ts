@@ -13,7 +13,6 @@ export const getDeploy = async (NODE_URL: string, deployHash: string) => {
   const client = new CasperClient(NODE_URL);
   let i = 1000;
   while (i != 0) {
-    console.log('i', i);
 
     const [deploy, raw] = await client.getDeploy(deployHash);
     if (raw.execution_results.length !== 0) {
