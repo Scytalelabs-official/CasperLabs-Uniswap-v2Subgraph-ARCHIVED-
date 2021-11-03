@@ -41,6 +41,13 @@ const factory = new FACTORYClient(
   EVENT_STREAM_ADDRESS!
 );
 
+function splitdata(data:string)
+{
+    var temp=data.split('(');
+    var result=temp[1].split(')');
+    return result[0];
+}
+
 const test = async () => {
   
   const listener = factory.onEvent(
@@ -53,7 +60,7 @@ const test = async () => {
         const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
         console.log("... Timestamp: ", timestamp);
         console.log("... Block hash: ", block_hash);
-
+        console.log("result.value(): ", result.value());
         let newData = JSON.parse(JSON.stringify(result.value()));
         
         console.log(eventName+ " Event result: ");
@@ -64,18 +71,26 @@ const test = async () => {
         console.log(newData[4][0].data + " = " + newData[4][1].data);
         console.log(newData[5][0].data + " = " + newData[5][1].data);
         
-        // (newData[2][1].data);
-        // var token0=(newData[2][1].data).split(')');
-        // request(GRAPHQL!,
-        // `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
-        //  handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
-        //    result
-        //  }
+        var allpairslength=parseInt(newData[0][1].data);
+        var pair=splitdata(newData[3][1].data);
+        var token0=splitdata(newData[4][1].data);
+        var token1=splitdata(newData[5][1].data);
+        
+        console.log("allpairslength: ", allpairslength);
+        console.log("pair splited: ", pair);
+        console.log("token0 splited: ", token0);
+        console.log("token1 splited: ", token1);
+
+        request(GRAPHQL!,
+        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
+         handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+           result
+         }
        
-        // }`,
-        //  {token0:newData[2][1].data, token1: newData[3][1].data, pair: newData[4][1].data, all_pairs_length: newData[5][1].data, timeStamp:timestamp, blockHash:block_hash})
-        //  .then(data => console.log(data))
-        //  .catch(error => console.error(error));
+        }`,
+         {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp, blockHash:block_hash})
+         .then(data => console.log(data))
+         .catch(error => console.error(error));
 
       } else {
         console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
