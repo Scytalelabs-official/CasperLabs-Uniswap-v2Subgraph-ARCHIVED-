@@ -69,11 +69,12 @@ const handleNewPair = {
     token1: { type:GraphQLString  },
     pair: { type: GraphQLString  },
     all_pairs_length: { type: GraphQLInt },
-    timeStamp: { type: GraphQLInt  },
+    timeStamp: { type: GraphQLString  },
     blockHash: { type: GraphQLString  }
   },
   async resolve(parent, args, context) {
     try {
+
       // load factory (create if first exchange)
       let factory = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
@@ -100,9 +101,6 @@ const handleNewPair = {
       factory.pairCount = factory.pairCount + 1;
       await factory.save();
 
-      // create the tokens
-      // let token0 = Token.load(event.params.token0.toHexString());
-      // let token1 = Token.load(event.params.token1.toHexString());
 
       // create the tokens
       let token0 = await Token.findOne({ id: args.token0 });
@@ -170,7 +168,7 @@ const handleNewPair = {
         token0: token0.id,
         token1: token1.id,
         liquidityProviderCount: ZERO_BI,
-        createdAtTimestamp : args.timeStamp,
+        createdAtTimestamp : parseInt(args.timeStamp),
         createdAtBlockNumber :args.blockHash,
         txCount: ZERO_BI,
         reserve0: ZERO_BD,
@@ -186,9 +184,6 @@ const handleNewPair = {
         token0Price: ZERO_BD,
         token1Price: ZERO_BD,
       });
-
-      // create the tracked contract based on the template
-      //PairTemplate.create(event.params.pair)
 
       // save updated values
       await token0.save();
@@ -232,19 +227,13 @@ const handleTransfer = {
     value: { type: GraphQLInt },
     pairAddress: { type: GraphQLString },
     deployHash: { type: GraphQLString },
-    timeStamp: { type: GraphQLInt  },
+    timeStamp: { type: GraphQLString  },
     blockHash: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
-      // ignore initial transfers for first adds
-      // if (
-      //   event.params.to.toHexString() == ADDRESS_ZERO &&
-      //   event.params.value.equals(BigInt.fromI32(1000))
-      // ) {
-      //   return;
-      // }
 
+      // ignore initial transfers for first adds
       if (args.to == ADDRESS_ZERO && args.value === 1000) {
         return false;
       }
@@ -253,27 +242,16 @@ const handleTransfer = {
         id: process.env.FACTORY_ADDRESS,
       });
 
-      // let transactionHash = event.transaction.hash.toHexString();
       let transactionHash = args.deployHash;
 
       // user stats
-      //let from = event.params.from;
       let from = args.from;
       createUser(from);
 
-      //let to = event.params.to;
       let to = args.to;
       createUser(to);
 
-      //let address ="hash-0000000000000000000000000000000000000000000000000000000000000000";
-      // get pair and load contract
-      //let pair = await Pair.findOne({ id: event.address.toHexString() });
       let pair = await Pair.findOne({ id: args.pairAddress });
-
-      //let pairContract = PairContract.bind(event.address);
-
-      // liquidity token amount being transfered
-      //let value = convertTokenToDecimal(event.params.value, BI_18);
 
       // get or create transaction
       let transaction = await Transaction.findOne({ id: transactionHash });
@@ -281,9 +259,7 @@ const handleTransfer = {
         transaction = new Transaction({
           id: transactionHash,
           blockNumber: args.blockHash,
-          timestamp: args.timeStamp,
-          //blockNumber: 599,
-          //timestamp: 1222,
+          timestamp: parseInt(args.timeStamp),
           mints: [],
           burns: [],
           swaps: [],
@@ -300,12 +276,7 @@ const handleTransfer = {
         // create new mint if no mints so far or if last one is done already
         if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
           let mint = new MintEvent({
-            // id: event.transaction.hash
-            //   .toHexString()
-            //   .concat("-")
-            //   .concat(BigInt.fromI32(mints.length).toString()),
-            id: transactionHash + "-" + mints.length,
-            //id: transactionHash,
+            id: transactionHash + "-" + (mints.length).toString(),
             transaction: transaction.id,
             pair: pair.id,
             to: to,
@@ -317,7 +288,7 @@ const handleTransfer = {
           await mint.save();
 
           // update mints in transaction
-          transaction.mints.push(mint.id);
+          transaction.mints=mints.push(mint.id);
 
           // save entities
           await transaction.save();
@@ -329,18 +300,11 @@ const handleTransfer = {
       if (to == pair.id) {
         let burns = transaction.burns;
         let burn = new BurnEvent({
-          // id: event.transaction.hash
-          //   .toHexString()
-          //   .concat("-")
-          //   .concat(BigInt.fromI32(burns.length).toString()),
-          id: transactionHash + "-" + burns.length,
-          //id: transactionHash,
+          id: transactionHash + "-" + (burns.length).toString(),
           transaction: transaction.id,
           pair: pair.id,
           liquidity: args.value,
           timestamp: transaction.timestamp,
-          // to: event.params.to,
-          // sender: event.params.from,
           to: to,
           sender: from,
           needsComplete: true,
@@ -372,12 +336,7 @@ const handleTransfer = {
             burn = currentBurn;
           } else {
             burn = new BurnEvent({
-              // id: event.transaction.hash
-              //   .toHexString()
-              //   .concat("-")
-              //   .concat(BigInt.fromI32(burns.length).toString()),
-              id: transactionHash + "-" + burns.length,
-              //id: transactionHash,
+              id: transactionHash + "-" + (burns.length).toString(),
               transaction: transaction.id,
               needsComplete: false,
               pair: pair.id,
@@ -388,12 +347,7 @@ const handleTransfer = {
           }
         } else {
           burn = new BurnEvent({
-            // id: event.transaction.hash
-            //   .toHexString()
-            //   .concat("-")
-            //   .concat(BigInt.fromI32(burns.length).toString()),
-            id: transactionHash + "-" + burns.length,
-            //id: transactionHash,
+            id: transactionHash + "-" + (burns.length).toString(),
             transaction: transaction.id,
             needsComplete: false,
             pair: pair.id,
@@ -436,7 +390,6 @@ const handleTransfer = {
       }
 
       if (from != ADDRESS_ZERO && from != pair.id) {
-        //let Balance =await PairContract.balanceOf(event.address,from);
         let Balance =await PairContract.balanceOf(args.pairAddress,from);
         createLiquidityPosition(args.pairAddress, from, Balance);
         
@@ -447,11 +400,10 @@ const handleTransfer = {
           });
         }
 
-        createLiquiditySnapshot(fromUserLiquidityPosition, args.timeStamp,args.blockHash);
+        createLiquiditySnapshot(fromUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
-        //let Balance = await PairContract.balanceOf(event.address,to);
         let Balance = await PairContract.balanceOf(args.pairAddress,to);
         createLiquidityPosition(args.pairAddress, to, Balance);
         
@@ -461,7 +413,7 @@ const handleTransfer = {
             id: args.pairAddress + "-" + to,
           });
         }
-        createLiquiditySnapshot(toUserLiquidityPosition, args.timeStamp,args.blockHash);
+        createLiquiditySnapshot(toUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
       }
 
       await transaction.save();

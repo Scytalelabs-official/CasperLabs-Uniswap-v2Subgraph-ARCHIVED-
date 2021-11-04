@@ -70,7 +70,7 @@ const pairSchema = new Schema({
         type: Number,
     },
     createdAtBlockNumber: {
-        type: Number,
+        type: String,
     },
   
     // Fields used to help derived relationship

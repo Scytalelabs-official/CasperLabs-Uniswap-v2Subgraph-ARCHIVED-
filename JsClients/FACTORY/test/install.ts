@@ -13,7 +13,7 @@ const {
   CHAIN_NAME,
   FACTORY_WASM_PATH,
   FACTORY_MASTER_KEY_PAIR_PATH,
-  INSTALL_PAYMENT_AMOUNT,
+  FACTORY_INSTALL_PAYMENT_AMOUNT,
   FACTORY_CONTRACT_NAME
 } = process.env;
 
@@ -34,7 +34,7 @@ const test = async () => {
     FACTORY_CONTRACT_NAME!,
     KEYS.publicKey!,
     // KEYS.publicKey,
-    INSTALL_PAYMENT_AMOUNT!,
+    FACTORY_INSTALL_PAYMENT_AMOUNT!,
     FACTORY_WASM_PATH!
   );
 
@@ -58,4 +58,4 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
 };
 
-test();
+//test();

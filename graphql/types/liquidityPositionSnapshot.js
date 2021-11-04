@@ -15,7 +15,7 @@ const liquidityPositionSnapshotType = new GraphQLObjectType({
         id: {type: GraphQLString},
         liquidityPosition: {type:GraphQLString},
         timestamp:{type: GraphQLInt},// saved for fast historical lookups
-        block:{type: GraphQLInt},// saved for fast historical lookups
+        block:{type: GraphQLString},// saved for fast historical lookups
         user: {type: GraphQLString}, // reference to user
         pair: {type:GraphQLString}, // reference to pair
         token0PriceUSD:{type: GraphQLInt}, //snapshot of token0 price

@@ -39,7 +39,7 @@ const pairType = new GraphQLObjectType({
 
         // creation stats
         createdAtTimestamp: {type: GraphQLInt},
-        createdAtBlockNumber: {type: GraphQLInt},
+        createdAtBlockNumber: {type: GraphQLString},
 
         // Fields used to help derived relationship
         liquidityProviderCount: {type: GraphQLInt}, // used to detect new exchanges

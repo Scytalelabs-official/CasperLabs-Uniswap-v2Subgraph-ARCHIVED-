@@ -13,7 +13,7 @@ const {
   CHAIN_NAME,
   PAIR_WASM_PATH,
   PAIR_MASTER_KEY_PAIR_PATH,
-  INSTALL_PAYMENT_AMOUNT,
+  PAIR_INSTALL_PAYMENT_AMOUNT,
   PAIR_TOKEN_NAME,
   PAIR_TOKEN_SYMBOL,
   PAIR_DECIMALS,
@@ -46,7 +46,7 @@ const test = async () => {
     CALLEE_CONTRACT!,
     // KEYS.publicKey,
     // KEYS.publicKey,
-    INSTALL_PAYMENT_AMOUNT!,
+    PAIR_INSTALL_PAYMENT_AMOUNT!,
     PAIR_WASM_PATH!
   );
 
@@ -70,4 +70,4 @@ const test = async () => {
 
 };
 
-test();
+//test();

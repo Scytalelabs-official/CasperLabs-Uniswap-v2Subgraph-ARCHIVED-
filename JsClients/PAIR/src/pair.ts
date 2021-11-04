@@ -161,8 +161,8 @@ class PAIRClient {
     return result.value();
   }
 
-  public async balanceOf(account: CLPublicKey) {
-    const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
+  public async balanceOf(accountHash: string) {
+    //const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,

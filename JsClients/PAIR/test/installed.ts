@@ -53,6 +53,12 @@ const pair = new PAIRClient(
   EVENT_STREAM_ADDRESS!
 );
 
+function splitdata(data:string)
+{
+    var temp=data.split('(');
+    var result=temp[1].split(')');
+    return result[0];
+}
 
 const test = async () => {
   
@@ -72,7 +78,7 @@ const test = async () => {
           console.log("... Deployhash: ",  deploy.deployHash);
           console.log("... Timestamp: ", timestamp);
           console.log("... Block hash: ", block_hash);
-          
+          console.log("result.value(): ",result.value());
           let newData = JSON.parse(JSON.stringify(result.value()));
 
           // console.log(eventName+ " Event result: ");
@@ -98,32 +104,26 @@ const test = async () => {
             console.log(newData[4][0].data + " = " + newData[4][1].data);
             console.log(newData[5][0].data + " = " + newData[5][1].data);
 
-            var from1=(newData[2][1].data).split('(');
-            var from=from1[1].split(')');
+            var from=splitdata(newData[2][1].data);
+            var to=splitdata(newData[4][1].data);
+            var value=parseInt(newData[5][1].data);
+            var pair=splitdata(newData[3][1].data);
 
-            var to1=(newData[4][1].data).split('(');
-            var to=to1[1].split(')');
+            console.log("from: ", from);
+            console.log("to: ", to);
+            console.log("value: ",value);
+            console.log("pair: ", pair);
 
-            var value=newData[5][1].data;
-
-            var pair1=newData[3][1].data.split('(');
-            var pair=pair1[1].split(')');
-
-            console.log("from: ", from[0]);
-            console.log("to: ", to[0]);
-            console.log("value: ", parseInt(value));
-            console.log("pair: ", pair[0]);
-
-            // request(GRAPHQL!,
-            //   `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
-            //   handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-            //      result
-            //    }
+            request(GRAPHQL!,
+              `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+              handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                 result
+               }
              
-            //   }`,
-            //    {from:newData[2][1].data, to: newData[3][1].data, value: newData[4][1].data, pairAddress: newData[5][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
-            //    .then(data => console.log(data))
-            //    .catch(error => console.error(error));
+              }`,
+               {from:from, to: to, value: value, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+               .then(data => console.log(data))
+               .catch(error => console.error(error));
           }
           else if (eventName=="mint")
           {
@@ -429,7 +429,7 @@ const test = async () => {
 
 };
 
-test();
+//test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   
@@ -438,13 +438,11 @@ export const balanceOf = async (contractHash:string, key:string) => {
   // We don't need hash- prefix so i'm removing it
   await pair.setContractHash(contractHash);
 
-  //how to convert string into AccountHash
-  
  //balanceof
- //let balance = await pair.balanceOf(key);
- //console.log(`... Balance of account ${key.toAccountHashStr()}`);
- //console.log(`... Balance: ${balance}`);
+  let balance = await pair.balanceOf(key);
 
-  //return balance;
-  return 100;
+  console.log(`... Balance: ${balance}`);
+
+  return balance;
+
 };

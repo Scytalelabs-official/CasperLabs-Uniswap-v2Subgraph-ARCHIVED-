@@ -14,7 +14,7 @@ const transactionType = new GraphQLObjectType({
 
         _id: {type: GraphQLID },
         id: {type: GraphQLString},// txn hash
-        blockNumber: {type: GraphQLInt},
+        blockNumber: {type: GraphQLString},
         timestamp: {type: GraphQLInt},
         // This is not the reverse of Mint.transaction; it is only used to
         // track incomplete mints (similar for burns and swaps)

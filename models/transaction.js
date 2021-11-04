@@ -8,7 +8,7 @@ const transactionSchema = new Schema({
     },// txn hash
 
     blockNumber: {
-        type: Number,
+        type: String,
     },
 
     timestamp: {

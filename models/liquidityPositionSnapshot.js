@@ -14,7 +14,7 @@ const liquidityPositionSnapshotSchema = new Schema({
     },// saved for fast historical lookups
     
     block:{
-        type: Number,
+        type: String,
     },// saved for fast historical lookups
 
     user: { 

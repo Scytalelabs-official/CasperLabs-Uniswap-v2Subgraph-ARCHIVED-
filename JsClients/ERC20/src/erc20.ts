@@ -153,6 +153,7 @@ class ERC20Client {
   }
 
   public async balanceOf(account: CLPublicKey) {
+
     const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,

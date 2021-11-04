@@ -28,7 +28,8 @@ const {
   TRANSFER_PAYMENT_AMOUNT,
   TRANSFER_AMOUNT,
   TRANSFER_FROM_PAYMENT_AMOUNT,
-  TRANSFER_FROM_AMOUNT
+  TRANSFER_FROM_AMOUNT,
+  TOKEN0_CONTRACT
 } = process.env;
 
 
@@ -92,47 +93,48 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
 
   // We don't need hash- prefix so i'm removing it
-  await erc20.setContractHash(contractHash.slice(5));
+  //await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(TOKEN0_CONTRACT!);
 
-  //name
-  const name = await erc20.name();
-  console.log(`... Contract name: ${name}`);
+  // //name
+  // const name = await erc20.name();
+  // console.log(`... Contract name: ${name}`);
 
-  //symbol
-  const symbol = await erc20.symbol();
-  console.log(`... Contract symbol: ${symbol}`);
+  // //symbol
+  // const symbol = await erc20.symbol();
+  // console.log(`... Contract symbol: ${symbol}`);
 
-  //decimal
-  const decimal = await erc20.decimal();
-  console.log(`... Contract decimal: ${decimal}`);
+  // //decimal
+  // const decimal = await erc20.decimal();
+  // console.log(`... Contract decimal: ${decimal}`);
 
-  //totalsupply
-  let totalSupply = await erc20.totalSupply();
-  console.log(`... Total supply: ${totalSupply}`);
+  // //totalsupply
+  // let totalSupply = await erc20.totalSupply();
+  // console.log(`... Total supply: ${totalSupply}`);
 
   // //balanceof
   let balance = await erc20.balanceOf(KEYS.publicKey);
-  // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
   console.log(`... Balance: ${balance}`);
 
-  //nonce
-  let nonce = await erc20.nonce(KEYS.publicKey);
-  console.log(`... Nonce: ${nonce}`);
+  // //nonce
+  // let nonce = await erc20.nonce(KEYS.publicKey);
+  // console.log(`... Nonce: ${nonce}`);
 
   // // //allowance
   // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
   // // console.log(`... Allowance: ${allowance}`);
 
-  //mint
-  const mintDeployHash = await erc20.mint(
-    KEYS,
-    KEYS.publicKey,
-    MINT_AMOUNT!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
+  // //mint
+  // const mintDeployHash = await erc20.mint(
+  //   KEYS,
+  //   KEYS.publicKey,
+  //   MINT_AMOUNT!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
  
 
 

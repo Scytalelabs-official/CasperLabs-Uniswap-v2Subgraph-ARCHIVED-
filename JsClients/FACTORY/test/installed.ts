@@ -82,13 +82,13 @@ const test = async () => {
         console.log("token1 splited: ", token1);
 
         request(GRAPHQL!,
-        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: Int!, $blockHash: String!){
+        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: String!, $blockHash: String!){
          handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
            result
          }
        
         }`,
-         {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp, blockHash:block_hash})
+         {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp.toString(), blockHash:block_hash})
          .then(data => console.log(data))
          .catch(error => console.error(error));
 
@@ -183,7 +183,7 @@ const test = async () => {
 
 };
 
-test();
+//test();
 
 export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   
