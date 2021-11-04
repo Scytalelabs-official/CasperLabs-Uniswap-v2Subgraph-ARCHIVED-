@@ -291,13 +291,13 @@ class ERC20Client {
   }
   public async mint(
     keys: Keys.AsymmetricKey,
-    to: RecipientType,
+    to: string,
     amount: string,
     paymentAmount: string
   ) {
-
+    const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
     const runtimeArgs = RuntimeArgs.fromMap({
-      to: utils.createRecipientAddress(to),
+      to: CLValueBuilder.key(tobytearray),
       amount: CLValueBuilder.u256(amount)
     });
 

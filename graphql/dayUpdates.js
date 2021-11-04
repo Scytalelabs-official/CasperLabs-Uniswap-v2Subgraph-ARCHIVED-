@@ -21,7 +21,7 @@ async function updateUniswapDayData (timeStamp) {
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_ADDRESS,
       });
-      //let timestamp = event.block.timestamp.toI32();
+      
       let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
@@ -55,18 +55,12 @@ async function updateUniswapDayData (timeStamp) {
 async function updatePairDayData (timeStamp,pairAddress){
  
     try {
-      //let timestamp = event.block.timestamp.toI32();
+     
       let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
-     
-      // let dayPairID = event.address
-      //   .toHexString()
-      //   .concat('-')
-      //   .concat(BigInt.fromI32(dayID).toString());
 
-      let dayPairID = pairAddress + "-" + dayID;
-      //let pair = Pir.load(event.address.toHexString());
+      let dayPairID = pairAddress + "-" + dayID.toString();
       let pair = await Pair.findOne({ id: pairAddress });
       let pairDayData = await PairDayData.findOne({ id: dayPairID });
       if (pairDayData === null) {
@@ -75,7 +69,6 @@ async function updatePairDayData (timeStamp,pairAddress){
           date: dayStartTimestamp,
           token0: pair.token0,
           token1: pair.token1,
-          //pairAddress : event.address.toHexString(),
           pairAddress: pairAddress,
           dailyVolumeToken0: ZERO_BD,
           dailyVolumeToken1: ZERO_BD,
@@ -101,24 +94,18 @@ async function updatePairDayData (timeStamp,pairAddress){
 async function updatePairHourData (timeStamp,pairAddress){
   
     try {
-      //let timestamp = event.block.timestamp.toI32();
+    
       let timestamp = timeStamp;
       let hourIndex = timestamp / 3600; // get unique hour within unix history
       let hourStartUnix = hourIndex * 3600; // want the rounded effect
      
-      // let hourPairID = event.address
-      //   .toHexString()
-      //   .concat('-')
-      //   .concat(BigInt.fromI32(hourIndex).toString());
-      let hourPairID = pairAddress + "-" + hourIndex;
-      //let pair = Pair.load(event.address.toHexString())
+      let hourPairID = pairAddress + "-" + hourIndex.toString();
       let pair = await Pair.findOne({ id: pairAddress });
       let pairHourData = await PairHourData.findOne({ id: hourPairID });
       if (pairHourData === null) {
         pairHourData = new PairHourData({
           id: hourPairID,
           hourStartUnix: hourStartUnix,
-          //pair : event.address.toHexString(),
           pair: pairAddress,
           hourlyVolumeToken0: ZERO_BD,
           hourlyVolumeToken1: ZERO_BD,
@@ -143,19 +130,14 @@ async function updatePairHourData (timeStamp,pairAddress){
 
 async function updateTokenDayData (token,timeStamp) {
     try {
+
       let bundle = await Bundle.findOne({ id: "1" });
-      //let timestamp = event.block.timestamp.toI32();
       let timestamp = timeStamp;
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
-      // let tokenDayID = args.token
-      //   .toString()
-      //   .concat("-")
-      //   .concat(BigInt.fromI32(dayID).toString());
 
       let tokenDayID = token.id+ "-"+ dayID.toString();
 
-      //let tokenDayData = TokenDayData.load(tokenDayID);
       let tokenDayData = await TokenDayData.findOne({ id: tokenDayID });
       let tokendata = await Token.findOne({ id: token.id });
       if (tokenDayData === null) {

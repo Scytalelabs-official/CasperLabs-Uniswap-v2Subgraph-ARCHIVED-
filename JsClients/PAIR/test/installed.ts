@@ -81,18 +81,6 @@ const test = async () => {
           console.log("result.value(): ",result.value());
           let newData = JSON.parse(JSON.stringify(result.value()));
 
-          // console.log(eventName+ " Event result: ");
-          // console.log(newData[0][0].data + " = " + newData[0][1].data);
-          // console.log(newData[1][0].data + " = " + newData[1][1].data);
-          // console.log(newData[2][0].data + " = " + newData[2][1].data);
-          // console.log(newData[3][0].data + " = " + newData[3][1].data);
-          // console.log(newData[4][0].data + " = " + newData[4][1].data);
-          // console.log(newData[5][0].data + " = " + newData[5][1].data);
-          // console.log(newData[6][0].data + " = " + newData[6][1].data);
-          // console.log(newData[7][0].data + " = " + newData[7][1].data);
-          // console.log(newData[8][0].data + " = " + newData[8][1].data);
-          // console.log(newData[9][0].data + " = " + newData[9][1].data);
-
           if(eventName=="transfer")
           {
             console.log(eventName+ " Event result: ");
@@ -127,55 +115,100 @@ const test = async () => {
           }
           else if (eventName=="mint")
           {
-            request(GRAPHQL!,
-              `mutation handleMint( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
-                handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+
+            console.log(eventName+ " Event result: ");
+            console.log(newData[0][0].data + " = " + newData[0][1].data);
+            console.log(newData[1][0].data + " = " + newData[1][1].data);
+            console.log(newData[2][0].data + " = " + newData[2][1].data);
+            console.log(newData[3][0].data + " = " + newData[3][1].data);
+            console.log(newData[4][0].data + " = " + newData[4][1].data);
+            console.log(newData[5][0].data + " = " + newData[5][1].data);
+
+
+            // request(GRAPHQL!,
+            //   `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+            //     handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+            //        result
+            //      }
                
-                }`,
-                 {amount0:newData[3][1].data, amount1: newData[4][1].data, sender: newData[2][1].data,logIndex:0, pairAddress: newData[5][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
+            //     }`,
+            //      {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+            //      .then(data => console.log(data))
+            //      .catch(error => console.error(error));
           }
           else if (eventName=="burn")
           {
-            request(GRAPHQL!,
-              `mutation handleBurn( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
-                handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+
+            console.log(eventName+ " Event result: ");
+            console.log(newData[0][0].data + " = " + newData[0][1].data);
+            console.log(newData[1][0].data + " = " + newData[1][1].data);
+            console.log(newData[2][0].data + " = " + newData[2][1].data);
+            console.log(newData[3][0].data + " = " + newData[3][1].data);
+            console.log(newData[4][0].data + " = " + newData[4][1].data);
+            console.log(newData[5][0].data + " = " + newData[5][1].data);
+            console.log(newData[6][0].data + " = " + newData[6][1].data);
+            
+            // request(GRAPHQL!,
+            //   `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+            //     handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+            //        result
+            //      }
                
-                }`,
-                 {amount0:newData[3][1].data, amount1: newData[4][1].data, sender: newData[2][1].data,logIndex:0, to:newData[5][1].data,pairAddress: newData[6][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
+            //     }`,
+            //      {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+            //      .then(data => console.log(data))
+            //      .catch(error => console.error(error));
           }
           else if (eventName=="sync")
           {
+
+            console.log(eventName+ " Event result: ");
+            console.log(newData[0][0].data + " = " + newData[0][1].data);
+            console.log(newData[1][0].data + " = " + newData[1][1].data);
+            console.log(newData[2][0].data + " = " + newData[2][1].data);
+            console.log(newData[3][0].data + " = " + newData[3][1].data);
+            console.log(newData[4][0].data + " = " + newData[4][1].data);
+
+            var reserve0=parseInt(newData[3][1].data);
+            var reserve1=parseInt(newData[4][1].data);
+            var pair=splitdata(newData[2][1].data);
+
             request(GRAPHQL!,
-              `mutation handleSync( $reserve0: String!, $reserve1: String!, $pairAddress: String!){
+              `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
                handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
                 result
                }
              
               }`,
-               {reserve0:newData[2][1].data, reserve1: newData[3][1].data, pairAddress: newData[4][1].data})
+               {reserve0:reserve0, reserve1: reserve1, pairAddress: pair})
                .then(data => console.log(data))
                .catch(error => console.error(error));
           }
           else if (eventName=="swap")
           {
-            request(GRAPHQL!,
-              `mutation handleSwap( $amount0In: String!, $amount1In: String!, $amount0Out: String!, $amount1Out: String!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
-                handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+
+            console.log(eventName+ " Event result: ");
+            console.log(newData[0][0].data + " = " + newData[0][1].data);
+            console.log(newData[1][0].data + " = " + newData[1][1].data);
+            console.log(newData[2][0].data + " = " + newData[2][1].data);
+            console.log(newData[3][0].data + " = " + newData[3][1].data);
+            console.log(newData[4][0].data + " = " + newData[4][1].data);
+            console.log(newData[5][0].data + " = " + newData[5][1].data);
+            console.log(newData[6][0].data + " = " + newData[6][1].data);
+            console.log(newData[7][0].data + " = " + newData[7][1].data);
+            console.log(newData[8][0].data + " = " + newData[8][1].data);
+            console.log(newData[9][0].data + " = " + newData[9][1].data);
+
+            // request(GRAPHQL!,
+            //   `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+            //     handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+            //        result
+            //      }
                
-                }`,
-                 {amount0In:newData[3][1].data, amount1In: newData[4][1].data,amount0Out:newData[5][1].data, amount1Out: newData[6][1].data,to:newData[7][1].data,from:newData[8][1].data, sender: newData[2][1].data,logIndex:0,pairAddress: newData[9][1].data, deployHash:deploy.deployHash,timeStamp:timestamp, blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
+            //     }`,
+            //      {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+            //      .then(data => console.log(data))
+            //      .catch(error => console.error(error));
           }
           
           
@@ -317,13 +350,11 @@ const test = async () => {
   // );
   // console.log("... sync deploy hash: ", syncDeployHash);
 
-
-
   // await getDeploy(NODE_ADDRESS!, syncDeployHash);
   // console.log("... Sync functionality successfull");
 
 
-  //mint
+  // //mint
   // const mintDeployHash = await pair.mint(
   //   KEYS,
   //   KEYS.publicKey,
@@ -334,7 +365,7 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, mintDeployHash);
   // console.log("... Token minted successfully");
 
-  // //burn
+  //burn
   // const burnDeployHash = await pair.burn(
   //   KEYS,
   //   KEYS.publicKey,
@@ -361,17 +392,17 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, approveDeployHash);
   // console.log("... Token approved successfully");
 
-  //transfer
-  const transferDeployHash = await pair.transfer(
-    KEYS,
-    KEYS.publicKey,
-    TRANSFER_AMOUNT!,
-    TRANSFER_PAYMENT_AMOUNT!
-  );
-  console.log("... Transfer deploy hash: ", transferDeployHash);
+  // //transfer
+  // const transferDeployHash = await pair.transfer(
+  //   KEYS,
+  //   KEYS.publicKey,
+  //   TRANSFER_AMOUNT!,
+  //   TRANSFER_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Transfer deploy hash: ", transferDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, transferDeployHash);
-  console.log("... Token transfer successfully");
+  // await getDeploy(NODE_ADDRESS!, transferDeployHash);
+  // console.log("... Token transfer successfully");
 
   // //transfer_from
   // const transferfromDeployHash = await pair.transferFrom(
@@ -399,18 +430,18 @@ const test = async () => {
 
 
   // //swap
-  // const swapDeployHash = await pair.swap(
-  //   KEYS,
-  //   "10",
-  //   "20",
-  //   KEYS.publicKey,
-  //   "",
-  //   SWAP_PAYMENT_AMOUNT!
-  // );
-  // console.log("... swap deploy hash: ", swapDeployHash);
+  const swapDeployHash = await pair.swap(
+    KEYS,
+    "10",
+    "20",
+    KEYS.publicKey,
+    "",
+    SWAP_PAYMENT_AMOUNT!
+  );
+  console.log("... swap deploy hash: ", swapDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, swapDeployHash);
-  // console.log("... Swap functionality successfull");
+  await getDeploy(NODE_ADDRESS!, swapDeployHash);
+  console.log("... Swap functionality successfull");
 
   // //settreasuryfeepercent
   // const settreasuryfeepercentDeployHash = await pair.setTreasuryFeePercent(
@@ -429,7 +460,7 @@ const test = async () => {
 
 };
 
-//test();
+test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   

@@ -153,7 +153,6 @@ async function fetchTokenDecimals(tokenAddress) {
 
 async function createLiquidityPosition(exchange, user, value) {
   try {
-    // let liquidityTokenBalance = await LiquidityPosition.findOne({id: exchange.toHexString().concat('-').concat(user.toHexString())});
     let liquidityTokenBalance = await LiquidityPosition.findOne({
       id: exchange + "-" + user,
     });
@@ -161,7 +160,6 @@ async function createLiquidityPosition(exchange, user, value) {
       let pair = await Pair.findOne({ id: exchange });
       pair.liquidityProviderCount = pair.liquidityProviderCount + ONE_BI;
       liquidityTokenBalance = new LiquidityPosition({
-        // id:exchange.toHexString().concat('-').concat(user.toHexString()),
         id: exchange + "-" + user,
         liquidityTokenBalance: value,
         pair: exchange,
@@ -197,21 +195,17 @@ async function createUser(address) {
 
 async function createLiquiditySnapshot(position, timeStamp, blockHash) {
   try {
-    // let timestamp = event.block.timestamp.toI32();
     let bundle = await Bundle.findOne({ id: "1" });
     let pair = await Pair.findOne({ id: position.pair });
-    //let pair = await Pair.findOne({ id: "hash-0000000000000000000000000000000000000000000000000000000000000000" });
     let token0 = await Token.findOne({ id: pair.token0 });
     let token1 = await Token.findOne({ id: pair.token1 });
 
     // create new snapshot
     let snapshot = new LiquidityPositionSnapshot({
-      // id:position.id.concat(timestamp.toString()),
       id: position.id + timeStamp.toString(),
       liquidityPosition: position.id,
       timestamp: timeStamp,
       block : blockHash,
-     // block: 599,
       user: position.user,
       pair: position.pair,
       token0PriceUSD: token0.derivedETH * bundle.ethPrice,

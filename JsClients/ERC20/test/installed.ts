@@ -29,7 +29,9 @@ const {
   TRANSFER_AMOUNT,
   TRANSFER_FROM_PAYMENT_AMOUNT,
   TRANSFER_FROM_AMOUNT,
-  TOKEN0_CONTRACT
+  TOKEN0_CONTRACT,
+  TOKEN1_CONTRACT,
+  PAIR_CONTRACT
 } = process.env;
 
 
@@ -94,7 +96,7 @@ const test = async () => {
 
   // We don't need hash- prefix so i'm removing it
   //await erc20.setContractHash(contractHash.slice(5));
-  await erc20.setContractHash(TOKEN0_CONTRACT!);
+  await erc20.setContractHash(TOKEN1_CONTRACT!);
 
   // //name
   // const name = await erc20.name();
@@ -112,10 +114,10 @@ const test = async () => {
   // let totalSupply = await erc20.totalSupply();
   // console.log(`... Total supply: ${totalSupply}`);
 
-  // //balanceof
-  let balance = await erc20.balanceOf(KEYS.publicKey);
-  console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
-  console.log(`... Balance: ${balance}`);
+  // // //balanceof
+  // let balance = await erc20.balanceOf(KEYS.publicKey);
+  // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  // console.log(`... Balance: ${balance}`);
 
   // //nonce
   // let nonce = await erc20.nonce(KEYS.publicKey);
@@ -125,16 +127,16 @@ const test = async () => {
   // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
   // // console.log(`... Allowance: ${allowance}`);
 
-  // //mint
-  // const mintDeployHash = await erc20.mint(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   MINT_AMOUNT!,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Mint deploy hash: ", mintDeployHash);
+  //mint
+  const mintDeployHash = await erc20.mint(
+    KEYS,
+    PAIR_CONTRACT!,
+    MINT_AMOUNT!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("... Mint deploy hash: ", mintDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  await getDeploy(NODE_ADDRESS!, mintDeployHash);
  
 
 
@@ -193,7 +195,7 @@ const test = async () => {
 
 };
 
-//test();
+ //test();
 
 
 export const getName = async (contractHash:string) => {

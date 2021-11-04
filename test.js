@@ -45,7 +45,7 @@
 
 // console.log("data: ",data[0][1].data);
 
-//const { request } = require('graphql-request');
+const { request } = require('graphql-request');
 
 // request('http://localhost:3000/graphql',
 //  `mutation handleTransfer( $pairAddress: String!, $from: String!, $to: String!, $value: Int!, $deployHash: String!, $timeStamp: Int!, $blockHash: String!){
@@ -78,5 +78,17 @@
 
 // console.log("from: ", parseInt(data1));
 
-var int=1635977242919;
-console.log("int: ",int.toString());
+// var int=1635977242919;
+// console.log("int: ",int.toString());
+
+
+request('http://localhost:3000/graphql',
+    `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
+     handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
+      result
+     }
+   
+    }`,
+     {reserve0:0, reserve1: 0, pairAddress: "c22c075df6da91e5c803ebc8914b12a215261c9d0cf28f637a9ce83b96f9842b"})
+     .then(data => console.log(data))
+     .catch(error => console.error(error));
