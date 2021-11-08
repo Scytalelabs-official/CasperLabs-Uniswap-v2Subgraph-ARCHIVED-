@@ -460,7 +460,7 @@ const test = async () => {
 
 };
 
-test();
+//test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   
