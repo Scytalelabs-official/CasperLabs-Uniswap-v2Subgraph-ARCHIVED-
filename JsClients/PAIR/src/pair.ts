@@ -599,6 +599,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
+      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
