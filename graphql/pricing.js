@@ -90,7 +90,7 @@ async function findEthPerToken(token) {
   }
   // loop through whitelist and check if paired with any
   for (let i = 0; i < WHITELIST.length; ++i) {
-    //let pairAddress = await factory.getPair(process.env.FACTORY_ADDRESS,token.id, WHITELIST[i]);
+    //let pairAddress = await factory.getPair(process.env.FACTORY_CONTRACT,token.id, WHITELIST[i]);
     
     let pairAddress =
       "hash-0000000000000000000000000000000000000000000000000000000000000000";

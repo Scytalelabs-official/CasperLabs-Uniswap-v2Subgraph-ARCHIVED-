@@ -77,11 +77,11 @@ const handleNewPair = {
 
       // load factory (create if first exchange)
       let factory = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
       if (factory === null) {
         factory = new UniswapFactory({
-          id: process.env.FACTORY_ADDRESS,
+          id: process.env.FACTORY_CONTRACT,
           pairCount: 0,
           totalVolumeETH: ZERO_BD,
           totalLiquidityETH: ZERO_BD,
@@ -239,7 +239,7 @@ const handleTransfer = {
       }
 
       let factory = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
 
       let transactionHash = args.deployHash;
@@ -449,7 +449,7 @@ const handleSync = {
       let token0 = await Token.findOne({ id: pair.token0 });
       let token1 = await Token.findOne({ id: pair.token1 });
       let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
 
       // reset factory liquidity by subtracting onluy tarcked liquidity
@@ -565,7 +565,7 @@ const handleMint = {
 
       let pair = await Pair.findOne({ id: args.pairAddress });
       let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
 
       let token0 = await Token.findOne({ id: pair.token0 });
@@ -672,7 +672,7 @@ const handleBurn = {
       
       let pair = await Pair.findOne({ id: args.pairAaddress });
       let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
 
       //update token info
@@ -828,7 +828,7 @@ const handleSwap = {
 
       // update global values, only used tracked amounts for volume
       let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
       uniswap.totalVolumeUSD = uniswap.totalVolumeUSD + trackedAmountUSD;
       uniswap.totalVolumeETH = uniswap.totalVolumeETH + trackedAmountETH;

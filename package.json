@@ -3,13 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ts-node ./bin/www",
-    "test:erc20install": "ts-node JsClients/ERC20/test/install.ts",
-    "test:erc20installed": "ts-node JsClients/ERC20/test/installed.ts",
-    "test:pairinstall": "ts-node JsClients/PAIR/test/install.ts",
-    "test:pairinstalled": "ts-node JsClients/PAIR/test/installed.ts",
-    "test:factoryinstall": "ts-node JsClients/FACTORY/test/install.ts",
-    "test:factoryinstalled": "ts-node JsClients/FACTORY/test/installed.ts"
+    "start": "ts-node ./bin/www"
   },
   "dependencies": {
     "casper-js-sdk": "2.4.1",

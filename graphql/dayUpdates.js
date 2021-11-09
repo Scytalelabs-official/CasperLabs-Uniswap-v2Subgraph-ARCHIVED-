@@ -19,7 +19,7 @@ async function updateUniswapDayData (timeStamp) {
   
     try {
       let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_ADDRESS,
+        id: process.env.FACTORY_CONTRACT,
       });
       
       let timestamp = timeStamp;
