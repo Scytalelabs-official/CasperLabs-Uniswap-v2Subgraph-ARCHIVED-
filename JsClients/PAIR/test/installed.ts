@@ -35,6 +35,7 @@ const {
   FACTORY_CONTRACT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
+  PAIR_CONTRACT_PACKAGE,
   PAIR_CONTRACT_NAME,
   GRAPHQL,
   PAIR_CONTRACT
@@ -64,7 +65,6 @@ const test = async () => {
   
   const listener = pair.onEvent(
     [
-      PAIREvents.Approval,
       PAIREvents.Transfer,
       PAIREvents.Mint,
       PAIREvents.Burn,
@@ -124,17 +124,26 @@ const test = async () => {
             console.log(newData[4][0].data + " = " + newData[4][1].data);
             console.log(newData[5][0].data + " = " + newData[5][1].data);
 
+            var amount0=parseInt(newData[0][1].data);
+            var amount1=parseInt(newData[1][1].data);
+            var pair=splitdata(newData[4][1].data);
+            var sender=splitdata(newData[5][1].data);
 
-            // request(GRAPHQL!,
-            //   `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-            //     handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-            //        result
-            //      }
+            console.log("amount0: ", amount0);
+            console.log("amount1: ", amount1);
+            console.log("pair: ",pair);
+            console.log("sender: ", sender);
+
+            request(GRAPHQL!,
+              `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
                
-            //     }`,
-            //      {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-            //      .then(data => console.log(data))
-            //      .catch(error => console.error(error));
+                }`,
+                 {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
           }
           else if (eventName=="burn")
           {
@@ -246,17 +255,17 @@ const test = async () => {
   console.log(`... Contract symbol: ${symbol}`);
 
   //initialize
-  const initializeDeployHash = await pair.initialize(
-    KEYS,
-    TOKEN0_CONTRACT!,
-    TOKEN1_CONTRACT!,
-    FACTORY_CONTRACT!,
-    INITIALIZE_PAYMENT_AMOUNT!
-  );
-  console.log("... Initialize deploy hash: ", initializeDeployHash);
+  // const initializeDeployHash = await pair.initialize(
+  //   KEYS,
+  //   TOKEN0_CONTRACT!,
+  //   TOKEN1_CONTRACT!,
+  //   FACTORY_CONTRACT!,
+  //   INITIALIZE_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Initialize deploy hash: ", initializeDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, initializeDeployHash);
-  console.log("... Token Initialized successfully");
+  // await getDeploy(NODE_ADDRESS!, initializeDeployHash);
+  // console.log("... Token Initialized successfully");
 
 
   //erc20mint
@@ -272,6 +281,10 @@ const test = async () => {
   await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
   console.log("...ERC20 Token minted successfully");
 
+  // //balanceof
+  // let balance = await pair.erc20balanceOf(KEYS.publicKey);
+  // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  // console.log(`... Balance: ${balance}`);
 
   //erc20mint
   const erc20MintToken1DeployHash = await pair.erc20MintMethod(
@@ -315,7 +328,6 @@ const test = async () => {
   // console.log(`... Allowance: ${allowance}`);
 
   //erc20_mint
-  //mint
   // const erc20mint0DeployHash = await pair.erc20Mint(
   //   KEYS,
   //   TOKEN0_CONTRACT!,
@@ -352,10 +364,10 @@ const test = async () => {
   // console.log("... Sync functionality successfull");
 
 
-  //mint
+  // //mint
   const mintDeployHash = await pair.mint(
     KEYS,
-    KEYS.publicKey,
+    PAIR_CONTRACT_PACKAGE!,
     MINT_PAYMENT_AMOUNT!
   );
   console.log("... Mint deploy hash: ", mintDeployHash);
@@ -364,15 +376,15 @@ const test = async () => {
   console.log("... Token minted successfully");
 
   //burn
-  // const burnDeployHash = await pair.burn(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   BURN_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Burn deploy hash: ", burnDeployHash);
+  const burnDeployHash = await pair.burn(
+    KEYS,
+    KEYS.publicKey,
+    BURN_PAYMENT_AMOUNT!
+  );
+  console.log("... Burn deploy hash: ", burnDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, burnDeployHash);
-  // console.log("... Token burned successfully");
+  await getDeploy(NODE_ADDRESS!, burnDeployHash);
+  console.log("... Token burned successfully");
 
   // // //totalsupply
   // // totalSupply = await pair.totalSupply();
@@ -428,18 +440,18 @@ const test = async () => {
 
 
   // //swap
-  // const swapDeployHash = await pair.swap(
-  //   KEYS,
-  //   "10",
-  //   "20",
-  //   KEYS.publicKey,
-  //   "",
-  //   SWAP_PAYMENT_AMOUNT!
-  // );
-  // console.log("... swap deploy hash: ", swapDeployHash);
+  const swapDeployHash = await pair.swap(
+    KEYS,
+    "10",
+    "20",
+    KEYS.publicKey,
+    "",
+    SWAP_PAYMENT_AMOUNT!
+  );
+  console.log("... swap deploy hash: ", swapDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, swapDeployHash);
-  // console.log("... Swap functionality successfull");
+  await getDeploy(NODE_ADDRESS!, swapDeployHash);
+  console.log("... Swap functionality successfull");
 
   // //settreasuryfeepercent
   // const settreasuryfeepercentDeployHash = await pair.setTreasuryFeePercent(
@@ -458,7 +470,7 @@ const test = async () => {
 
 };
 
-//test();
+test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   

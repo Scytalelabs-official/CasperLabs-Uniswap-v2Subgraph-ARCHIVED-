@@ -325,14 +325,14 @@ class PAIRClient {
   }
   public async mint(
     keys: Keys.AsymmetricKey,
-    to: RecipientType,
+    to: string,
     paymentAmount: string
   ) {
 
+    const _to = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
     const runtimeArgs = RuntimeArgs.fromMap({
-      to: utils.createRecipientAddress(to),
+      to: CLValueBuilder.key(_to),
     });
-
 
     const deployHash = await contractCall({
       chainName: this.chainName,
@@ -582,12 +582,11 @@ class PAIRClient {
     paymentAmount: string
   ) {
 
-    const _to = new CLByteArray(Uint8Array.from(Buffer.from(this.contractHash, 'hex')));
+    const _to = new CLByteArray(Uint8Array.from(Buffer.from(this.contractPackageHash, 'hex')));
     const runtimeArgs = RuntimeArgs.fromMap({
       to: CLValueBuilder.key(_to),
       amount: CLValueBuilder.u256(amount),
     });
-
 
     const deployHash = await contractCall({
       chainName: this.chainName,
@@ -600,7 +599,6 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

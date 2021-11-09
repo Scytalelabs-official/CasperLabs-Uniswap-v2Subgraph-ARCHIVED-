@@ -96,7 +96,7 @@ const test = async () => {
 
   // We don't need hash- prefix so i'm removing it
   //await erc20.setContractHash(contractHash.slice(5));
-  await erc20.setContractHash(TOKEN1_CONTRACT!);
+  await erc20.setContractHash(TOKEN0_CONTRACT!);
 
   // //name
   // const name = await erc20.name();
@@ -138,7 +138,9 @@ const test = async () => {
 
   await getDeploy(NODE_ADDRESS!, mintDeployHash);
  
-
+   //balanceof
+  let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
+  console.log(`... Balance: ${balance}`);
 
   // //burn
   // const burnDeployHash = await erc20.burn(

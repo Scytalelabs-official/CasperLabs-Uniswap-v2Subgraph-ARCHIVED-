@@ -185,17 +185,33 @@ const test = async () => {
 
 //test();
 
-export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
+// export const createPair = async (paircontractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   
-  console.log(`... Contract Hash: ${contractHash}`);
+//   console.log(`... Contract Hash: ${paircontractHash}`);
 
-  // We don't need hash- prefix so i'm removing it
-  await factory.setContractHash(contractHash);
+//   // We don't need hash- prefix so i'm removing it
+//   await factory.setContractHash(paircontractHash);
 
-  //pair
-  let pair = await factory.getPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT);
-  console.log(`... Pair: ${pair}`);
+//   //pair
+//   let pair = await factory.createPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT,paircontractHash);
+//   console.log(`... Pair: ${pair}`);
 
-  return pair;
+//   return pair;
   
-};
+// };
+
+// export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
+  
+//   console.log(`... Contract Hash: ${contractHash}`);
+
+//   // We don't need hash- prefix so i'm removing it
+//   await factory.setContractHash(contractHash);
+
+//   //pair
+//   let pair = await factory.getPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT);
+//   console.log(`... Pair: ${pair}`);
+
+//   return pair;
+  
+// };
+
