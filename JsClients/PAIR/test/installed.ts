@@ -237,53 +237,53 @@ const test = async () => {
   //await pair.setContractHash(contractHash.slice(5));
   await pair.setContractHash(PAIR_CONTRACT!);
 
-  // //name
-  // const name = await pair.name();
-  // console.log(`... Contract name: ${name}`);
+  //name
+  const name = await pair.name();
+  console.log(`... Contract name: ${name}`);
 
-  // //symbol
-  // const symbol = await pair.symbol();
-  // console.log(`... Contract symbol: ${symbol}`);
+  //symbol
+  const symbol = await pair.symbol();
+  console.log(`... Contract symbol: ${symbol}`);
 
-  // //initialize
-  // const initializeDeployHash = await pair.initialize(
-  //   KEYS,
-  //   TOKEN0_CONTRACT!,
-  //   TOKEN1_CONTRACT!,
-  //   FACTORY_CONTRACT!,
-  //   INITIALIZE_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Initialize deploy hash: ", initializeDeployHash);
+  //initialize
+  const initializeDeployHash = await pair.initialize(
+    KEYS,
+    TOKEN0_CONTRACT!,
+    TOKEN1_CONTRACT!,
+    FACTORY_CONTRACT!,
+    INITIALIZE_PAYMENT_AMOUNT!
+  );
+  console.log("... Initialize deploy hash: ", initializeDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, initializeDeployHash);
-  // console.log("... Token Initialized successfully");
-
-
-  // //erc20mint
-  // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
-  //   KEYS,
-  //   TOKEN0_CONTRACT!,
-  //   "1000"!,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
+  await getDeploy(NODE_ADDRESS!, initializeDeployHash);
+  console.log("... Token Initialized successfully");
 
 
-  // await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
-  // console.log("...ERC20 Token minted successfully");
+  //erc20mint
+  const erc20MintToken0DeployHash = await pair.erc20MintMethod(
+    KEYS,
+    TOKEN0_CONTRACT!,
+    "1000"!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
 
 
-  // //erc20mint
-  // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
-  //   KEYS,
-  //   TOKEN1_CONTRACT!,
-  //   "1000"!,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+  await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
+  console.log("...ERC20 Token minted successfully");
 
-  // await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
-  // console.log("...ERC20 Token minted successfully");
+
+  //erc20mint
+  const erc20MintToken1DeployHash = await pair.erc20MintMethod(
+    KEYS,
+    TOKEN1_CONTRACT!,
+    "1000"!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+
+  await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
+  console.log("...ERC20 Token minted successfully");
 
   // //token0
   // const token0 = await pair.token0();
@@ -340,8 +340,6 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, erc20mint1DeployHash);
   // console.log("... Token minted successfully");
 
-
-
   // //sync
   // const syncDeployHash = await pair.sync(
   //   KEYS,
@@ -354,16 +352,16 @@ const test = async () => {
   // console.log("... Sync functionality successfull");
 
 
-  // //mint
-  // const mintDeployHash = await pair.mint(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Mint deploy hash: ", mintDeployHash);
+  //mint
+  const mintDeployHash = await pair.mint(
+    KEYS,
+    KEYS.publicKey,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("... Mint deploy hash: ", mintDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
-  // console.log("... Token minted successfully");
+  await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  console.log("... Token minted successfully");
 
   //burn
   // const burnDeployHash = await pair.burn(
@@ -376,9 +374,9 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, burnDeployHash);
   // console.log("... Token burned successfully");
 
-  // //totalsupply
-  // totalSupply = await pair.totalSupply();
-  // console.log(`... Total supply: ${totalSupply}`);
+  // // //totalsupply
+  // // totalSupply = await pair.totalSupply();
+  // // console.log(`... Total supply: ${totalSupply}`);
 
   // //approve
   // const approveDeployHash = await pair.approve(
@@ -430,18 +428,18 @@ const test = async () => {
 
 
   // //swap
-  const swapDeployHash = await pair.swap(
-    KEYS,
-    "10",
-    "20",
-    KEYS.publicKey,
-    "",
-    SWAP_PAYMENT_AMOUNT!
-  );
-  console.log("... swap deploy hash: ", swapDeployHash);
+  // const swapDeployHash = await pair.swap(
+  //   KEYS,
+  //   "10",
+  //   "20",
+  //   KEYS.publicKey,
+  //   "",
+  //   SWAP_PAYMENT_AMOUNT!
+  // );
+  // console.log("... swap deploy hash: ", swapDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, swapDeployHash);
-  console.log("... Swap functionality successfull");
+  // await getDeploy(NODE_ADDRESS!, swapDeployHash);
+  // console.log("... Swap functionality successfull");
 
   // //settreasuryfeepercent
   // const settreasuryfeepercentDeployHash = await pair.setTreasuryFeePercent(

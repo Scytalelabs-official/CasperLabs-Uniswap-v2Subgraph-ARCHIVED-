@@ -337,7 +337,7 @@ class PAIRClient {
     const deployHash = await contractCall({
       chainName: this.chainName,
       contractHash: this.contractHash,
-      entryPoint: "mint",
+      entryPoint: "mint_js_client",
       keys,
       nodeAddress: this.nodeAddress,
       paymentAmount,
@@ -365,7 +365,7 @@ class PAIRClient {
     const deployHash = await contractCall({
       chainName: this.chainName,
       contractHash: this.contractHash,
-      entryPoint: "burn",
+      entryPoint: "burn_js_client",
       keys,
       nodeAddress: this.nodeAddress,
       paymentAmount,
