@@ -157,16 +157,28 @@ const test = async () => {
             console.log(newData[5][0].data + " = " + newData[5][1].data);
             console.log(newData[6][0].data + " = " + newData[6][1].data);
             
-            // request(GRAPHQL!,
-            //   `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-            //     handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-            //        result
-            //      }
+            var amount0=parseInt(newData[0][1].data);
+            var amount1=parseInt(newData[1][1].data);
+            var pair=splitdata(newData[4][1].data);
+            var sender=splitdata(newData[5][1].data);
+            var to=splitdata(newData[6][1].data);
+
+            console.log("amount0: ", amount0);
+            console.log("amount1: ", amount1);
+            console.log("pair: ",pair);
+            console.log("sender: ", sender);
+            console.log("to: ", to);
+
+            request(GRAPHQL!,
+              `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
                
-            //     }`,
-            //      {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-            //      .then(data => console.log(data))
-            //      .catch(error => console.error(error));
+                }`,
+                 {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
           }
           else if (eventName=="sync")
           {
@@ -181,6 +193,11 @@ const test = async () => {
             var reserve0=parseInt(newData[3][1].data);
             var reserve1=parseInt(newData[4][1].data);
             var pair=splitdata(newData[2][1].data);
+
+            console.log("reserve0: ", reserve0);
+            console.log("reserve1: ", reserve1);
+            console.log("pair: ",pair);
+           
 
             request(GRAPHQL!,
               `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
@@ -208,16 +225,34 @@ const test = async () => {
             console.log(newData[8][0].data + " = " + newData[8][1].data);
             console.log(newData[9][0].data + " = " + newData[9][1].data);
 
-            // request(GRAPHQL!,
-            //   `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-            //     handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-            //        result
-            //      }
+            var amount0In=parseInt(newData[0][1].data);
+            var amount1In=parseInt(newData[1][1].data);
+            var amount0Out=parseInt(newData[2][1].data);
+            var amount1Out=parseInt(newData[3][1].data);
+            var from=splitdata(newData[6][1].data);
+            var pair=splitdata(newData[7][1].data);
+            var sender=splitdata(newData[8][1].data);
+            var to=splitdata(newData[9][1].data);
+
+            console.log("amount0In: ", amount0In);
+            console.log("amount1In: ", amount1In);
+            console.log("amount0Out: ", amount0Out);
+            console.log("amount1Out: ", amount1Out);
+            console.log("from: ",from);
+            console.log("pair: ",pair);
+            console.log("sender: ", sender);
+            console.log("to: ", to);
+
+            request(GRAPHQL!,
+              `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                   result
+                 }
                
-            //     }`,
-            //      {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-            //      .then(data => console.log(data))
-            //      .catch(error => console.error(error));
+                }`,
+                 {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+                 .then(data => console.log(data))
+                 .catch(error => console.error(error));
           }
           
           
@@ -269,17 +304,17 @@ const test = async () => {
 
 
   //erc20mint
-  const erc20MintToken0DeployHash = await pair.erc20MintMethod(
-    KEYS,
-    TOKEN0_CONTRACT!,
-    "1000"!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
+  // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
+  //   KEYS,
+  //   TOKEN0_CONTRACT!,
+  //   "1000"!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
 
 
-  await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
-  console.log("...ERC20 Token minted successfully");
+  // await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
+  // console.log("...ERC20 Token minted successfully");
 
   // //balanceof
   // let balance = await pair.erc20balanceOf(KEYS.publicKey);
@@ -287,16 +322,16 @@ const test = async () => {
   // console.log(`... Balance: ${balance}`);
 
   //erc20mint
-  const erc20MintToken1DeployHash = await pair.erc20MintMethod(
-    KEYS,
-    TOKEN1_CONTRACT!,
-    "1000"!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+  // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
+  //   KEYS,
+  //   TOKEN1_CONTRACT!,
+  //   "1000"!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
 
-  await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
-  console.log("...ERC20 Token minted successfully");
+  // await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
+  // console.log("...ERC20 Token minted successfully");
 
   // //token0
   // const token0 = await pair.token0();
@@ -364,27 +399,16 @@ const test = async () => {
   // console.log("... Sync functionality successfull");
 
 
-  // //mint
-  const mintDeployHash = await pair.mint(
-    KEYS,
-    PAIR_CONTRACT_PACKAGE!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
+  //mint
+  // const mintDeployHash = await pair.mint(
+  //   KEYS,
+  //   PAIR_CONTRACT_PACKAGE!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
-  console.log("... Token minted successfully");
-
-  //burn
-  const burnDeployHash = await pair.burn(
-    KEYS,
-    KEYS.publicKey,
-    BURN_PAYMENT_AMOUNT!
-  );
-  console.log("... Burn deploy hash: ", burnDeployHash);
-
-  await getDeploy(NODE_ADDRESS!, burnDeployHash);
-  console.log("... Token burned successfully");
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // console.log("... Token minted successfully");
 
   // // //totalsupply
   // // totalSupply = await pair.totalSupply();
@@ -438,20 +462,55 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, skimDeployHash);
   // console.log("... Skim functionality successfull");
 
-
-  // //swap
-  const swapDeployHash = await pair.swap(
+  //erc20mint
+  const erc20MintToken0DeployHash = await pair.erc20MintMethod(
     KEYS,
-    "10",
-    "20",
-    KEYS.publicKey,
-    "",
-    SWAP_PAYMENT_AMOUNT!
+    TOKEN0_CONTRACT!,
+    "1000"!,
+    MINT_PAYMENT_AMOUNT!
   );
-  console.log("... swap deploy hash: ", swapDeployHash);
+  console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
 
-  await getDeploy(NODE_ADDRESS!, swapDeployHash);
-  console.log("... Swap functionality successfull");
+
+  await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
+  console.log("...ERC20 Token minted successfully");
+
+  //erc20mint
+  const erc20MintToken1DeployHash = await pair.erc20MintMethod(
+    KEYS,
+    TOKEN1_CONTRACT!,
+    "1000"!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+
+  await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
+  console.log("...ERC20 Token minted successfully");
+
+  //swap
+  // const swapDeployHash = await pair.swap(
+  //   KEYS,
+  //   "10",
+  //   "20",
+  //   KEYS.publicKey,
+  //   "",
+  //   SWAP_PAYMENT_AMOUNT!
+  // );
+  // console.log("... swap deploy hash: ", swapDeployHash);
+
+  // await getDeploy(NODE_ADDRESS!, swapDeployHash);
+  // console.log("... Swap functionality successfull");
+
+  //burn
+  const burnDeployHash = await pair.burn(
+    KEYS,
+    KEYS.publicKey,
+    BURN_PAYMENT_AMOUNT!
+  );
+  console.log("... Burn deploy hash: ", burnDeployHash);
+
+  await getDeploy(NODE_ADDRESS!, burnDeployHash);
+  console.log("... Token burned successfully");
 
   // //settreasuryfeepercent
   // const settreasuryfeepercentDeployHash = await pair.setTreasuryFeePercent(
@@ -470,7 +529,7 @@ const test = async () => {
 
 };
 
-//test();
+test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   

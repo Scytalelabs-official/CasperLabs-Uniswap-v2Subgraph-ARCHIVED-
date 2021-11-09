@@ -75,6 +75,7 @@ const handleNewPair = {
   async resolve(parent, args, context) {
     try {
 
+      console.log("process.env.FACTORY_CONTRACT: ",process.env.FACTORY_CONTRACT);
       // load factory (create if first exchange)
       let factory = await UniswapFactory.findOne({
         id: process.env.FACTORY_CONTRACT,
@@ -391,7 +392,7 @@ const handleTransfer = {
 
       if (from != ADDRESS_ZERO && from != pair.id) {
         let Balance =await PairContract.balanceOf(args.pairAddress,from);
-        createLiquidityPosition(args.pairAddress, from, Balance);
+        await createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
         while (fromUserLiquidityPosition == null) {
@@ -400,12 +401,12 @@ const handleTransfer = {
           });
         }
 
-        createLiquiditySnapshot(fromUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
+        await createLiquiditySnapshot(fromUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         let Balance = await PairContract.balanceOf(args.pairAddress,to);
-        createLiquidityPosition(args.pairAddress, to, Balance);
+        await createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;
         while (toUserLiquidityPosition == null) {
@@ -413,7 +414,7 @@ const handleTransfer = {
             id: args.pairAddress + "-" + to,
           });
         }
-        createLiquiditySnapshot(toUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
+        await createLiquiditySnapshot(toUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
       }
 
       await transaction.save();
@@ -605,21 +606,27 @@ const handleMint = {
       await mint.save();
 
       // update the LP position
-      createLiquidityPosition(args.pairAddress, mint.to, 0 );
+      await createLiquidityPosition(args.pairAddress, mint.to, 0 );
       let liquidityPosition = null;
       while (liquidityPosition == null) {
         liquidityPosition = await LiquidityPosition.findOne({
           id: args.pairAddress + "-" + mint.to,
         });
       }
-      createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
+      await createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
 
       // update day entities
-      updatePairDayData( parseInt(args.timeStamp),args.pairAddress);
-      updatePairHourData( parseInt(args.timeStamp),args.pairAddress);
-      updateUniswapDayData( parseInt(args.timeStamp));
-      updateTokenDayData(token0, parseInt(args.timeStamp));
-      updateTokenDayData(token1, parseInt(args.timeStamp));
+      pairDayData = await updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
+      pairHourData = await updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(parseInt(args.timeStamp));
+      token0DayData = await updateTokenDayData(token0,parseInt(args.timeStamp));
+      token1DayData = await updateTokenDayData(token1,parseInt(args.timeStamp));
+      
+      await uniswapDayData.save();
+      await pairDayData.save();
+      await pairHourData.save();
+      await token0DayData.save();
+      await token1DayData.save();
 
       let response = await Response.findOne({ id: "1" });
       if(response=== null)
@@ -712,21 +719,27 @@ const handleBurn = {
       await burn.save();
 
       // update the LP position
-      createLiquidityPosition(args.pairAddress, burn.sender,0);
+      await createLiquidityPosition(args.pairAddress, burn.sender,0);
       let liquidityPosition = null;
       while (liquidityPosition == null) {
         liquidityPosition = await LiquidityPosition.findOne({
           id: args.pairAddress + "-" + burn.sender,
         });
       }
-      createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
+      await createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
 
       // update day entities
-      updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
-      updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
-      updateUniswapDayData(parseInt(args.timeStamp));
-      updateTokenDayData(token0,parseInt(args.timeStamp));
-      updateTokenDayData(token1,parseInt(args.timeStamp));
+      pairDayData = await updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
+      pairHourData = await updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(parseInt(args.timeStamp));
+      token0DayData = await updateTokenDayData(token0,parseInt(args.timeStamp));
+      token1DayData = await updateTokenDayData(token1,parseInt(args.timeStamp));
+     
+      await uniswapDayData.save();
+      await pairDayData.save();
+      await pairHourData.save();
+      await token0DayData.save();
+      await token1DayData.save();
 
       let response = await Response.findOne({ id: "1" });
       if(response=== null)
