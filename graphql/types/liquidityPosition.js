@@ -5,6 +5,8 @@ const {
     GraphQLInt
 } = require("graphql");
 
+const { userType } = require("./user");
+const { pairType } = require("./pair");
 const liquidityPositionType = new GraphQLObjectType({
   
     name: "LiquidityPosition",
@@ -13,8 +15,8 @@ const liquidityPositionType = new GraphQLObjectType({
 
         _id: {type: GraphQLID },
         id: {type: GraphQLString},
-        user: {type: GraphQLString},
-        pair: {type: GraphQLString},
+        user: {type: userType},
+        pair: {type: pairType},
         liquidityTokenBalance:{type: GraphQLInt}
 
   })

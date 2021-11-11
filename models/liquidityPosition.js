@@ -7,11 +7,15 @@ const liquidityPositionSchema = new Schema({
         type: String,
     },
     user: { 
-        type : String
+        id:{
+            type : String
+        }
     },
 
     pair: { 
-        type : String
+        id:{
+            type : String
+        }
     },
     
     liquidityTokenBalance:{

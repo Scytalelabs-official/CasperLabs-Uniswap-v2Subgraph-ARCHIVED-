@@ -115,14 +115,14 @@ const tokens = {
   type: GraphQLList(tokenType),
   description: "Retrieves list of tokens",
   args: {
-    start: { type: GraphQLInt },
-    end: { type: GraphQLInt },
+    first: { type: GraphQLInt },
+    skip: { type: GraphQLInt },
   },
   async resolve(parent, args, context) {
     try {
       let tokens = await Token.find();
 
-      return tokens.splice(args.start, args.end);
+      return tokens.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -150,14 +150,14 @@ const pairs = {
   type: GraphQLList(pairType),
   description: "Retrieves list of pairs",
   args: {
-    start: { type: GraphQLInt },
-    end: { type: GraphQLInt },
+    first: { type: GraphQLInt },
+    skip: { type: GraphQLInt },
   },
   async resolve(parent, args, context) {
     try {
       let pairs = await Pair.find();
+      return pairs.splice(0, args.first);
 
-      return pairs.splice(args.start, args.end);
     } catch (error) {
       throw new Error(error);
     }
@@ -185,14 +185,14 @@ const liquiditypositions = {
   type: GraphQLList(liquidityPositionType),
   description: "Retrieves list of liquiditypositions",
   args: {
-    start: { type: GraphQLInt },
-    end: { type: GraphQLInt },
+    first: { type: GraphQLInt },
+    id: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let liquiditypositions = await LiquidityPosition.find();
+      let liquiditypositions = await LiquidityPosition.find({id:args.id});
 
-      return liquiditypositions.splice(args.start, args.end);
+      return liquiditypositions.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -502,14 +502,33 @@ const tokendaydatas = {
   type: GraphQLList(tokenDayDataType),
   description: "Retrieves list of tokendaydatas",
   args: {
-    start: { type: GraphQLInt },
-    end: { type: GraphQLInt },
+    first: { type: GraphQLInt },
+    skip: { type: GraphQLInt },
+    id: {type: GraphQLString}
   },
   async resolve(parent, args, context) {
     try {
-      let tokendaydatas = await TokenDayData.find();
+      let tokendaydatas = await TokenDayData.find({token:args.id});
 
-      return tokendaydatas.splice(args.start, args.end);
+      return tokendaydatas.splice(0, args.first);
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+};
+
+const tokendaydatasbydate = {
+  type: GraphQLList(tokenDayDataType),
+  description: "Retrieves list of tokendaydatas against date",
+  args: {
+    first: { type: GraphQLInt },
+    date: {type: GraphQLInt}
+  },
+  async resolve(parent, args, context) {
+    try {
+      let tokendaydatas = await TokenDayData.find({date:args.date});
+
+      return tokendaydatas.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -599,4 +618,5 @@ module.exports = {
   pairhourdata,
   tokendaydatas,
   tokendaydata,
+  tokendaydatasbydate
 };

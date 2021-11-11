@@ -12,10 +12,38 @@ const pairSchema = new Schema({
     // mirrored from the smart contract
     
     token0: { 
-        type : String
+        id:{
+            type : String
+        },
+        name:{
+            type : String
+        },
+        symbol:{
+            type : String
+        },
+        totalLiquidity:{
+            type : String
+        },
+        derivedETH:{
+            type : String
+        } 
     },
     token1: { 
-        type : String
+        id:{
+            type : String
+        },
+        name:{
+            type : String
+        },
+        symbol:{
+            type : String
+        },
+        totalLiquidity:{
+            type : String
+        },
+        derivedETH:{
+            type : String
+        } 
     },
 
     reserve0: {

@@ -109,7 +109,8 @@ const handleNewPair = {
 
       // fetch info if null
       if (token0 === null) {
-        let Decimals = await fetchTokenDecimals(args.token0);
+        let Decimals = 18;
+        //await fetchTokenDecimals(args.token0);
         
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
@@ -117,9 +118,12 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName=await fetchTokenName(args.token0);
-        let TokenSymbol=await fetchTokenSymbol(args.token0);
-        let TokenTotalSupply=await fetchTokenTotalSupply(args.token0);
+        let TokenName="token2";
+        //await fetchTokenName(args.token0);
+        let TokenSymbol="DAI";
+        //await fetchTokenSymbol(args.token0);
+        let TokenTotalSupply=0;
+        //await fetchTokenTotalSupply(args.token0);
 
         token0 = new Token({
           id: args.token0,
@@ -138,16 +142,20 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        let Decimals = await fetchTokenDecimals(args.token1);
+        let Decimals = 18;
+        //await fetchTokenDecimals(args.token1);
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           return;
         }
 
-        let TokenName=await fetchTokenName(args.token1);
-        let TokenSymbol=await fetchTokenSymbol(args.token1);
-        let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
+        let TokenName="token3";
+        //await fetchTokenName(args.token1);
+        let TokenSymbol="DAI";
+        //await fetchTokenSymbol(args.token1);
+        let TokenTotalSupply=0;
+        //await fetchTokenTotalSupply(args.token1);
 
         token1 = new Token({
           id: args.token1,
@@ -166,8 +174,8 @@ const handleNewPair = {
 
       let pair = new Pair({
         id: args.pair,
-        token0: token0.id,
-        token1: token1.id,
+        token0: {id:token0.id, name:token0.name,symbol:token0.symbol,derivedETH:token0.derivedETH,totalLiquidity:token0.totalLiquidity},
+        token1: {id:token1.id, name:token1.name,symbol:token1.symbol,derivedETH:token1.derivedETH,totalLiquidity:token1.totalLiquidity},
         liquidityProviderCount: ZERO_BI,
         createdAtTimestamp : parseInt(args.timeStamp),
         createdAtBlockNumber :args.blockHash,

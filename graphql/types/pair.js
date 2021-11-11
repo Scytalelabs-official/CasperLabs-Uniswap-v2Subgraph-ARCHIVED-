@@ -2,9 +2,16 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLOutputType
 } = require("graphql");
 
+// var GraphQLOutputType={
+//     id: {type: GraphQLString},
+//     name: {type: GraphQLString},
+//     symbol: {type: GraphQLString}
+// };
+const { tokenType } = require("./token");
 const pairType = new GraphQLObjectType({
   
     name: "Pair",
@@ -15,8 +22,8 @@ const pairType = new GraphQLObjectType({
         id: {type: GraphQLString},// pair address
 
         // mirrored from the smart contract
-        token0: {type: GraphQLString},
-        token1: {type: GraphQLString},
+        token0: {type:tokenType},
+        token1: {type:tokenType},
         reserve0: {type: GraphQLInt},
         reserve1: {type: GraphQLInt},
         totalSupply:{type: GraphQLInt},

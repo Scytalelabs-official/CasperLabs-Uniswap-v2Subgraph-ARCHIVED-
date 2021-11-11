@@ -162,8 +162,8 @@ async function createLiquidityPosition(exchange, user, value) {
       liquidityTokenBalance = new LiquidityPosition({
         id: exchange + "-" + user,
         liquidityTokenBalance: value,
-        pair: exchange,
-        user: user,
+        pair: {id:exchange},
+        user: {id:user},
       });
 
       await liquidityTokenBalance.save();
