@@ -22,7 +22,28 @@ const liquidityPositionSnapshotSchema = new Schema({
     }, // reference to user
 
     pair: { 
-        type : String
+        id:{
+            type : String
+        },
+        reserve0:{
+            type : Number
+        },
+        reserve1:{
+            type : Number
+        },
+        reserveUSD:{
+            type : Number
+        },
+        token0:{
+            id:{
+                type : String
+            }
+        },
+        token1:{
+            id:{
+                type : String
+            }
+        }
     }, // reference to pair
 
     token0PriceUSD:{

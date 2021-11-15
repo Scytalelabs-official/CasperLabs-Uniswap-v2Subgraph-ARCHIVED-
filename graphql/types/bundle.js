@@ -11,8 +11,8 @@ const bundleType = new GraphQLObjectType({
   fields: () => ({
     _id: {type: GraphQLID },
     id:{type:GraphQLString},
-    ethPrice:{type:GraphQLInt} // price of ETH usd
-
+    ethPrice:{type:GraphQLInt}, // price of ETH usd
+    //bundleuser:{type:GraphQLObjectType}
   })
 });
 

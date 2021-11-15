@@ -118,7 +118,7 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName="token2";
+        let TokenName="token0";
         //await fetchTokenName(args.token0);
         let TokenSymbol="DAI";
         //await fetchTokenSymbol(args.token0);
@@ -150,7 +150,7 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName="token3";
+        let TokenName="token1";
         //await fetchTokenName(args.token1);
         let TokenSymbol="DAI";
         //await fetchTokenSymbol(args.token1);
@@ -286,18 +286,28 @@ const handleTransfer = {
         if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
           let mint = new MintEvent({
             id: transactionHash + "-" + (mints.length).toString(),
-            transaction: transaction.id,
-            pair: pair.id,
+            transactionid:transaction.id,
+            transactiontimestamp:transaction.timestamp,
+            pair: {
+              id:pair.id,
+              token0:{
+                id:pair.token0.id,
+                symbol:pair.token0.symbol
+              },
+              token1:{
+                id:pair.token1.id,
+                symbol:pair.token1.symbol
+              }
+            },
             to: to,
             liquidity: args.value,
             timestamp: transaction.timestamp,
-            transaction: transaction.id,
           });
 
           await mint.save();
 
           // update mints in transaction
-          transaction.mints=mints.push(mint.id);
+          transaction.mints=mints.push(mint);
 
           // save entities
           await transaction.save();
@@ -310,21 +320,31 @@ const handleTransfer = {
         let burns = transaction.burns;
         let burn = new BurnEvent({
           id: transactionHash + "-" + (burns.length).toString(),
-          transaction: transaction.id,
-          pair: pair.id,
+          transactionid:transaction.id,
+          transactiontimestamp:transaction.timestamp,
+          pair: {
+            id:pair.id,
+            token0:{
+              id:pair.token0.id,
+              symbol:pair.token0.symbol
+            },
+            token1:{
+              id:pair.token1.id,
+              symbol:pair.token1.symbol
+            }
+          },
           liquidity: args.value,
           timestamp: transaction.timestamp,
           to: to,
           sender: from,
-          needsComplete: true,
-          transaction: transaction.id,
+          needsComplete: true
         });
 
         await burn.save();
 
         // TODO: Consider using .concat() for handling array updates to protect
         // against unintended side effects for other code paths.
-        burns.push(burn.id);
+        burns.push(burn);
         transaction.burns = burns;
         await transaction.save();
       }
@@ -346,22 +366,42 @@ const handleTransfer = {
           } else {
             burn = new BurnEvent({
               id: transactionHash + "-" + (burns.length).toString(),
-              transaction: transaction.id,
+              transactionid:transaction.id,
+              transactiontimestamp:transaction.timestamp,
+              pair: {
+                id:pair.id,
+                token0:{
+                  id:pair.token0.id,
+                  symbol:pair.token0.symbol
+                },
+                token1:{
+                  id:pair.token1.id,
+                  symbol:pair.token1.symbol
+                }
+              },
               needsComplete: false,
-              pair: pair.id,
               liquidity: args.value,
-              transaction: transaction.id,
               timestamp: transaction.timestamp,
             });
           }
         } else {
           burn = new BurnEvent({
             id: transactionHash + "-" + (burns.length).toString(),
-            transaction: transaction.id,
+            transactionid:transaction.id,
+            transactiontimestamp:transaction.timestamp,
+            pair: {
+              id:pair.id,
+              token0:{
+                id:pair.token0.id,
+                symbol:pair.token0.symbol
+              },
+              token1:{
+                id:pair.token1.id,
+                symbol:pair.token1.symbol
+              }
+            },
             needsComplete: false,
-            pair: pair.id,
             liquidity: args.value,
-            transaction: transaction.id,
             timestamp: transaction.timestamp,
           });
         }
@@ -386,7 +426,7 @@ const handleTransfer = {
         if (burn.needsComplete) {
           // TODO: Consider using .slice(0, -1).concat() to protect against
           // unintended side effects for other code paths.
-          burns[burns.length - 1] = burn.id;
+          burns[burns.length - 1] = burn;
         }
         // else add new one
         else {
@@ -883,10 +923,20 @@ const handleSwap = {
         
         id: transactionHash + "-"+ (swaps.length).toString(),
         // update swap event
-        transaction: transaction.id,
-        pair: pair.id,
+        transactionid:transaction.id,
+        transactiontimestamp:transaction.timestamp,
+        pair: {
+          id:pair.id,
+          token0:{
+            id:pair.token0.id,
+            symbol:pair.token0.symbol
+          },
+          token1:{
+            id:pair.token1.id,
+            symbol:pair.token1.symbol
+          }
+        },
         timestamp: transaction.timestamp,
-        transaction: transaction.id,
         sender: args.sender,
         amount0In: amount0In,
         amount1In: amount1In,
@@ -905,7 +955,7 @@ const handleSwap = {
 
       // TODO: Consider using .concat() for handling array updates to protect
       // against unintended side effects for other code paths.
-      swaps.push(swap.id);
+      swaps.push(swap);
       transaction.swaps = swaps;
       await transaction.save();
 

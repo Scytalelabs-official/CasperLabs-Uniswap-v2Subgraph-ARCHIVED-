@@ -5,7 +5,9 @@ const {
     GraphQLInt,
     GraphQLBoolean
 } = require("graphql");
-  
+
+const  {pairType} = require("./pair");
+
 const swapType = new GraphQLObjectType({
   
     name: "Swap",
@@ -14,9 +16,10 @@ const swapType = new GraphQLObjectType({
   
         _id: {type: GraphQLID },
         id:{type:GraphQLString},//transaction hash + "-" + index in swap Transaction array
-        transaction: {type: GraphQLString},
+        transactionid: {type:GraphQLString},
+        transactiontimestamp: {type:GraphQLInt},
         timestamp:{type:GraphQLInt}, //need this to pull recent txns for specific token or pair
-        pair: {type: GraphQLString},
+        pair: {type: pairType},
         // populated from the Swap event
         sender:{type:GraphQLString},
         from:{type:GraphQLString},//the EOA that initiated the txn

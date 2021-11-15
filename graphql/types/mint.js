@@ -6,6 +6,8 @@ const {
   GraphQLInt
 } = require("graphql");
 
+const  {pairType} = require("./pair");
+
 const mintType = new GraphQLObjectType({
 
   name: "Mint",
@@ -14,9 +16,10 @@ const mintType = new GraphQLObjectType({
 
       _id: {type: GraphQLID },
       id:{type:GraphQLString},//transaction hash + "-" + index in mints Transaction array
-      transaction: {type: GraphQLString},
+      transactionid: {type:GraphQLString},
+      transactiontimestamp: {type:GraphQLInt},
       timestamp:{type:GraphQLInt}, //need this to pull recent txns for specific token or pair
-      pair: {type: GraphQLString},
+      pair: {type: pairType},
       // populated from the primary Transfer event
       to:{type:GraphQLString},
       liquidity:{type:GraphQLInt},

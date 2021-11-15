@@ -6,6 +6,8 @@ const {
   GraphQLBoolean
 } = require("graphql");
 
+const  {pairType} = require("./pair");
+
 const burnType = new GraphQLObjectType({
 
   name: "Burn",
@@ -14,9 +16,10 @@ const burnType = new GraphQLObjectType({
 
       _id: {type: GraphQLID },
       id:{type:GraphQLString},//transaction hash + "-" + index in mints Transaction array
-      transaction: {type:GraphQLString},
+      transactionid: {type:GraphQLString},
+      transactiontimestamp: {type:GraphQLInt},
       timestamp:{type:GraphQLInt}, //need this to pull recent txns for specific token or pair
-      pair: {type: GraphQLString},
+      pair: {type: pairType},
       liquidity:{type:GraphQLInt},
       // populated from the Burn event
       sender:{type:GraphQLString},

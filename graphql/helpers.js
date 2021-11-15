@@ -162,7 +162,8 @@ async function createLiquidityPosition(exchange, user, value) {
       liquidityTokenBalance = new LiquidityPosition({
         id: exchange + "-" + user,
         liquidityTokenBalance: value,
-        pair: {id:exchange},
+        pair: {id:pair.id,reserve0:pair.reserve0,reserve1:pair.reserve1,reserveUSD:pair.reserveUSD,totalSupply:pair.totalSupply,token0:{id:pair.token0.id,symbol:pair.token0.symbol,derivedETH:pair.token0.derivedETH},token1:{id:pair.token1.id,symbol:pair.token1.symbol,derivedETH:pair.token1.derivedETH}},
+        //pair:pair,
         user: {id:user},
       });
 
@@ -196,9 +197,9 @@ async function createUser(address) {
 async function createLiquiditySnapshot(position, timeStamp, blockHash) {
   try {
     let bundle = await Bundle.findOne({ id: "1" });
-    let pair = await Pair.findOne({ id: position.pair });
-    let token0 = await Token.findOne({ id: pair.token0 });
-    let token1 = await Token.findOne({ id: pair.token1 });
+    let pair = await Pair.findOne({ id: position.pair.id });
+    let token0 = await Token.findOne({ id: pair.token0.id });
+    let token1 = await Token.findOne({ id: pair.token1.id });
 
     // create new snapshot
     let snapshot = new LiquidityPositionSnapshot({
@@ -207,15 +208,14 @@ async function createLiquiditySnapshot(position, timeStamp, blockHash) {
       timestamp: timeStamp,
       block : blockHash,
       user: position.user,
-      pair: position.pair,
+      pair: {id:position.pair.id,reserve0:pair.reserve0,reserve1:pair.reserve1,reserveUSD:pair.reserveUSD,token0:{id:pair.token0.id},token1:{id:pair.token1.id}},
       token0PriceUSD: token0.derivedETH * bundle.ethPrice,
       token1PriceUSD: token1.derivedETH * bundle.ethPrice,
       reserve0: pair.reserve0,
       reserve1: pair.reserve1,
       reserveUSD: pair.reserveUSD,
       liquidityTokenTotalSupply: pair.totalSupply,
-      liquidityTokenBalance: position.liquidityTokenBalance,
-      liquidityPosition: position.id,
+      liquidityTokenBalance: position.liquidityTokenBalance
     });
 
     await snapshot.save();

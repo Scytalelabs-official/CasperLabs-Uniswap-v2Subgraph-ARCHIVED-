@@ -9,17 +9,37 @@ const mintSchema = new Schema({
       type:String
     },
 
-    transaction: { 
+    transactionid:{
       type : String
     },
-
+    transactiontimestamp:{
+      type : Number
+    },
+    pair: { 
+      id:{
+        type : String
+      },
+      token0:{
+        id:{
+          type : String
+        },
+        symbol:{
+          type : String
+        }
+      },
+      token1:{
+        id:{
+          type : String
+        },
+        symbol:{
+          type : String
+        }
+      }
+    },
+    
     timestamp:{
       type:Number
     }, //need this to pull recent txns for specific token or pair
-
-    pair: { 
-      type : String
-    },
 
     // populated from the primary Transfer event
     to:{

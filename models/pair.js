@@ -25,7 +25,7 @@ const pairSchema = new Schema({
             type : String
         },
         derivedETH:{
-            type : String
+            type : Number
         } 
     },
     token1: { 
@@ -42,7 +42,7 @@ const pairSchema = new Schema({
             type : String
         },
         derivedETH:{
-            type : String
+            type : Number
         } 
     },
 
