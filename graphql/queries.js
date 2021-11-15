@@ -246,14 +246,14 @@ const allpairs = {
 };
 
 const pairbyId = {
-  type: pairType,
+  type: GraphQLList(pairType),
   description: "Retrieves pair against id",
   args: {
     id: { type: GraphQLString }
   },
   async resolve(parent, args, context) {
     try {
-      let pair = await Pair.findOne({id:args.id});
+      let pair = await Pair.find({id:args.id});
       return pair;
 
     } catch (error) {

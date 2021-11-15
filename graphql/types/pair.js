@@ -3,6 +3,7 @@ const {
     GraphQLID,
     GraphQLString,
     GraphQLInt,
+    GraphQLFloat,
     GraphQLOutputType
 } = require("graphql");
 
@@ -45,7 +46,7 @@ const pairType = new GraphQLObjectType({
         txCount: {type: GraphQLInt},
 
         // creation stats
-        createdAtTimestamp: {type: GraphQLInt},
+        createdAtTimestamp: {type: GraphQLFloat},
         createdAtBlockNumber: {type: GraphQLString},
 
         // Fields used to help derived relationship
