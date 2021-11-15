@@ -3,7 +3,8 @@ const {
     GraphQLID,
     GraphQLString,
     GraphQLInt,
-    GraphQLList
+    GraphQLList,
+    GraphQLFloat
 } = require("graphql");
 
 var token=require('./token');
@@ -17,7 +18,7 @@ const tokenDayDataType = new GraphQLObjectType({
   
         _id: {type: GraphQLID },
         id:{type:GraphQLString},
-        date: {type:GraphQLInt},
+        date: {type:GraphQLFloat},
         token: {type:GraphQLString},
         // volume stats
         dailyVolumeToken: {type:GraphQLInt},
