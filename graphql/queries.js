@@ -769,8 +769,7 @@ const tokendaydatasbydate = {
   async resolve(parent, args, context) {
     try {
       
-      let date=parseInt(args.date);
-      let tokendaydatas = await TokenDayData.find({date:date});
+      let tokendaydatas = await TokenDayData.find({date:parseInt(args.date)});
 
       return tokendaydatas.splice(0, args.first);
     } catch (error) {
