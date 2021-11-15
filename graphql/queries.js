@@ -764,11 +764,13 @@ const tokendaydatasbydate = {
   description: "Retrieves list of tokendaydatas against date",
   args: {
     first: { type: GraphQLInt },
-    date: {type: GraphQLInt}
+    date: {type: GraphQLString}
   },
   async resolve(parent, args, context) {
     try {
-      let tokendaydatas = await TokenDayData.find({date:args.date});
+      
+      let date=parseFloat(args.date);
+      let tokendaydatas = await TokenDayData.find({date:date});
 
       return tokendaydatas.splice(0, args.first);
     } catch (error) {
