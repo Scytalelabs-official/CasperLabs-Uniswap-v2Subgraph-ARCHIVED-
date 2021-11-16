@@ -207,7 +207,7 @@ async function createLiquiditySnapshot(position, timeStamp, blockHash) {
       liquidityPosition: position.id,
       timestamp: timeStamp,
       block : blockHash,
-      user: position.user,
+      user: position.user.id,
       pair: {id:position.pair.id,reserve0:pair.reserve0,reserve1:pair.reserve1,reserveUSD:pair.reserveUSD,token0:{id:pair.token0.id},token1:{id:pair.token1.id}},
       token0PriceUSD: token0.derivedETH * bundle.ethPrice,
       token1PriceUSD: token1.derivedETH * bundle.ethPrice,

@@ -6,6 +6,7 @@ const {
     GraphQLList
 } = require("graphql");
 
+
 const userType = new GraphQLObjectType({
   
     name: "User",

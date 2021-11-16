@@ -7,8 +7,9 @@ const liquidityPositionSnapshotSchema = new Schema({
         type: String,
     },
 
-    liquidityPosition: [{ type : String}],
-
+    liquidityPosition: {
+         type : String
+    },
     timestamp:{
         type: Number,
     },// saved for fast historical lookups

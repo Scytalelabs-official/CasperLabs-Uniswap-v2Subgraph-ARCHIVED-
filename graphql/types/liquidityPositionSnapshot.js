@@ -2,7 +2,8 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt
+    GraphQLInt,
+    GraphQLFloat
 } = require("graphql");
 
 const  {pairType} = require("./pair");
@@ -16,7 +17,7 @@ const liquidityPositionSnapshotType = new GraphQLObjectType({
         _id: {type: GraphQLID },
         id: {type: GraphQLString},
         liquidityPosition: {type:GraphQLString},
-        timestamp:{type: GraphQLInt},// saved for fast historical lookups
+        timestamp:{type: GraphQLFloat},// saved for fast historical lookups
         block:{type: GraphQLString},// saved for fast historical lookups
         user: {type: GraphQLString}, // reference to user
         pair: {type:pairType}, // reference to pair

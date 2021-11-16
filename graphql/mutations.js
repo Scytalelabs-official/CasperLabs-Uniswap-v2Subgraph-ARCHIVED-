@@ -109,8 +109,7 @@ const handleNewPair = {
 
       // fetch info if null
       if (token0 === null) {
-        let Decimals = 18;
-        //await fetchTokenDecimals(args.token0);
+        let Decimals =await fetchTokenDecimals(args.token0);
         
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
@@ -118,12 +117,9 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName="token0";
-        //await fetchTokenName(args.token0);
-        let TokenSymbol="DAI";
-        //await fetchTokenSymbol(args.token0);
-        let TokenTotalSupply=0;
-        //await fetchTokenTotalSupply(args.token0);
+        let TokenName=await fetchTokenName(args.token0);
+        let TokenSymbol=await fetchTokenSymbol(args.token0);
+        let TokenTotalSupply=await fetchTokenTotalSupply(args.token0);
 
         token0 = new Token({
           id: args.token0,
@@ -142,20 +138,16 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        let Decimals = 18;
-        //await fetchTokenDecimals(args.token1);
+        let Decimals =await fetchTokenDecimals(args.token1);
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
           return;
         }
 
-        let TokenName="token1";
-        //await fetchTokenName(args.token1);
-        let TokenSymbol="DAI";
-        //await fetchTokenSymbol(args.token1);
-        let TokenTotalSupply=0;
-        //await fetchTokenTotalSupply(args.token1);
+        let TokenName=await fetchTokenName(args.token1);
+        let TokenSymbol=await fetchTokenSymbol(args.token1);
+        let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
 
         token1 = new Token({
           id: args.token1,
@@ -278,6 +270,7 @@ const handleTransfer = {
       // mints
       let mints = transaction.mints;
       if (from == ADDRESS_ZERO) {
+     
         // update total supply
         pair.totalSupply = pair.totalSupply + args.value;
         pair.save();
@@ -302,12 +295,19 @@ const handleTransfer = {
             to: to,
             liquidity: args.value,
             timestamp: transaction.timestamp,
+            amount0:0,
+            amount1:0,
+            amountUSD:0
           });
 
           await mint.save();
-
+          console.log("mint: ", mint);
+         
           // update mints in transaction
-          transaction.mints=mints.push(mint);
+          mints.push(mint);
+          console.log("mints: ", mints);
+          transaction.mints=mints;
+          console.log("transaction.mints: ", transaction.mints);
 
           // save entities
           await transaction.save();
@@ -317,6 +317,7 @@ const handleTransfer = {
 
       // case where direct send first on ETH withdrawls
       if (to == pair.id) {
+      
         let burns = transaction.burns;
         let burn = new BurnEvent({
           id: transactionHash + "-" + (burns.length).toString(),
@@ -337,7 +338,10 @@ const handleTransfer = {
           timestamp: transaction.timestamp,
           to: to,
           sender: from,
-          needsComplete: true
+          needsComplete: true,
+          amount0:0,
+          amount1:0,
+          amountUSD:0
         });
 
         await burn.save();
@@ -351,6 +355,7 @@ const handleTransfer = {
 
       // burn
       if (to == ADDRESS_ZERO && from == pair.id) {
+       
         pair.totalSupply = pair.totalSupply - args.value;
         await pair.save();
 
@@ -359,7 +364,7 @@ const handleTransfer = {
         let burn;
         if (burns.length > 0) {
           let currentBurn = await BurnEvent.findOne({
-            id: burns[burns.length - 1],
+            id: burns[burns.length - 1].id,
           });
           if (currentBurn.needsComplete) {
             burn = currentBurn;
@@ -382,6 +387,11 @@ const handleTransfer = {
               needsComplete: false,
               liquidity: args.value,
               timestamp: transaction.timestamp,
+              to: to,
+              sender: from,
+              amount0:0,
+              amount1:0,
+              amountUSD:0
             });
           }
         } else {
@@ -403,16 +413,21 @@ const handleTransfer = {
             needsComplete: false,
             liquidity: args.value,
             timestamp: transaction.timestamp,
+            to: to,
+            sender: from,
+            amount0:0,
+            amount1:0,
+            amountUSD:0
           });
         }
-
+      
         // if this logical burn included a fee mint, account for this
-        if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1])) {
-          let mint = await MintEvent.findOne({ id: mints[mints.length - 1] });
+        if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1].id)) {
+          let mint = await MintEvent.findOne({ id: mints[mints.length - 1].id });
           burn.feeTo = mint.to;
           burn.feeLiquidity = mint.liquidity;
           // remove the logical mint
-          await MintEvent.deleteOne({ id: mints[mints.length - 1] });
+          await MintEvent.deleteOne({ id: mints[mints.length - 1].id });
           // update the transaction
 
           // TODO: Consider using .slice().pop() to protect against unintended
@@ -432,14 +447,15 @@ const handleTransfer = {
         else {
           // TODO: Consider using .concat() for handling array updates to protect
           // against unintended side effects for other code paths.
-          burns.push(burn.id);
+          burns.push(burn);
         }
         transaction.burns = burns;
         await transaction.save();
       }
 
       if (from != ADDRESS_ZERO && from != pair.id) {
-        let Balance =await PairContract.balanceOf(args.pairAddress,from);
+        let Balance =1000;
+        //await PairContract.balanceOf(args.pairAddress,from);
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
@@ -453,7 +469,8 @@ const handleTransfer = {
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
-        let Balance = await PairContract.balanceOf(args.pairAddress,to);
+        let Balance =1000;
+        // await PairContract.balanceOf(args.pairAddress,to);
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;
@@ -495,8 +512,8 @@ const handleSync = {
     try {
       
       let pair = await Pair.findOne({ id: args.pairAddress });
-      let token0 = await Token.findOne({ id: pair.token0 });
-      let token1 = await Token.findOne({ id: pair.token1 });
+      let token0 = await Token.findOne({ id: pair.token0.id });
+      let token1 = await Token.findOne({ id: pair.token1.id });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_CONTRACT,
       });
@@ -607,7 +624,7 @@ const handleMint = {
         return false;
       }
       let mints = transaction.mints;
-      let mint = await MintEvent.findOne({ id: mints[mints.length - 1] });
+      let mint = await MintEvent.findOne({ id: mints[mints.length - 1].id });
       if (mint === null) {
         return false;
       }
@@ -617,8 +634,8 @@ const handleMint = {
         id: process.env.FACTORY_CONTRACT,
       });
 
-      let token0 = await Token.findOne({ id: pair.token0 });
-      let token1 = await Token.findOne({ id: pair.token1 });
+      let token0 = await Token.findOne({ id: pair.token0.id });
+      let token1 = await Token.findOne({ id: pair.token1.id });
 
       let token0Amount = args.amount0;
       let token1Amount = args.amount1;
@@ -720,19 +737,19 @@ const handleBurn = {
       }
 
       let burns = transaction.burns;
-      let burn = await BurnEvent.findOne({ id: burns[burns.length - 1] });
+      let burn = await BurnEvent.findOne({ id: burns[burns.length - 1].id });
       if (burn === null) {
         return false;
       }
       
-      let pair = await Pair.findOne({ id: args.pairAaddress });
+      let pair = await Pair.findOne({ id: args.pairAddress });
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_CONTRACT,
       });
 
       //update token info
-      let token0 = await Token.findOne({ id: pair.token0 });
-      let token1 = await Token.findOne({ id: pair.token1 });
+      let token0 = await Token.findOne({ id: pair.token0.id });
+      let token1 = await Token.findOne({ id: pair.token1.id });
 
       let token0Amount = args.amount0;
       let token1Amount = args.amount1;
@@ -827,8 +844,8 @@ const handleSwap = {
     try {
 
       let pair = await Pair.findOne({ id: args.pairAddress });
-      let token0 = await Token.findOne({ id: pair.token0 });
-      let token1 = await Token.findOne({ id: pair.token1 });
+      let token0 = await Token.findOne({ id: pair.token0.id });
+      let token1 = await Token.findOne({ id: pair.token1.id });
 
       let amount0In = args.amount0In;
       let amount1In = args.amount1In;

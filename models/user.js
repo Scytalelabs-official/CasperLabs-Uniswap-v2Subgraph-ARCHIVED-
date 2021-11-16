@@ -10,9 +10,7 @@ const userSchema = new Schema({
     usdSwapped: {
         type: Number,
     },
-    liquidityPositions: [{
-        type: String
-    }]
+    liquidityPositions: [{type:String}]
 });
 
 var user = mongoose.model("user", userSchema);
