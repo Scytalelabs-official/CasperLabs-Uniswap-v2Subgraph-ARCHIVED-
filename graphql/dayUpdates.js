@@ -67,8 +67,8 @@ async function updatePairDayData (timeStamp,pairAddress){
         pairDayData = new PairDayData({
           id: dayPairID,
           date: dayStartTimestamp,
-          token0: pair.token0,
-          token1: pair.token1,
+          token0: pair.token0.id,
+          token1: pair.token1.id,
           pairAddress: pairAddress,
           dailyVolumeToken0: ZERO_BD,
           dailyVolumeToken1: ZERO_BD,
