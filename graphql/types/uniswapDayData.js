@@ -2,7 +2,8 @@ const {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLFloat
 } = require("graphql");
 
 const uniswapDayDataType = new GraphQLObjectType({
@@ -13,7 +14,7 @@ const uniswapDayDataType = new GraphQLObjectType({
 
       _id: {type: GraphQLID },
       id:{type:GraphQLString},// timestamp rounded to current day by dividing by 86400
-      date: {type:GraphQLInt},
+      date: {type:GraphQLFloat},
       dailyVolumeETH: {type:GraphQLInt},
       dailyVolumeUSD: {type:GraphQLInt},
       dailyVolumeUntracked: {type:GraphQLInt},

@@ -939,11 +939,11 @@ const uniswapdaydatasbydate = {
   args: {
     first: { type: GraphQLInt },
     skip: { type: GraphQLInt },
-    date: { type: GraphQLInt },
+    date: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let uniswapdaydatas = await UniswapDayData.find({date:args.date});
+      let uniswapdaydatas = await UniswapDayData.find({date:parseFloat(args.date)});
 
       return uniswapdaydatas.splice(0, args.first);
     } catch (error) {
