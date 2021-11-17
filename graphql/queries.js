@@ -765,7 +765,7 @@ const pairdaydatas = {
   args: {
     first: { type: GraphQLInt },
     pairAddress: { type: GraphQLList(GraphQLString) },
-    date: {type: GraphQLInt}
+    date: {type: GraphQLString}
   },
   async resolve(parent, args, context) {
     try {
@@ -775,7 +775,7 @@ const pairdaydatas = {
       {
         for (var i=0;i<pairdaydatas.length;i++)
         {
-          if(pairdaydatas[i].pairAddress == args.pairAddress[j] && pairdaydatas[i].date == args.date)
+          if(pairdaydatas[i].pairAddress == args.pairAddress[j] && pairdaydatas[i].date == parseFloat(args.date))
           {
             pairdaydatasresult.push(pairdaydatas[i]);
           }
