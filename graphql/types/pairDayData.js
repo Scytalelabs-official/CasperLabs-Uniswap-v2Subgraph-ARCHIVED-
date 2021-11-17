@@ -2,7 +2,8 @@ const {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLFloat
 } = require("graphql");
 
 const pairDayDataType = new GraphQLObjectType({
@@ -13,7 +14,7 @@ const pairDayDataType = new GraphQLObjectType({
 
       _id: {type: GraphQLID },
       id:{type:GraphQLString},
-      date: {type:GraphQLInt},
+      date: {type:GraphQLFloat},
       pairAddress:{type:GraphQLString},
       token0: {type:GraphQLString},
       token1:{type: GraphQLString},
