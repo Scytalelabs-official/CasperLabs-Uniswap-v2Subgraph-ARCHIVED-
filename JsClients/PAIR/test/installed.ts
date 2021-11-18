@@ -463,29 +463,29 @@ const test = async () => {
   // console.log("... Skim functionality successfull");
 
   //erc20mint
-  const erc20MintToken0DeployHash = await pair.erc20MintMethod(
-    KEYS,
-    TOKEN0_CONTRACT!,
-    "1000"!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
+  // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
+  //   KEYS,
+  //   TOKEN0_CONTRACT!,
+  //   "1000"!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken0DeployHash);
 
 
-  await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
-  console.log("...ERC20 Token minted successfully");
+  // await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
+  // console.log("...ERC20 Token minted successfully");
 
   //erc20mint
-  const erc20MintToken1DeployHash = await pair.erc20MintMethod(
-    KEYS,
-    TOKEN1_CONTRACT!,
-    "1000"!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+  // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
+  //   KEYS,
+  //   TOKEN1_CONTRACT!,
+  //   "1000"!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
 
-  await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
-  console.log("...ERC20 Token minted successfully");
+  // await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
+  // console.log("...ERC20 Token minted successfully");
 
   //swap
   // const swapDeployHash = await pair.swap(
@@ -501,16 +501,16 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, swapDeployHash);
   // console.log("... Swap functionality successfull");
 
-  //burn
-  const burnDeployHash = await pair.burn(
-    KEYS,
-    KEYS.publicKey,
-    BURN_PAYMENT_AMOUNT!
-  );
-  console.log("... Burn deploy hash: ", burnDeployHash);
+  // //burn
+  // const burnDeployHash = await pair.burn(
+  //   KEYS,
+  //   KEYS.publicKey,
+  //   BURN_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Burn deploy hash: ", burnDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, burnDeployHash);
-  console.log("... Token burned successfully");
+  // await getDeploy(NODE_ADDRESS!, burnDeployHash);
+  // console.log("... Token burned successfully");
 
   // //settreasuryfeepercent
   // const settreasuryfeepercentDeployHash = await pair.setTreasuryFeePercent(

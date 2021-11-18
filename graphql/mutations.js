@@ -169,7 +169,7 @@ const handleNewPair = {
         token0: {id:token0.id, name:token0.name,symbol:token0.symbol,derivedETH:token0.derivedETH,totalLiquidity:token0.totalLiquidity},
         token1: {id:token1.id, name:token1.name,symbol:token1.symbol,derivedETH:token1.derivedETH,totalLiquidity:token1.totalLiquidity},
         liquidityProviderCount: ZERO_BI,
-        createdAtTimestamp : parseInt(args.timeStamp),
+        createdAtTimestamp : parseInt(parseInt(args.timeStamp)/1000),
         createdAtBlockNumber :args.blockHash,
         txCount: ZERO_BI,
         reserve0: ZERO_BD,
@@ -260,7 +260,7 @@ const handleTransfer = {
         transaction = new Transaction({
           id: transactionHash,
           blockNumber: args.blockHash,
-          timestamp: parseInt(args.timeStamp),
+          timestamp: parseInt(parseInt(args.timeStamp)/1000),
           mints: [],
           burns: [],
           swaps: [],
@@ -454,8 +454,7 @@ const handleTransfer = {
       }
 
       if (from != ADDRESS_ZERO && from != pair.id) {
-        let Balance =1000;
-        //await PairContract.balanceOf(args.pairAddress,from);
+        let Balance =await PairContract.balanceOf(args.pairAddress,from);
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
@@ -465,12 +464,11 @@ const handleTransfer = {
           });
         }
 
-        await createLiquiditySnapshot(fromUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
+        await createLiquiditySnapshot(fromUserLiquidityPosition,  parseInt(parseInt(args.timeStamp)/1000),args.blockHash);
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
-        let Balance =1000;
-        // await PairContract.balanceOf(args.pairAddress,to);
+        let Balance =await PairContract.balanceOf(args.pairAddress,to);
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;
@@ -479,7 +477,7 @@ const handleTransfer = {
             id: args.pairAddress + "-" + to,
           });
         }
-        await createLiquiditySnapshot(toUserLiquidityPosition,  parseInt(args.timeStamp),args.blockHash);
+        await createLiquiditySnapshot(toUserLiquidityPosition,  parseInt(parseInt(args.timeStamp)/1000),args.blockHash);
       }
 
       await transaction.save();
@@ -678,14 +676,14 @@ const handleMint = {
           id: args.pairAddress + "-" + mint.to,
         });
       }
-      await createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
+      await createLiquiditySnapshot(liquidityPosition, parseInt(parseInt(args.timeStamp)/1000),args.blockHash);
 
       // update day entities
-      pairDayData = await updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
-      pairHourData = await updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
-      uniswapDayData = await updateUniswapDayData(parseInt(args.timeStamp));
-      token0DayData = await updateTokenDayData(token0,parseInt(args.timeStamp));
-      token1DayData = await updateTokenDayData(token1,parseInt(args.timeStamp));
+      pairDayData = await updatePairDayData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      pairHourData = await updatePairHourData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(parseInt(parseInt(args.timeStamp)/1000));
+      token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
+      token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
       
       await uniswapDayData.save();
       await pairDayData.save();
@@ -791,14 +789,14 @@ const handleBurn = {
           id: args.pairAddress + "-" + burn.sender,
         });
       }
-      await createLiquiditySnapshot(liquidityPosition, parseInt(args.timeStamp),args.blockHash);
+      await createLiquiditySnapshot(liquidityPosition, parseInt(parseInt(args.timeStamp)/1000),args.blockHash);
 
       // update day entities
-      pairDayData = await updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
-      pairHourData = await updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
-      uniswapDayData = await updateUniswapDayData(parseInt(args.timeStamp));
-      token0DayData = await updateTokenDayData(token0,parseInt(args.timeStamp));
-      token1DayData = await updateTokenDayData(token1,parseInt(args.timeStamp));
+      pairDayData = await updatePairDayData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      pairHourData = await updatePairHourData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(parseInt(parseInt(args.timeStamp)/1000));
+      token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
+      token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
      
       await uniswapDayData.save();
       await pairDayData.save();
@@ -929,7 +927,7 @@ const handleSwap = {
           
           id: transactionHash,
           blockNumber: args.blockHash,
-          timestamp: parseInt(args.timeStamp),
+          timestamp: parseInt(parseInt(args.timeStamp)/1000),
           mints: [],
           swaps: [],
           burns: [],
@@ -977,11 +975,11 @@ const handleSwap = {
       await transaction.save();
 
       // update day entities
-      pairDayData = await updatePairDayData(parseInt(args.timeStamp),args.pairAddress);
-      pairHourData = await updatePairHourData(parseInt(args.timeStamp),args.pairAddress);
-      uniswapDayData = await updateUniswapDayData(parseInt(args.timeStamp));
-      token0DayData = await updateTokenDayData(token0,parseInt(args.timeStamp));
-      token1DayData = await updateTokenDayData(token1,parseInt(args.timeStamp));
+      pairDayData = await updatePairDayData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      pairHourData = await updatePairHourData(parseInt(parseInt(args.timeStamp)/1000),args.pairAddress);
+      uniswapDayData = await updateUniswapDayData(parseInt(parseInt(args.timeStamp)/1000));
+      token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
+      token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
 
       // swap specific updating
       uniswapDayData.dailyVolumeUSD =

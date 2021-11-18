@@ -30,8 +30,8 @@ async function updateUniswapDayData (timeStamp) {
       });
       if (uniswapDayData === null) {
         uniswapDayData = new UniswapDayData({
-          id: dayID.toString(),
-          date: dayStartTimestamp,
+          id: (parseInt(dayID)).toString(),
+          date: parseInt(dayStartTimestamp),
           dailyVolumeUSD: ZERO_BD,
           dailyVolumeETH: ZERO_BD,
           totalVolumeUSD: ZERO_BD,
@@ -60,13 +60,13 @@ async function updatePairDayData (timeStamp,pairAddress){
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
 
-      let dayPairID = pairAddress + "-" + dayID.toString();
+      let dayPairID = pairAddress + "-" + (parseInt(dayID)).toString();
       let pair = await Pair.findOne({ id: pairAddress });
       let pairDayData = await PairDayData.findOne({ id: dayPairID });
       if (pairDayData === null) {
         pairDayData = new PairDayData({
           id: dayPairID,
-          date: dayStartTimestamp,
+          date: parseInt(dayStartTimestamp),
           token0: pair.token0.id,
           token1: pair.token1.id,
           pairAddress: pairAddress,
@@ -99,13 +99,13 @@ async function updatePairHourData (timeStamp,pairAddress){
       let hourIndex = timestamp / 3600; // get unique hour within unix history
       let hourStartUnix = hourIndex * 3600; // want the rounded effect
      
-      let hourPairID = pairAddress + "-" + hourIndex.toString();
+      let hourPairID = pairAddress + "-" + (parseInt(hourIndex)).toString();
       let pair = await Pair.findOne({ id: pairAddress });
       let pairHourData = await PairHourData.findOne({ id: hourPairID });
       if (pairHourData === null) {
         pairHourData = new PairHourData({
           id: hourPairID,
-          hourStartUnix: hourStartUnix,
+          hourStartUnix: parseInt(hourStartUnix),
           pair: pairAddress,
           hourlyVolumeToken0: ZERO_BD,
           hourlyVolumeToken1: ZERO_BD,
@@ -136,14 +136,14 @@ async function updateTokenDayData (token,timeStamp) {
       let dayID = timestamp / 86400;
       let dayStartTimestamp = dayID * 86400;
 
-      let tokenDayID = token.id+ "-"+ dayID.toString();
+      let tokenDayID = token.id+ "-"+ (parseInt(dayID)).toString();
 
       let tokenDayData = await TokenDayData.findOne({ id: tokenDayID });
       let tokendata = await Token.findOne({ id: token.id });
       if (tokenDayData === null) {
         tokenDayData = new TokenDayData({
           id: tokenDayID,
-          date: dayStartTimestamp,
+          date: parseInt(dayStartTimestamp),
           token: token.id,
           priceUSD: tokendata.derivedETH * bundle.ethPrice,
           dailyVolumeToken: ZERO_BD,
