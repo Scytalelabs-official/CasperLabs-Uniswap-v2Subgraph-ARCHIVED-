@@ -93,7 +93,7 @@ async function findEthPerToken(token) {
     //let pairAddress = await factory.getPair(process.env.FACTORY_CONTRACT,token.id, WHITELIST[i]);
     
     let pairAddress =
-      "hash-0000000000000000000000000000000000000000000000000000000000000000";
+      "0000000000000000000000000000000000000000000000000000000000000000";
     if (pairAddress != ADDRESS_ZERO) {
       let pair = await Pair.findOne({ id: pairAddress });
       if (

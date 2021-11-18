@@ -539,7 +539,7 @@ const handleSync = {
       // update ETH price now that reserves could have changed
       let bundle = await Bundle.findOne({ id: "1" });
       //bundle.ethPrice = getEthPriceInUSD(); 
-      bundle.ethPrice = 0; //passing zero Because Casper don't have the feature right now
+      bundle.ethPrice = 1; //passing one Because Casper don't have the feature right now and zero gives error on the frontend
       await bundle.save();
 
       // token0.derivedETH = findEthPerToken(token0);
