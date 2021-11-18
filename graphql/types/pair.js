@@ -35,8 +35,8 @@ const pairType = new GraphQLObjectType({
         trackedReserveETH: {type: GraphQLInt},// used for separating per pair reserves and global
     
         // Price in terms of the asset pair
-        token0Price: {type: GraphQLInt},
-        token1Price: {type: GraphQLInt},
+        token0Price: {type: GraphQLFloat},
+        token1Price: {type: GraphQLFloat},
         
         // lifetime volume stats
         volumeToken0: {type: GraphQLInt},
