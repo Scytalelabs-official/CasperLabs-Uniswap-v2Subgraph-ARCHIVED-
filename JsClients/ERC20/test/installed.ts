@@ -1,8 +1,8 @@
 import { config } from "dotenv";
 config();
-import { ERC20Client, utils, constants } from "../src";
+import { ERC20Client ,utils, constants} from "../src";
 import { sleep, getDeploy } from "./utils";
-
+//import { ERC20Events } from '../src/constants';
 import {
   CLValueBuilder,
   Keys,
@@ -31,6 +31,7 @@ const {
   TRANSFER_FROM_AMOUNT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
+  EXTERNAL_CONTRACT,
   PAIR_CONTRACT
 } = process.env;
 
@@ -47,7 +48,7 @@ const erc20 = new ERC20Client(
 );
 
 const test = async () => {
-
+ 
   const listener = erc20.onEvent(
     [
       ERC20Events.Approval,
@@ -71,7 +72,6 @@ const test = async () => {
         console.log(newData[3][0].data + " = " + newData[3][1].data);
         console.log(newData[4][0].data + " = " + newData[4][1].data);
 
-
       } else {
         console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
         console.log(`Error: ${deploy.error}`);
@@ -80,85 +80,85 @@ const test = async () => {
   );
   console.log("listener: ",listener);
 
-  await sleep(5 * 1000);
+  // await sleep(5 * 1000);
 
-  let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+  // let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 
-  console.log(`... Account Info: `);
-  console.log(JSON.stringify(accountInfo, null, 2));
+  // console.log(`... Account Info: `);
+  // console.log(JSON.stringify(accountInfo, null, 2));
 
-  const contractHash = await utils.getAccountNamedKeyValue(
-    accountInfo,
-    `${ERC20_CONTRACT_NAME!}_contract_hash`
-  );
-
-  console.log(`... Contract Hash: ${contractHash}`);
-
-  // We don't need hash- prefix so i'm removing it
-  //await erc20.setContractHash(contractHash.slice(5));
-  await erc20.setContractHash(TOKEN0_CONTRACT!);
-
-  // //name
-  // const name = await erc20.name();
-  // console.log(`... Contract name: ${name}`);
-
-  // //symbol
-  // const symbol = await erc20.symbol();
-  // console.log(`... Contract symbol: ${symbol}`);
-
-  // //decimal
-  // const decimal = await erc20.decimal();
-  // console.log(`... Contract decimal: ${decimal}`);
-
-  // //totalsupply
-  // let totalSupply = await erc20.totalSupply();
-  // console.log(`... Total supply: ${totalSupply}`);
-
-  // // //balanceof
-  // let balance = await erc20.balanceOf(KEYS.publicKey);
-  // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
-  // console.log(`... Balance: ${balance}`);
-
-  // //nonce
-  // let nonce = await erc20.nonce(KEYS.publicKey);
-  // console.log(`... Nonce: ${nonce}`);
-
-  // // //allowance
-  // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
-  // // console.log(`... Allowance: ${allowance}`);
-
-  //mint
-  const mintDeployHash = await erc20.mint(
-    KEYS,
-    PAIR_CONTRACT!,
-    MINT_AMOUNT!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
-
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
- 
-   //balanceof
-  let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
-  console.log(`... Balance: ${balance}`);
-
-  // //burn
-  // const burnDeployHash = await erc20.burn(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   BURN_AMOUNT!,
-  //   BURN_PAYMENT_AMOUNT!
+  // const contractHash = await utils.getAccountNamedKeyValue(
+  //   accountInfo,
+  //   `${ERC20_CONTRACT_NAME!}_contract_hash`
   // );
-  // console.log("... Burn deploy hash: ", burnDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, burnDeployHash);
-  // console.log("... Token burned successfully");
+  // console.log(`... Contract Hash: ${contractHash}`);
 
-  // //totalsupply
-  // totalSupply = await erc20.totalSupply();
-  // console.log(`... Total supply: ${totalSupply}`);
+  // // // We don't need hash- prefix so i'm removing it
+  // // //await erc20.setContractHash(contractHash.slice(5));
+  // await erc20.setContractHash(EXTERNAL_CONTRACT!);
 
-  // //approve
+  // // //name
+  // // const name = await erc20.name();
+  // // console.log(`... Contract name: ${name}`);
+
+  // // //symbol
+  // // const symbol = await erc20.symbol();
+  // // console.log(`... Contract symbol: ${symbol}`);
+
+  // // //decimal
+  // // const decimal = await erc20.decimal();
+  // // console.log(`... Contract decimal: ${decimal}`);
+
+  // // //totalsupply
+  // // let totalSupply = await erc20.totalSupply();
+  // // console.log(`... Total supply: ${totalSupply}`);
+
+  // // // //balanceof
+  // // let balance = await erc20.balanceOf(KEYS.publicKey);
+  // // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  // // console.log(`... Balance: ${balance}`);
+
+  // // //nonce
+  // // let nonce = await erc20.nonce(KEYS.publicKey);
+  // // console.log(`... Nonce: ${nonce}`);
+
+  // // // //allowance
+  // // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
+  // // // console.log(`... Allowance: ${allowance}`);
+
+  // //mint
+  // // const mintDeployHash = await erc20.mint(
+  // //   KEYS,
+  // //   PAIR_CONTRACT!,
+  // //   MINT_AMOUNT!,
+  // //   MINT_PAYMENT_AMOUNT!
+  // // );
+  // // console.log("... Mint deploy hash: ", mintDeployHash);
+
+  // // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+ 
+  // //  //balanceof
+  // // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
+  // // console.log(`... Balance: ${balance}`);
+
+  // // //burn
+  // // const burnDeployHash = await erc20.burn(
+  // //   KEYS,
+  // //   KEYS.publicKey,
+  // //   BURN_AMOUNT!,
+  // //   BURN_PAYMENT_AMOUNT!
+  // // );
+  // // console.log("... Burn deploy hash: ", burnDeployHash);
+
+  // // await getDeploy(NODE_ADDRESS!, burnDeployHash);
+  // // console.log("... Token burned successfully");
+
+  // // //totalsupply
+  // // totalSupply = await erc20.totalSupply();
+  // // console.log(`... Total supply: ${totalSupply}`);
+
+  //approve
   // const approveDeployHash = await erc20.approve(
   //   KEYS,
   //   KEYS.publicKey,
@@ -170,35 +170,34 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, approveDeployHash);
   // console.log("... Token approved successfully");
 
-  // //transfer
-  // const transferDeployHash = await erc20.transfer(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   TRANSFER_AMOUNT!,
-  //   TRANSFER_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Transfer deploy hash: ", transferDeployHash);
+  // // //transfer
+  // // const transferDeployHash = await erc20.transfer(
+  // //   KEYS,
+  // //   KEYS.publicKey,
+  // //   TRANSFER_AMOUNT!,
+  // //   TRANSFER_PAYMENT_AMOUNT!
+  // // );
+  // // console.log("... Transfer deploy hash: ", transferDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, transferDeployHash);
-  // console.log("... Token transfer successfully");
+  // // await getDeploy(NODE_ADDRESS!, transferDeployHash);
+  // // console.log("... Token transfer successfully");
 
-  // //transfer_from
-  // const transferfromDeployHash = await erc20.transferFrom(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   KEYS.publicKey,
-  //   TRANSFER_FROM_AMOUNT!,
-  //   TRANSFER_FROM_PAYMENT_AMOUNT!
-  // );
-  // console.log("... TransferFrom deploy hash: ", transferfromDeployHash);
+  // // //transfer_from
+  // // const transferfromDeployHash = await erc20.transferFrom(
+  // //   KEYS,
+  // //   KEYS.publicKey,
+  // //   KEYS.publicKey,
+  // //   TRANSFER_FROM_AMOUNT!,
+  // //   TRANSFER_FROM_PAYMENT_AMOUNT!
+  // // );
+  // // console.log("... TransferFrom deploy hash: ", transferfromDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, transferfromDeployHash);
-  // console.log("... Token transfer successfully");
+  // // await getDeploy(NODE_ADDRESS!, transferfromDeployHash);
+  // // console.log("... Token transfer successfully");
 
 };
 
- //test();
-
+//test();
 
 export const getName = async (contractHash:string) => {
   

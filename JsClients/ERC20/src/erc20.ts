@@ -467,7 +467,9 @@ class ERC20Client {
               const event = clValue.get(CLValueBuilder.string("event_type"));
               if (
                 hash &&
-                hash.value() === this.contractPackageHash &&
+                // NOTE: Calling toLowerCase() because current JS-SDK doesn't support checksumed hashes and returns all lower case value
+                // Remove it after updating SDK
+                hash.value() === this.contractPackageHash.toLowerCase() &&
                 event &&
                 eventNames.includes(event.value())
               ) {
@@ -503,7 +505,7 @@ class ERC20Client {
     };
   }
 
-  private addPendingDeploy(deployType: ERC20Events, deployHash: string) {
+  public addPendingDeploy(deployType: ERC20Events, deployHash: string) {
     this.pendingDeploys = [...this.pendingDeploys, { deployHash, deployType }];
   }
 }
