@@ -54,46 +54,12 @@ const {
 
 var PairContract = require("../JsClients/PAIR/test/installed.ts");
 
-var ERC20Contract = require("../JsClients/Events/test/installed.ts");
-
 const {
   getEthPriceInUSD,
   findEthPerToken,
   getTrackedVolumeUSD,
   getTrackedLiquidityUSD,
 } = require("./pricing");
-
-const handlelistener = {
-  type: responseType,
-  description: "Handle listener",
-  args: {
-
-    event: { type: GraphQLString },
-    contractHash: { type: GraphQLString },
-    deployHash: { type: GraphQLString }
-
-  },
-  async resolve(parent, args, context) {
-    try {
-
-      await ERC20Contract.addpendingDeploy(args.event,args.contractHash,args.deployHash);
-      
-      let response = await Response.findOne({ id: "1" });
-      if(response=== null)
-      {
-        // create new response
-        response = new Response({
-          id: "1",
-          result: true
-        });
-        await response.save();
-      }
-      return response;
-    } catch (error) {
-      throw new Error(error);
-    }
-  },
-};
 
 const handleNewPair = {
   type: responseType,
@@ -1080,7 +1046,6 @@ const handleSwap = {
 };
 
 module.exports = {
-  handlelistener,
   handleNewPair,
   updateUniswapDayData,
   updatePairDayData,

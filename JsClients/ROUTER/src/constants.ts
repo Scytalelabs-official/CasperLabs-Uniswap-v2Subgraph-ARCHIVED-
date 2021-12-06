@@ -1,4 +1,4 @@
-export enum Events {
+export enum RouterEvents {
   PairCreated="pair_created",
   Approval = 'approve',
   Transfer = 'transfer',
@@ -6,6 +6,4 @@ export enum Events {
   Burn = 'burn',
   Sync = 'sync',
   Swap = 'swap'
-  
 }
-

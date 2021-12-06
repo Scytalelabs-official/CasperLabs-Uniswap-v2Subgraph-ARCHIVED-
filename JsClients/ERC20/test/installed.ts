@@ -9,6 +9,7 @@ import {
   CLPublicKey,
   CLAccountHash,
   CLPublicKeyType,
+  Contracts,
 } from "casper-js-sdk";
 
 const { ERC20Events } = constants;
@@ -31,7 +32,6 @@ const {
   TRANSFER_FROM_AMOUNT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
-  EXTERNAL_CONTRACT,
   PAIR_CONTRACT
 } = process.env;
 
@@ -80,23 +80,23 @@ const test = async () => {
   );
   console.log("listener: ",listener);
 
-  // await sleep(5 * 1000);
+  await sleep(5 * 1000);
 
-  // let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+  let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 
-  // console.log(`... Account Info: `);
-  // console.log(JSON.stringify(accountInfo, null, 2));
+  console.log(`... Account Info: `);
+  console.log(JSON.stringify(accountInfo, null, 2));
 
-  // const contractHash = await utils.getAccountNamedKeyValue(
-  //   accountInfo,
-  //   `${ERC20_CONTRACT_NAME!}_contract_hash`
-  // );
+  const contractHash = await utils.getAccountNamedKeyValue(
+    accountInfo,
+    `${ERC20_CONTRACT_NAME!}_contract_hash`
+  );
 
-  // console.log(`... Contract Hash: ${contractHash}`);
+  console.log(`... Contract Hash: ${contractHash}`);
 
-  // // // We don't need hash- prefix so i'm removing it
-  // // //await erc20.setContractHash(contractHash.slice(5));
-  // await erc20.setContractHash(EXTERNAL_CONTRACT!);
+  // // We don't need hash- prefix so i'm removing it
+  // //await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(TOKEN0_CONTRACT!);
 
   // // //name
   // // const name = await erc20.name();
@@ -159,16 +159,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  // const approveDeployHash = await erc20.approve(
-  //   KEYS,
-  //   KEYS.publicKey,
-  //   APPROVE_AMOUNT!,
-  //   APPROVE_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Approve deploy hash: ", approveDeployHash);
+  const approveDeployHash = await erc20.approve(
+    KEYS,
+    KEYS.publicKey,
+    APPROVE_AMOUNT!,
+    APPROVE_PAYMENT_AMOUNT!
+  );
+  console.log("... Approve deploy hash: ", approveDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  // console.log("... Token approved successfully");
+  await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(

@@ -52,7 +52,6 @@ const {
 
 // Import mutations
 const {
-  handlelistener,
   handleNewPair,
   handleTransfer,
   handleSync,
@@ -119,7 +118,6 @@ const MutationType = new GraphQLObjectType({
   name: "MutationType",
   description: "Mutations",
   fields: {
-    handlelistener,
     handleNewPair,
     handleTransfer,
     handleSync,
