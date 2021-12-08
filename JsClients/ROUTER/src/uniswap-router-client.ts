@@ -19,6 +19,8 @@ import {
 	CLKeyType,
 	CLList,
 	CLBoolBytesParser,
+	CLOption,
+	CLOptionType
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
 import { RouterEvents } from "./constants";
@@ -29,8 +31,8 @@ const axios = require("axios").default;
 
 class UniswapRouterClient {
 	private contractName: string = "uniswap_router";
-	private contractHash: string; // Hash type is string
-	private contractPackageHash: string;
+	private contractHash: string= "uniswap_router"; // Hash type is string
+	private contractPackageHash: string= "uniswap_router";
 	private namedKeys: {
 		balances: string;
 		metadata: string;
@@ -45,7 +47,15 @@ class UniswapRouterClient {
 		private nodeAddress: string,
 		private chainName: string,
 		private eventStreamAddress?: string
-	) {}
+	) {
+		this.namedKeys= {
+		  balances:"null",
+		  metadata: "null",
+		  ownedTokens: "null",
+		  owners: "null",
+		  paused: "null"
+		}; 
+	}
 
 	public async install(
 		keys: Keys.AsymmetricKey, // Have Public/Private Key Pair
@@ -130,6 +140,7 @@ class UniswapRouterClient {
 		amount_b_min: string,
 		to: string,
 		deadline: string,
+		pair_hash:string,
 		paymentAmount: string
 	) {
 		const _token_a = new CLByteArray(
@@ -140,6 +151,10 @@ class UniswapRouterClient {
 		);
 		const _to = new CLByteArray(Uint8Array.from(Buffer.from(to, "hex")));
 
+		const pair = new CLByteArray(
+			Uint8Array.from(Buffer.from(pair_hash, "hex"))
+		);
+
 		const runtimeArgs = RuntimeArgs.fromMap({
 			token_a: new CLKey(_token_a),
 			token_b: new CLKey(_token_b),
@@ -149,12 +164,13 @@ class UniswapRouterClient {
 			amount_b_min: CLValueBuilder.u256(amount_b_min),
 			to: utils.createRecipientAddress(_to),
 			deadline: CLValueBuilder.u256(deadline),
+			pair: new CLOption(Some(new CLKey(pair)))
 		});
 
 		const deployHash = await contractCall({
 			chainName: this.chainName,
 			contractHash: this.contractHash,
-			entryPoint: "add_liquidity",
+			entryPoint: "add_liquidity_js_client",
 			keys,
 			nodeAddress: this.nodeAddress,
 			paymentAmount,
@@ -163,6 +179,7 @@ class UniswapRouterClient {
 
 		if (deployHash !== null) {
 			this.addPendingDeploy(RouterEvents.PairCreated, deployHash);
+			this.addPendingDeploy(RouterEvents.Erc20Transfer, deployHash);
 			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
 			this.addPendingDeploy(RouterEvents.Sync, deployHash);
 			this.addPendingDeploy(RouterEvents.Mint, deployHash);

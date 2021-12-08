@@ -85,10 +85,17 @@ const test = async () => {
 
   const contractHash = await utils.getAccountNamedKeyValue(
     accountInfo,
-    `${TOKEN_NAME!}_contract`
+    `${CONTRACT_NAME!}_contract_hash`
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
+
+  const packageHash = await utils.getAccountNamedKeyValue(
+    accountInfo,
+    `${CONTRACT_NAME!}_package_hash`
+  );
+
+  console.log(`... Package Hash: ${packageHash}`);
 };
 
 //test();

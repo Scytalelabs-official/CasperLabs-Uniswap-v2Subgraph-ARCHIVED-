@@ -32,7 +32,11 @@ const {
   TRANSFER_FROM_AMOUNT,
   TOKEN0_CONTRACT,
   TOKEN1_CONTRACT,
-  PAIR_CONTRACT
+  TOKEN1_CONTRACT_PACKAGE,
+  PAIR_CONTRACT,
+  PACKAGE_HASH,
+  AMOUNT_A_DESIRED,
+  AMOUNT_B_DESIRED
 } = process.env;
 
 
@@ -127,20 +131,20 @@ const test = async () => {
   // // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
   // // // console.log(`... Allowance: ${allowance}`);
 
-  // //mint
-  // // const mintDeployHash = await erc20.mint(
-  // //   KEYS,
-  // //   PAIR_CONTRACT!,
-  // //   MINT_AMOUNT!,
-  // //   MINT_PAYMENT_AMOUNT!
-  // // );
-  // // console.log("... Mint deploy hash: ", mintDeployHash);
+  //mint
+  const mintDeployHash = await erc20.mint(
+    KEYS,
+    PACKAGE_HASH!,
+    MINT_AMOUNT!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("... Mint deploy hash: ", mintDeployHash);
 
-  // // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  await getDeploy(NODE_ADDRESS!, mintDeployHash);
  
-  // //  //balanceof
-  // // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
-  // // console.log(`... Balance: ${balance}`);
+   //balanceof
+  // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
+  // console.log(`... Balance: ${balance}`);
 
   // // //burn
   // // const burnDeployHash = await erc20.burn(
@@ -159,16 +163,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  const approveDeployHash = await erc20.approve(
-    KEYS,
-    KEYS.publicKey,
-    APPROVE_AMOUNT!,
-    APPROVE_PAYMENT_AMOUNT!
-  );
-  console.log("... Approve deploy hash: ", approveDeployHash);
+  // const approveDeployHash = await erc20.approve(
+  //   KEYS,
+  //   PACKAGE_HASH!,
+  //   AMOUNT_B_DESIRED!,
+  //   APPROVE_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Approve deploy hash: ", approveDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  console.log("... Token approved successfully");
+  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  // console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(

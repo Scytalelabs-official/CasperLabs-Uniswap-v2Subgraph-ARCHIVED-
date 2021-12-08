@@ -209,13 +209,16 @@ class ERC20Client {
 
   public async approve(
     keys: Keys.AsymmetricKey,
-    spender: RecipientType,
+    spender: string,
     amount: string,
     paymentAmount: string
   ) {
 
+    const _spender = new CLByteArray(
+			Uint8Array.from(Buffer.from(spender, "hex"))
+		);
     const runtimeArgs = RuntimeArgs.fromMap({
-      spender: utils.createRecipientAddress(spender),
+      spender: utils.createRecipientAddress(_spender),
       amount: CLValueBuilder.u256(amount)
     });
 

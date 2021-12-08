@@ -11,6 +11,7 @@ import {
 	CLAccountHash,
 	CLPublicKeyType,
 } from "casper-js-sdk";
+import { isCombinedNodeFlagSet } from "tslint";
 
 const { RouterEvents } = constants;
 
@@ -28,7 +29,7 @@ const {
 	CONTRACT_NAME,
 	CONTRACT_HASH,
 	INSTALL_PAYMENT_AMOUNT,
-
+	PAIR_CONTRACT,
 	TO,
 	DEADLINE,
 
@@ -39,6 +40,7 @@ const {
 	AMOUNT_B_DESIRED,
 	AMOUNT_A_MIN,
 	AMOUNT_B_MIN,
+	ADD_LIQUIDITY_PAYMENT_AMOUNT,
 
 	// add_liquidity_cspr
 	TOKEN,
@@ -274,7 +276,8 @@ const add_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
 		AMOUNT_B_MIN!,
 		TO!,
 		DEADLINE!,
-		INSTALL_PAYMENT_AMOUNT!
+		PAIR_CONTRACT!,
+		ADD_LIQUIDITY_PAYMENT_AMOUNT!
 	);
 };
 
@@ -483,6 +486,7 @@ const test = async () => {
 	const listener = uniswapRouter.onEvent(
 		[
 			RouterEvents.PairCreated,
+			RouterEvents.Erc20Transfer,
 			RouterEvents.Transfer,
 			RouterEvents.Approval,
 			RouterEvents.Mint,
@@ -539,6 +543,46 @@ const test = async () => {
 					console.log(newData[2][0].data + " = " + newData[2][1].data);
 					console.log(newData[3][0].data + " = " + newData[3][1].data);
 					console.log(newData[4][0].data + " = " + newData[4][1].data);
+				}
+				else if(eventName=="erc20_transfer")
+					{
+					console.log(eventName+ " Event result: ");
+					console.log(newData[0][0].data + " = " + newData[0][1].data);
+					console.log(newData[1][0].data + " = " + newData[1][1].data);
+
+					console.log(newData[2][0].data + " = " + newData[2][1].data);
+					console.log(newData[3][0].data + " = " + newData[3][1].data);
+					console.log(newData[4][0].data + " = " + newData[4][1].data);
+					
+					var flag=0;
+					var temp=(newData[3][1].data).split('(');
+					console.log("temp[0]: ",temp[0]);
+					if(temp[0] == "Key::Account(")
+					{
+						flag=1;
+					}
+					var from=splitdata(newData[2][1].data);
+					var to=splitdata(newData[3][1].data);
+					var value=parseInt(newData[4][1].data);
+
+					console.log("from: ", from);
+					console.log("to: ", to);
+					console.log("value: ",value);
+					
+					if(flag==0)
+					{
+						request(GRAPHQL!,
+							`mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+							handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+							result
+							}
+						
+							}`,
+							{from:from, to: to, value: value, pairAddress: to, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+							.then(data => console.log(data))
+							.catch(error => console.error(error));
+					}
+					
 				}
 				else if(eventName=="transfer")
 					{
@@ -721,24 +765,25 @@ const test = async () => {
 			}
 		}
 	);
-	// await sleep(5 * 1000);
+	await sleep(5 * 1000);
 
-	// let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+	let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 
-	// console.log(`... Account Info: `);
-	// console.log(JSON.stringify(accountInfo, null, 2));
+	console.log(`... Account Info: `);
+	console.log(JSON.stringify(accountInfo, null, 2));
 
-	// const contractHash = await utils.getAccountNamedKeyValue(
-	// 	accountInfo,
-	// 	"UniSwapRouter_contract_hash"
-	// );
+	const contractHash = await utils.getAccountNamedKeyValue(
+		accountInfo,
+		"UniSwapRouter_contract_hash"
+	);
 
-	// console.log(`... Contract Hash: ${contractHash}`);
+	console.log(`... Contract Hash: ${contractHash}`);
 
-	// await uniswapRouter.setContractHash(contractHash.slice(5));
-
+	//await uniswapRouter.setContractHash(contractHash.slice(5));
+	await uniswapRouter.setContractHash(CONTRACT_HASH!);
+	
 	// Test add_liquidity
-	//add_liquidity(uniswapRouter);
+	add_liquidity(uniswapRouter);
 
 	// Test add_liquidity_cspr
 	//add_liquidity_cspr(uniswapRouter);
