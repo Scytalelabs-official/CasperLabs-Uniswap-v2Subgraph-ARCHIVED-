@@ -36,13 +36,20 @@ const {
   PAIR_CONTRACT,
   PACKAGE_HASH,
   AMOUNT_A_DESIRED,
-  AMOUNT_B_DESIRED
+  AMOUNT_B_DESIRED,
+  MASTER_KEY_PAIR_PATH,
+  PAIR_CONTRACT_PACKAGE
 } = process.env;
 
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
   `${ERC20_MASTER_KEY_PAIR_PATH}/public_key.pem`,
   `${ERC20_MASTER_KEY_PAIR_PATH}/secret_key.pem`
+);
+
+const ROUTERKEYS = Keys.Ed25519.parseKeyFiles(
+  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
+  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
 const erc20 = new ERC20Client(
@@ -99,8 +106,8 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
 
   // // We don't need hash- prefix so i'm removing it
-  // //await erc20.setContractHash(contractHash.slice(5));
-  await erc20.setContractHash(TOKEN0_CONTRACT!);
+  //await erc20.setContractHash(contractHash.slice(5));
+  await erc20.setContractHash(TOKEN1_CONTRACT!);
 
   // // //name
   // // const name = await erc20.name();
@@ -132,16 +139,17 @@ const test = async () => {
   // // // console.log(`... Allowance: ${allowance}`);
 
   //mint
-  const mintDeployHash = await erc20.mint(
-    KEYS,
-    PACKAGE_HASH!,
-    MINT_AMOUNT!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
+  // const mintDeployHash = await erc20.mint(
+  //   ROUTERKEYS,
+  //   ROUTERKEYS.publicKey,
+  //   MINT_AMOUNT!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
- 
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // console.log("... Token minted successfully.");
+
    //balanceof
   // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
   // console.log(`... Balance: ${balance}`);
@@ -163,16 +171,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  // const approveDeployHash = await erc20.approve(
-  //   KEYS,
-  //   PACKAGE_HASH!,
-  //   AMOUNT_B_DESIRED!,
-  //   APPROVE_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Approve deploy hash: ", approveDeployHash);
+  const approveDeployHash = await erc20.approve(
+    ROUTERKEYS,
+    PACKAGE_HASH!,
+    AMOUNT_B_DESIRED!,
+    APPROVE_PAYMENT_AMOUNT!
+  );
+  console.log("... Approve deploy hash: ", approveDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  // console.log("... Token approved successfully");
+  await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(
@@ -201,7 +209,7 @@ const test = async () => {
 
 };
 
-//test();
+test();
 
 export const getName = async (contractHash:string) => {
   

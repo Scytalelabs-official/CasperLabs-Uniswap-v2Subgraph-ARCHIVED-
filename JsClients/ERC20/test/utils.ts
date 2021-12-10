@@ -11,14 +11,15 @@ export const sleep = (ms: number) => {
 
 export const getDeploy = async (NODE_URL: string, deployHash: string) => {
   const client = new CasperClient(NODE_URL);
-  let i = 1000;
+  let i = 300;
   while (i != 0) {
+    //console.log("i: ",i);
       const [deploy, raw] = await client.getDeploy(deployHash);
       if (raw.execution_results.length !== 0){
           // @ts-ignore
           if (raw.execution_results[0].result.Success) {
            
-              return [deploy.header.timestamp,deploy.header.gasPrice,raw.execution_results[0].block_hash];
+              return [deploy.header.timestamp,raw.execution_results[0].block_hash];
           } else {
               // @ts-ignore
               throw Error("Contract execution: " + raw.execution_results[0].result.Failure.error_message);

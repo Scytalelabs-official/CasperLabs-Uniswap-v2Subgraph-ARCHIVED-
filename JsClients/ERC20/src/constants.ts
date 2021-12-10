@@ -1,5 +1,5 @@
 export enum ERC20Events {
   Approval="approve",
-  Transfer="transfer"
+  Transfer="erc20_transfer"
 }
 

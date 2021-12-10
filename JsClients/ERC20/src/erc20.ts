@@ -304,16 +304,15 @@ class ERC20Client {
   }
   public async mint(
     keys: Keys.AsymmetricKey,
-    to: string,
+    to: RecipientType,
     amount: string,
     paymentAmount: string
   ) {
-    const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
+    
     const runtimeArgs = RuntimeArgs.fromMap({
-      to: CLValueBuilder.key(tobytearray),
+      to:utils.createRecipientAddress(to),
       amount: CLValueBuilder.u256(amount)
     });
-
 
     const deployHash = await contractCall({
       chainName: this.chainName,
@@ -332,6 +331,36 @@ class ERC20Client {
       throw Error("Invalid Deploy");
     }
   }
+  // public async mint(
+  //   keys: Keys.AsymmetricKey,
+  //   to: string,
+  //   amount: string,
+  //   paymentAmount: string
+  // ) {
+  //   const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     to: CLValueBuilder.key(tobytearray),
+  //     amount: CLValueBuilder.u256(amount)
+  //   });
+
+
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "mint",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+  //     this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
   public async burn(
     keys: Keys.AsymmetricKey,
     from: RecipientType,
