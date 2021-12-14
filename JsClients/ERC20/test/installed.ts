@@ -246,7 +246,7 @@ const test = async () => {
 };
 
 
-test();
+//test();
 
 export const getName = async (contractHash:string) => {
   
