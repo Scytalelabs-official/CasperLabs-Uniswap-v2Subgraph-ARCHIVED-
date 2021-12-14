@@ -2,7 +2,8 @@ import { config } from "dotenv";
 config();
 import { ERC20Client ,utils, constants} from "../src";
 import { sleep, getDeploy } from "./utils";
-//import { ERC20Events } from '../src/constants';
+import { request } from 'graphql-request';
+
 import {
   CLValueBuilder,
   Keys,
@@ -38,7 +39,8 @@ const {
   AMOUNT_A_DESIRED,
   AMOUNT_B_DESIRED,
   MASTER_KEY_PAIR_PATH,
-  PAIR_CONTRACT_PACKAGE
+  PAIR_CONTRACT_PACKAGE,
+  GRAPHQL
 } = process.env;
 
 
@@ -52,6 +54,13 @@ const ROUTERKEYS = Keys.Ed25519.parseKeyFiles(
   `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
+function splitdata(data:string)
+{
+    var temp=data.split('(');
+    var result=temp[1].split(')');
+    return result[0];
+}
+
 const erc20 = new ERC20Client(
   NODE_ADDRESS!,
   CHAIN_NAME!,
@@ -59,54 +68,81 @@ const erc20 = new ERC20Client(
 );
 
 const test = async () => {
- 
-  const listener = erc20.onEvent(
-    [
-      ERC20Events.Approval,
-      ERC20Events.Transfer
-    ],
-    async (eventName, deploy, result) => {
-      if (deploy.success) {
-        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-        const [timestamp,gasPrice,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
-        console.log("... Deployhash: ",  deploy.deployHash);
-        console.log("... Timestamp: ", timestamp);
-        //console.log("... GasPrice: ", gasPrice);
-        console.log("... Block hash: ", block_hash);
 
-        let newData = JSON.parse(JSON.stringify(result.value()));
-        
-        console.log(eventName+ " Event result: ");
-        console.log(newData[0][0].data + " = " + newData[0][1].data);
-        console.log(newData[1][0].data + " = " + newData[1][1].data);
-        console.log(newData[2][0].data + " = " + newData[2][1].data);
-        console.log(newData[3][0].data + " = " + newData[3][1].data);
-        console.log(newData[4][0].data + " = " + newData[4][1].data);
+  // const listener = erc20.onEvent(
+  //   [
+  //     ERC20Events.Approval,
+  //     ERC20Events.Transfer
+  //   ],
+  //   async (eventName, deploy, result) => {
+  //     if (deploy.success) {
+  //       console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+  //       const [timestamp,gasPrice,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+  //       console.log("... Deployhash: ",  deploy.deployHash);
+  //       console.log("... Timestamp: ", timestamp);
+  //       //console.log("... GasPrice: ", gasPrice);
+  //       console.log("... Block hash: ", block_hash);
 
-      } else {
-        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(`Error: ${deploy.error}`);
-      }
-    }
-  );
-  console.log("listener: ",listener);
+  //       let newData = JSON.parse(JSON.stringify(result.value()));
+    
+  //       if(eventName=="approve")
+	// 			{
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+	// 			}
+	// 			else if(eventName=="erc20_transfer")
+	// 			{
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
 
-  await sleep(5 * 1000);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+            
+  //           var flag=0;
+  //           var temp=(newData[3][1].data).split('(');
+  //           console.log("temp[0]: ",temp[0]);
+  //           if(temp[0] == "Key::Account(")
+  //           {
+  //             flag=1;
+  //           }
+  //           var from=splitdata(newData[2][1].data);
+  //           var to=splitdata(newData[3][1].data);
+  //           var value=parseInt(newData[4][1].data);
 
-  let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+  //           console.log("from: ", from);
+  //           console.log("to: ", to);
+  //           console.log("value: ",value);
+            
+  //           if(flag==0)
+  //           {
+  //             request(GRAPHQL!,
+  //               `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //               handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //               result
+  //               }
+              
+  //               }`,
+  //               {from:from, to: to, value: value, pairAddress: to, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //               .then(data => console.log(data))
+  //               .catch(error => console.error(error));
+  //           }
+					
+	// 			}
 
-  console.log(`... Account Info: `);
-  console.log(JSON.stringify(accountInfo, null, 2));
+  //     } else {
+  //       console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+  //       console.log(`Error: ${deploy.error}`);
+  //     }
+  //   }
+  // );
+  // console.log("listener: ",listener);
 
-  const contractHash = await utils.getAccountNamedKeyValue(
-    accountInfo,
-    `${ERC20_CONTRACT_NAME!}_contract_hash`
-  );
-
-  console.log(`... Contract Hash: ${contractHash}`);
-
-  // // We don't need hash- prefix so i'm removing it
-  //await erc20.setContractHash(contractHash.slice(5));
   await erc20.setContractHash(TOKEN1_CONTRACT!);
 
   // // //name
@@ -139,18 +175,18 @@ const test = async () => {
   // // // console.log(`... Allowance: ${allowance}`);
 
   //mint
-  // const mintDeployHash = await erc20.mint(
-  //   ROUTERKEYS,
-  //   ROUTERKEYS.publicKey,
-  //   MINT_AMOUNT!,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Mint deploy hash: ", mintDeployHash);
+  const mintDeployHash = await erc20.mint(
+    ROUTERKEYS,
+    ROUTERKEYS.publicKey,
+    MINT_AMOUNT!,
+    MINT_PAYMENT_AMOUNT!
+  );
+  console.log("... Mint deploy hash: ", mintDeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
-  // console.log("... Token minted successfully.");
+  await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  console.log("... Token minted successfully.");
 
-   //balanceof
+  //  balanceof
   // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
   // console.log(`... Balance: ${balance}`);
 
@@ -171,16 +207,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  const approveDeployHash = await erc20.approve(
-    ROUTERKEYS,
-    PACKAGE_HASH!,
-    AMOUNT_B_DESIRED!,
-    APPROVE_PAYMENT_AMOUNT!
-  );
-  console.log("... Approve deploy hash: ", approveDeployHash);
+  // const approveDeployHash = await erc20.approve(
+  //   ROUTERKEYS,
+  //   PACKAGE_HASH!,
+  //   AMOUNT_A_DESIRED!,
+  //   APPROVE_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Approve deploy hash: ", approveDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  console.log("... Token approved successfully");
+  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  // console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(
@@ -208,6 +244,7 @@ const test = async () => {
   // // console.log("... Token transfer successfully");
 
 };
+
 
 test();
 

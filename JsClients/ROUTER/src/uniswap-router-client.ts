@@ -113,9 +113,6 @@ class UniswapRouterClient {
 		  ""
 		);
 		const LIST_OF_NAMED_KEYS = [
-		  'balances',
-		  'nonces',
-		  'allowances',
 		  `${this.contractName}_package_hash`,
 		  `${this.contractName}_package_hash_wrapped`,
 		  `${this.contractName}_contract_hash`,
