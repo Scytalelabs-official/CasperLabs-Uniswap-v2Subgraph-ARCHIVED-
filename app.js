@@ -64,7 +64,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.json({ msg: "Uniswap V2 GraphQL Server" });
 });
-app.use('/listener', listenerRouter);
+app.use('/', listenerRouter);
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,

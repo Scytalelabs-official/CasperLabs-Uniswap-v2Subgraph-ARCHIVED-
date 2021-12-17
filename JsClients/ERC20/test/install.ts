@@ -67,7 +67,7 @@ const test = async () => {
     `${ERC20_CONTRACT_NAME!}_package_hash`
   );
 
-  console.log(`... Contract Hash: ${packageHash}`);
+  console.log(`... Package Hash: ${packageHash}`);
 };
 
 //test();

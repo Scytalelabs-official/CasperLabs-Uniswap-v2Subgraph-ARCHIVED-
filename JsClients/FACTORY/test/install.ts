@@ -56,6 +56,14 @@ const test = async () => {
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
+
+  const packageHash = await utils.getAccountNamedKeyValue(
+    accountInfo,
+    `${FACTORY_CONTRACT_NAME!}_package_hash`
+  );
+
+  console.log(`... Package Hash: ${packageHash}`);
+
 };
 
 //test();

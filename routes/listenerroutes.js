@@ -3,7 +3,9 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios').default;
 var {request} = require('graphql-request');
-var pairsModel=require('../models/pairs');
+var pairModel=require('../models/pair');
+var hashesofpairsModel=require('../models/hashesofpairs');
+var eventsModel=require('../models/events');
 
 function splitdata(data)
 {
@@ -11,41 +13,28 @@ function splitdata(data)
     var result=temp[1].split(')');
     return result[0];
 }
+
 router.route("/addpaircontractandpackageHash").post(async function (req, res, next) {
     try {
 
-		if(!req.body.ContractHash)
+		if(!req.body.contractHash)
 		{
 			return res.status(400).json({
 			success: false,
 			message: "There is no contractHash specified in the req body.",
 			});
 		}
-		if(!req.body.PackageHash)
+		if(!req.body.packageHash)
 		{
 			return res.status(400).json({
 			success: false,
-			message: "There is no PackageHash specified in the req body.",
+			message: "There is no packageHash specified in the req body.",
 			});
-		}
-		var pairsresult=await pairsModel.findOne({id:"pair"});
-		var temp = pairsresult.data;
-		temp[req.body.PackageHash] = req.body.ContractHash;
-
-		if(pairsresult==null)
-		{
-			var newpair = new pairsModel({
-				data:temp
-			});
-	  
-			await pairsModel.create(newpair);
-		}
-		else{
-			pairsresult.data=temp;
-			await pairsresult.save();
 		}
 		
-
+		var newpair = new hashesofpairsModel({contractHash:req.body.contractHash,packageHash:req.body.packageHash});
+		await hashesofpairsModel.create(newpair);
+		
 		return res.status(200).json({
 			success: true,
 			message: "Pair's Contract and Package Hash are Succefully stored.",
@@ -71,21 +60,21 @@ router.route("/startListener").post(async function (req, res, next) {
         });
       }
    
-      axios.post('http://localhost:3001/initiateListener', {
+      await axios.post('http://localhost:3001/listener/initiateListener', {
         contractPackageHashes: req.body.contractPackageHashes
       })
       .then(function (response) {
         console.log(response);
-        return res.status(200).json({
+		return res.status(200).json({
             success: true,
             message: response.data.message,
             status: response.data.status
         });
-    
       })
       .catch(function (error) {
         console.log(error);
       });
+		
 
     } catch (error) {
       console.log("error (try-catch) : " + error);
@@ -145,6 +134,7 @@ router.route("/geteventsdata").post(async function (req, res, next) {
     console.log("... Block hash: ", block_hash);
 	console.log("Event Data: ",newData);
 
+
     if(eventName =="pair_created")
     {
       	console.log(eventName+ " Event result: ");
@@ -165,16 +155,25 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("token0 splited: ", token0);
       	console.log("token1 splited: ", token1);
       
-      	request(process.env.GRAPHQL,
-      		`mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: String!, $blockHash: String!){
-      		handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+      	  request(process.env.GRAPHQL,
+      		`mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!,$deployHash: String!,$timeStamp: String!, $blockHash: String!){
+      		handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, deployHash:$deployHash,timeStamp: $timeStamp, blockHash: $blockHash) {
       		result
       		}
                       
       		}`,
-      		{token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp.toString(), blockHash:block_hash})
-      			.then(data => console.log(data))
-      			.catch(error => console.error(error));
+      		{token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+			.then(function (response) {
+				console.log(response);
+				return res.status(200).json({
+					success: true,
+					message: "HandleNewPair Mutation called."
+				});
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+
     }
     else if(eventName=="approve")
     {
@@ -184,6 +183,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log(newData[2][0].data + " = " + newData[2][1].data);
       	console.log(newData[3][0].data + " = " + newData[3][1].data);
       	console.log(newData[4][0].data + " = " + newData[4][1].data);
+		return res.status(200).json({
+			success: true,
+			message: "Approved Event emitted."
+		});
     }
     else if(eventName=="erc20_transfer")
     {
@@ -198,7 +201,7 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	var flag=0;
       	var temp=(newData[3][1].data).split('(');
       	console.log("temp[0]: ",temp[0]);
-      	if(temp[0] == "Key::Account(")
+      	if(temp[0] == "Key::Account")
       	{
       		flag=1;
       	}
@@ -212,24 +215,87 @@ router.route("/geteventsdata").post(async function (req, res, next) {
                           
       	if(flag==0)
       	{
-			var pairsresult=await pairsModel.findOne({id:"pair"});
-			var to_contractHash=pairsresult.data[to];  
+			var pairsresult=await hashesofpairsModel.find({});
+			if(pairsresult==null)
+			{
+				console.log("there are no contract and package hash found in the database.");
+				return res.status(400).json({
+					success: false,
+					message: "there are no contract and package hash found in the database."
+				});
+			}
+			var to_contractHash=null;
+			for(var i=0;i<pairsresult.length;i++)
+			{
+				if((pairsresult[i].packageHash).toLowerCase()==to.toLowerCase())
+				{
+					to_contractHash=pairsresult[i].contractHash;
+					console.log("contractHash: ",to_contractHash);
+				}
+			} 
+
 			if(to_contractHash==null)
 			{
 				console.log("contract hash did not find at this package hash.");
-				return;
+				return res.status(400).json({
+					success: false,
+					message: "contract hash did not find at this package hash."
+				});
 			}
-      		request(process.env.GRAPHQL,
-      			`mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-      			handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-      			result
-      			}
-                              
-      			}`,
-      			{from:from, to: to, value: value, pairAddress: to_contractHash, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-      			.then(data => console.log(data))
-      			.catch(error => console.error(error));
+			else
+			{
+				var pairData=await pairModel.findOne({id:to_contractHash});
+
+				if(pairData == null)
+				{
+
+					var newevent = new eventsModel({
+						deployHash : deployHash,
+						timestamp : timestamp,
+						block_hash : block_hash,
+						pairContractHash:to_contractHash.toLowerCase(),
+						eventName : eventName,
+						eventsdata:newData
+					});
+					await eventsModel.create(newevent);
+					
+					console.log("pair did not created against this pair package hash, event has been saved to database.");
+					return res.status(200).json({
+						success: true,
+						message: "pair did not created against this pair package hash, event has been saved to database."
+					});
+				}
+				else
+				{
+					request(process.env.GRAPHQL,
+						`mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+						handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+						result
+						}
+									
+						}`,
+						{from:from, to: to, value: value, pairAddress: to_contractHash, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+					  .then(function (response) {
+						  console.log(response);
+						  return res.status(200).json({
+							  success: true,
+							  message: "handleTransfer Mutation called."
+						  });
+					  })
+					  .catch(function (error) {
+						  console.log(error);
+					  });
+				}
+			}
+			
       	}
+		else
+		{
+			return res.status(200).json({
+				success: true,
+				message: "handleTransfer Mutation did not called."
+			});
+		}
                           
     }
     else if(eventName=="transfer")
@@ -252,17 +318,47 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("to: ", to);
       	console.log("value: ",value);
       	console.log("pair: ", pair);
-      
-      	request(process.env.GRAPHQL,
-      			`mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-      			handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-      			result
-      			}
-                          
-      			}`,
-      			{from:from, to: to, value: value, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-      			.then(data => console.log(data))
-      			.catch(error => console.error(error));
+
+		var pairData=await pairModel.findOne({id:pair});
+		if(pairData==null)
+		{
+			  var newevent = new eventsModel({
+				  deployHash : deployHash,
+				  timestamp : timestamp,
+				  block_hash : block_hash,
+				  eventName : eventName,
+				  eventsdata:newData
+			  });
+			  await eventsModel.create(newevent);
+			  
+			  console.log("pair did not created against this pair package hash, event has been saved to database.");
+			  return res.status(200).json({
+				  success: true,
+				  message: "pair did not created against this pair package hash, event has been saved to database."
+			  });
+		}
+		else
+		{
+			request(process.env.GRAPHQL,
+				`mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+				handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+				result
+				}
+						
+				}`,
+				{from:from, to: to, value: value, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+				.then(function (response) {
+				  console.log(response);
+				  return res.status(200).json({
+					  success: true,
+					  message: "handleTransfer Mutation called."
+				  });
+			  })
+			  .catch(function (error) {
+				  console.log(error);
+			  });
+		}
+      	 
     }
     else if (eventName=="mint")
     {
@@ -284,17 +380,47 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("amount1: ", amount1);
       	console.log("pair: ",pair);
       	console.log("sender: ", sender);
-      
-      		request(process.env.GRAPHQL,
-      			`mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-      			handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-      				result
-      			}
-                              
-      			}`,
-      			{amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-      				.then(data => console.log(data))
-      				.catch(error => console.error(error));
+
+		var pairData=await pairModel.findOne({id:pair});
+		if(pairData==null)
+		{
+				var newevent = new eventsModel({
+					deployHash : deployHash,
+					timestamp : timestamp,
+					block_hash : block_hash,
+					eventName : eventName,
+					eventsdata:newData
+				});
+				await eventsModel.create(newevent);
+				
+				console.log("pair did not created against this pair package hash, event has been saved to database.");
+				return res.status(200).json({
+					success: true,
+					message: "pair did not created against this pair package hash, event has been saved to database."
+				});
+		}
+		else
+		{
+			request(process.env.GRAPHQL,
+				`mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+				handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+					result
+				}
+							
+				}`,
+				{amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+				.then(function (response) {
+				  console.log(response);
+				  return res.status(200).json({
+					  success: true,
+					  message: "handleMint Mutation called."
+				  });
+			  })
+			  .catch(function (error) {
+				  console.log(error);
+			  });
+		}
+		  
     }
     else if (eventName=="burn")
     {
@@ -319,8 +445,28 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("pair: ",pair);
       	console.log("sender: ", sender);
       	console.log("to: ", to);
-      
-      		request(process.env.GRAPHQL,
+
+		var pairData=await pairModel.findOne({id:pair});
+		if(pairData==null)
+		{
+				  var newevent = new eventsModel({
+					  deployHash : deployHash,
+					  timestamp : timestamp,
+					  block_hash : block_hash,
+					  eventName : eventName,
+					  eventsdata:newData
+				  });
+				  await eventsModel.create(newevent);
+				  
+				  console.log("pair did not created against this pair package hash, event has been saved to database.");
+				  return res.status(200).json({
+					  success: true,
+					  message: "pair did not created against this pair package hash, event has been saved to database."
+				  });
+		}
+		else
+		{
+		   request(process.env.GRAPHQL,
       			`mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
       				handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
       				result
@@ -328,8 +474,17 @@ router.route("/geteventsdata").post(async function (req, res, next) {
                               
       				}`,
       			    {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-      					.then(data => console.log(data))
-      					.catch(error => console.error(error));
+      				.then(function (response) {
+						console.log(response);
+						return res.status(200).json({
+							success: true,
+							message: "handleBurn Mutation called."
+						});
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+		}
     }
     else if (eventName=="sync")
     {
@@ -349,8 +504,27 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("reserve1: ", reserve1);
       	console.log("pair: ",pair);
                           
-      
-      	    request(process.env.GRAPHQL,
+		var pairData=await pairModel.findOne({id:pair});
+		if(pairData==null)
+		{
+					var newevent = new eventsModel({
+						deployHash : deployHash,
+						timestamp : timestamp,
+						block_hash : block_hash,
+						eventName : eventName,
+						eventsdata:newData
+					});
+					await eventsModel.create(newevent);
+					
+					console.log("pair did not created against this pair package hash, event has been saved to database.");
+					return res.status(200).json({
+						success: true,
+						message: "pair did not created against this pair package hash, event has been saved to database."
+					});
+		}
+		else
+		{
+		   request(process.env.GRAPHQL,
       				`mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
       				handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
       				result
@@ -358,8 +532,17 @@ router.route("/geteventsdata").post(async function (req, res, next) {
                           
       				}`,
       				{reserve0:reserve0, reserve1: reserve1, pairAddress: pair})
-      				    .then(data => console.log(data))
-      				    .catch(error => console.error(error));
+      				.then(function (response) {
+						console.log(response);
+						return res.status(200).json({
+							success: true,
+							message: "handleSync Mutation called."
+						});
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+		}			  
     }
     else if (eventName=="swap")
     {
@@ -393,8 +576,28 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       	console.log("pair: ",pair);
       	console.log("sender: ", sender);
       	console.log("to: ", to);
-      
-      		request(process.env.GRAPHQL,
+		var pairData=await pairModel.findOne({id:pair});
+		if(pairData==null)
+		{
+					var newevent = new eventsModel({
+						deployHash : deployHash,
+						timestamp : timestamp,
+						block_hash : block_hash,
+						eventName : eventName,
+						eventsdata:newData
+					});
+					await eventsModel.create(newevent);
+					
+					console.log("pair did not created against this pair package hash, event has been saved to database.");
+					return res.status(200).json({
+						success: true,
+						message: "pair did not created against this pair package hash, event has been saved to database."
+					});
+		}
+		else
+		{
+
+		   request(process.env.GRAPHQL,
       				`mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
       				handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
       					result
@@ -402,15 +605,19 @@ router.route("/geteventsdata").post(async function (req, res, next) {
                               
       				}`,
       				{amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-      				.then(data => console.log(data))
-      				.catch(error => console.error(error));
+      				.then(function (response) {
+						console.log(response);
+						return res.status(200).json({
+							success: true,
+							message: "handleSwap Mutation called."
+						});
+					})
+					.catch(function (error) {
+						console.log(error);
+					});	
+		}  
     }				
       
-      return res.status(200).json({
-        success: true,
-        message: "Mutation called according to received event."
-      });
-
     } catch (error) {
       console.log("error (try-catch) : " + error);
       return res.status(500).json({

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const {
   GraphQLString,
   GraphQLObjectType,
@@ -6,7 +7,8 @@ const {
   GraphQLBoolean,
 } = require("graphql");
 
-require("dotenv").config();
+var {request} = require('graphql-request');
+
 
 const Response = require("../models/response");
 const UniswapFactory = require("../models/uniswapFactory");
@@ -23,6 +25,7 @@ let pairHourData = require("../models/pairHourData");
 let uniswapDayData = require("../models/uniswapDayData");
 let token0DayData = require("../models/tokenDayData");
 let token1DayData = require("../models/tokenDayData");
+let eventsModel = require("../models/events");
 
 const {responseType} = require("./types/response");
 
@@ -61,6 +64,13 @@ const {
   getTrackedLiquidityUSD,
 } = require("./pricing");
 
+function splitdata(data)
+{
+    var temp=data.split('(');
+    var result=temp[1].split(')');
+    return result[0];
+}
+
 const handleNewPair = {
   type: responseType,
   description: "Handle New Pair",
@@ -69,6 +79,7 @@ const handleNewPair = {
     token1: { type:GraphQLString  },
     pair: { type: GraphQLString  },
     all_pairs_length: { type: GraphQLInt },
+    deployHash: { type: GraphQLString  },
     timeStamp: { type: GraphQLString  },
     blockHash: { type: GraphQLString  }
   },
@@ -192,17 +203,262 @@ const handleNewPair = {
       await pair.save();
       await factory.save();
       
-      let response = await Response.findOne({ id: "1" });
-      if(response=== null)
+      console.log("deployHash: ",args.deployHash);
+      var eventsData=await eventsModel.find({deployHash:args.deployHash});
+      if(eventsData.length == 0)
       {
-        // create new response
-        response = new Response({
-          id: "1",
-          result: true
-        });
-        await response.save();
+        console.log("No event found in the database at this pair created event deployHash.");
+        let response = await Response.findOne({ id: "1" });
+        if(response=== null)
+        {
+          // create new response
+          response = new Response({
+            id: "1",
+            result: true
+          });
+          await response.save();
+        }
+        return response;
       }
-      return response;
+      else
+      { 
+        const eventslength=eventsData.length;
+        for (var i=0;i<eventslength;i++)
+        {
+          let deployHash=eventsData[i].deployHash;
+          let timestamp=eventsData[i].timestamp;
+          let block_hash=eventsData[i].block_hash;
+          let eventName=eventsData[i].eventName;
+          let newData=eventsData[i].eventsdata;
+
+          console.log("... Deployhash: ",  deployHash);
+          console.log("... Timestamp: ", timestamp);
+          console.log("... Block hash: ", block_hash);
+          console.log("Event Data: ",newData);
+
+          
+          if(eventName=="erc20_transfer")
+          {
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+          
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+                                
+              var from=splitdata(newData[2][1].data);
+              var to=splitdata(newData[3][1].data);
+              var value=parseInt(newData[4][1].data);
+            
+              console.log("from: ", from);
+              console.log("to: ", to);
+              console.log("value: ",value);
+
+              let response = await request(process.env.GRAPHQL,
+                  `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                  handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                  result
+                  }
+                        
+                  }`,
+                  {from:from, to: to, value: value, pairAddress: eventsData[i].pairContractHash, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash});
+
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+              
+          }
+          else if(eventName=="transfer")
+          {
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+            
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+              console.log(newData[5][0].data + " = " + newData[5][1].data);
+            
+              var from=splitdata(newData[2][1].data);
+              var to=splitdata(newData[4][1].data);
+              var value=parseInt(newData[5][1].data);
+              pair=splitdata(newData[3][1].data);
+            
+              console.log("from: ", from);
+              console.log("to: ", to);
+              console.log("value: ",value);
+              console.log("pair: ", pair);
+
+              let response =await request(process.env.GRAPHQL,
+                  `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                  handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                  result
+                  }
+                      
+                  }`,
+                  {from:from, to: to, value: value, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash});
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+             
+          }
+          else if (eventName=="mint")
+          {
+            
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+              console.log(newData[5][0].data + " = " + newData[5][1].data);
+            
+              var amount0=parseInt(newData[0][1].data);
+              var amount1=parseInt(newData[1][1].data);
+              pair=splitdata(newData[4][1].data);
+              var sender=splitdata(newData[5][1].data);
+            
+              console.log("amount0: ", amount0);
+              console.log("amount1: ", amount1);
+              console.log("pair: ",pair);
+              console.log("sender: ", sender);
+              let response = await request(process.env.GRAPHQL,
+                  `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                  handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                    result
+                  }
+                        
+                  }`,
+                  {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash});
+
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+             
+          }
+          else if (eventName=="burn")
+          {
+            
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+              console.log(newData[5][0].data + " = " + newData[5][1].data);
+              console.log(newData[6][0].data + " = " + newData[6][1].data);
+                                
+              var amount0=parseInt(newData[0][1].data);
+              var amount1=parseInt(newData[1][1].data);
+              pair=splitdata(newData[4][1].data);
+              var sender=splitdata(newData[5][1].data);
+              var to=splitdata(newData[6][1].data);
+            
+              console.log("amount0: ", amount0);
+              console.log("amount1: ", amount1);
+              console.log("pair: ",pair);
+              console.log("sender: ", sender);
+              console.log("to: ", to);
+              let response=await request(process.env.GRAPHQL,
+                  `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                    handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                    result
+                    }
+                                    
+                    }`,
+                      {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash});
+
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+             
+          }
+          else if (eventName=="sync")
+          {
+            
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+            
+              var reserve0=parseInt(newData[3][1].data);
+              var reserve1=parseInt(newData[4][1].data);
+              pair=splitdata(newData[2][1].data);
+            
+              console.log("reserve0: ", reserve0);
+              console.log("reserve1: ", reserve1);
+              console.log("pair: ",pair);
+              let response=await request(process.env.GRAPHQL,
+                    `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
+                    handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
+                    result
+                    }
+                                
+                    }`,
+                    {reserve0:reserve0, reserve1: reserve1, pairAddress: pair});
+
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+             
+          }
+          else if (eventName=="swap")
+          {
+            
+              console.log(eventName+ " Event result: ");
+              console.log(newData[0][0].data + " = " + newData[0][1].data);
+              console.log(newData[1][0].data + " = " + newData[1][1].data);
+              console.log(newData[2][0].data + " = " + newData[2][1].data);
+              console.log(newData[3][0].data + " = " + newData[3][1].data);
+              console.log(newData[4][0].data + " = " + newData[4][1].data);
+              console.log(newData[5][0].data + " = " + newData[5][1].data);
+              console.log(newData[6][0].data + " = " + newData[6][1].data);
+              console.log(newData[7][0].data + " = " + newData[7][1].data);
+              console.log(newData[8][0].data + " = " + newData[8][1].data);
+              console.log(newData[9][0].data + " = " + newData[9][1].data);
+            
+              var amount0In=parseInt(newData[0][1].data);
+              var amount1In=parseInt(newData[1][1].data);
+              var amount0Out=parseInt(newData[2][1].data);
+              var amount1Out=parseInt(newData[3][1].data);
+              var from=splitdata(newData[6][1].data);
+              pair=splitdata(newData[7][1].data);
+              var sender=splitdata(newData[8][1].data);
+              var to=splitdata(newData[9][1].data);
+            
+              console.log("amount0In: ", amount0In);
+              console.log("amount1In: ", amount1In);
+              console.log("amount0Out: ", amount0Out);
+              console.log("amount1Out: ", amount1Out);
+              console.log("from: ",from);
+              console.log("pair: ",pair);
+              console.log("sender: ", sender);
+              console.log("to: ", to);
+              let response= await request(process.env.GRAPHQL,
+                    `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+                    handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+                      result
+                    }
+                                    
+                    }`,
+                    {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+              console.log(response);
+              await eventsModel.deleteOne({ _id: eventsData[i]._id });
+          }	
+            if(i==eventslength)
+            {
+              let response = await Response.findOne({ id: "1" });
+              if(response=== null)
+              {
+                // create new response
+                response = new Response({
+                  id: "1",
+                  result: true
+                });
+                await response.save();
+              }
+              return response;
+            }
+        }
+      }
     } catch (error) {
       throw new Error(error);
     }
@@ -234,6 +490,7 @@ const handleTransfer = {
   async resolve(parent, args, context) {
     try {
 
+      
       // ignore initial transfers for first adds
       if (args.to == ADDRESS_ZERO && args.value === 1000) {
         return false;
@@ -253,6 +510,7 @@ const handleTransfer = {
       createUser(to);
 
       let pair = await Pair.findOne({ id: args.pairAddress });
+      console.log("pair result,",pair);
 
       // get or create transaction
       let transaction = await Transaction.findOne({ id: transactionHash });
@@ -266,17 +524,18 @@ const handleTransfer = {
           swaps: [],
         });
       }
-
+    
       // mints
       let mints = transaction.mints;
       if (from == ADDRESS_ZERO) {
-     
+        
         // update total supply
         pair.totalSupply = pair.totalSupply + args.value;
         pair.save();
 
         // create new mint if no mints so far or if last one is done already
         if (mints.length === 0 || isCompleteMint(mints[mints.length - 1])) {
+          
           let mint = new MintEvent({
             id: transactionHash + "-" + (mints.length).toString(),
             transactionid:transaction.id,
@@ -314,10 +573,11 @@ const handleTransfer = {
           await factory.save();
         }
       }
-
+      
+   
       // case where direct send first on ETH withdrawls
       if (to == pair.id) {
-      
+      console.log("case where direct send first on ETH withdrawls");
         let burns = transaction.burns;
         let burn = new BurnEvent({
           id: transactionHash + "-" + (burns.length).toString(),
@@ -352,10 +612,10 @@ const handleTransfer = {
         transaction.burns = burns;
         await transaction.save();
       }
-
+      
       // burn
       if (to == ADDRESS_ZERO && from == pair.id) {
-       
+        console.log("burn");
         pair.totalSupply = pair.totalSupply - args.value;
         await pair.save();
 
@@ -423,6 +683,7 @@ const handleTransfer = {
       
         // if this logical burn included a fee mint, account for this
         if (mints.length !== 0 && !isCompleteMint(mints[mints.length - 1].id)) {
+          console.log("burn4");
           let mint = await MintEvent.findOne({ id: mints[mints.length - 1].id });
           burn.feeTo = mint.to;
           burn.feeLiquidity = mint.liquidity;
@@ -454,7 +715,9 @@ const handleTransfer = {
       }
 
       if (from != ADDRESS_ZERO && from != pair.id) {
+        console.log("burn2");
         let Balance =await PairContract.balanceOf(args.pairAddress,from);
+        //let Balance=2000;
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
@@ -468,7 +731,9 @@ const handleTransfer = {
       }
 
       if (to != ADDRESS_ZERO && to != pair.id) {
+        console.log("burn3");
         let Balance =await PairContract.balanceOf(args.pairAddress,to);
+        //let Balance=2000;
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;
@@ -481,6 +746,7 @@ const handleTransfer = {
       }
 
       await transaction.save();
+      
       let response = await Response.findOne({ id: "1" });
       if(response=== null)
       {

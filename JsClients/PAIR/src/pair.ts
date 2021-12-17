@@ -445,6 +445,36 @@ class PAIRClient {
       throw Error("Invalid Deploy");
     }
   }
+  public async erc20Mint_router(
+    keys: Keys.AsymmetricKey,
+    to: RecipientType,
+    amount: string,
+    paymentAmount: string
+  ) {
+
+    const runtimeArgs = RuntimeArgs.fromMap({
+      to:utils.createRecipientAddress(to),
+      amount: CLValueBuilder.u256(amount),
+    });
+
+
+    const deployHash = await contractCall({
+      chainName: this.chainName,
+      contractHash: this.contractHash,
+      entryPoint: "erc20_mint",
+      keys,
+      nodeAddress: this.nodeAddress,
+      paymentAmount,
+      runtimeArgs,
+    });
+
+    if (deployHash !== null) {
+      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+      return deployHash;
+    } else {
+      throw Error("Invalid Deploy");
+    }
+  }
   public async erc20Mint(
     keys: Keys.AsymmetricKey,
     to: String,

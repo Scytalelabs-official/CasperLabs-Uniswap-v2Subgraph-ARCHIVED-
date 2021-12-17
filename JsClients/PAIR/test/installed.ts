@@ -38,7 +38,8 @@ const {
   PAIR_CONTRACT_PACKAGE,
   PAIR_CONTRACT_NAME,
   GRAPHQL,
-  PAIR_CONTRACT
+  PAIR_CONTRACT,
+  MASTER_KEY_PAIR_PATH
 } = process.env;
 
 // const TOKEN_META = new Map(parseTokenMeta(process.env.TOKEN_META!));
@@ -47,7 +48,10 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${PAIR_MASTER_KEY_PAIR_PATH}/public_key.pem`,
   `${PAIR_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
-
+const ROUTERKEYS = Keys.Ed25519.parseKeyFiles(
+  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
+  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
+);
 const pair = new PAIRClient(
   NODE_ADDRESS!,
   CHAIN_NAME!,
@@ -330,12 +334,12 @@ const test = async () => {
   await pair.setContractHash(PAIR_CONTRACT!);
 
   //name
-  const name = await pair.name();
-  console.log(`... Contract name: ${name}`);
+  // const name = await pair.name();
+  // console.log(`... Contract name: ${name}`);
 
-  //symbol
-  const symbol = await pair.symbol();
-  console.log(`... Contract symbol: ${symbol}`);
+  // //symbol
+  // const symbol = await pair.symbol();
+  // console.log(`... Contract symbol: ${symbol}`);
 
   //initialize
   // const initializeDeployHash = await pair.initialize(
@@ -398,9 +402,9 @@ const test = async () => {
   // console.log(`... Total supply: ${totalSupply}`);
 
   // //balanceof
-  // let balance = await pair.balanceOf(KEYS.publicKey);
-  // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
-  // console.log(`... Balance: ${balance}`);
+  let balance = await pair.balanceOf(PAIR_CONTRACT_PACKAGE!);
+  //console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  console.log(`... Balance: ${balance}`);
 
   // //balanceof
   // let nonce = await pair.nonce(KEYS.publicKey);
@@ -426,8 +430,20 @@ const test = async () => {
   // //erc20mint
   // const erc20mint1DeployHash = await pair.erc20Mint(
   //   KEYS,
-  //   TOKEN1_CONTRACT!,
-  //   "1000"!,
+  //   PAIR_CONTRACT_PACKAGE!,
+  //   "2000",
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", erc20mint1DeployHash);
+
+  // await getDeploy(NODE_ADDRESS!, erc20mint1DeployHash);
+  // console.log("... Token minted successfully");
+
+  //erc20mint
+  // const erc20mint1DeployHash = await pair.erc20Mint_router(
+  //   KEYS,
+  //   ROUTERKEYS.publicKey!,
+  //   "2000",
   //   MINT_PAYMENT_AMOUNT!
   // );
   // console.log("... Mint deploy hash: ", erc20mint1DeployHash);
@@ -513,7 +529,7 @@ const test = async () => {
   //erc20mint
   // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
   //   KEYS,
-  //   TOKEN0_CONTRACT!,
+  //   PAIR_CONTRACT_PACKAGE!,
   //   "1000"!,
   //   MINT_PAYMENT_AMOUNT!
   // );
@@ -577,7 +593,7 @@ const test = async () => {
 
 };
 
-//test();
+test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   

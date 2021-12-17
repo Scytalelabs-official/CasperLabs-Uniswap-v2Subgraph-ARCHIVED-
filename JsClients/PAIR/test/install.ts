@@ -72,7 +72,7 @@ const test = async () => {
   );
 
   console.log(`... Contract Hash: ${contractHash}`);
-  console.log(`... Contract Package Hash: ${packageHash}`);
+  console.log(`... Package Hash: ${packageHash}`);
  
 };
 
