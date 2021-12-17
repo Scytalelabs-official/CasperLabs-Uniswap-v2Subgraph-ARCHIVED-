@@ -67,253 +67,253 @@ function splitdata(data:string)
 
 const test = async () => {
   
-  const listener = pair.onEvent(
-    [
-      PAIREvents.Transfer,
-      PAIREvents.Mint,
-      PAIREvents.Burn,
-      PAIREvents.Sync,
-      PAIREvents.Swap,
-    ],
-    async (eventName, deploy, result) => {
-      if (deploy.success) {
-        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-          const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
-          console.log("... Deployhash: ",  deploy.deployHash);
-          console.log("... Timestamp: ", timestamp);
-          console.log("... Block hash: ", block_hash);
-          console.log("result.value(): ",result.value());
-          let newData = JSON.parse(JSON.stringify(result.value()));
-          if(eventName=="approve")
-          {
-              console.log(eventName+ " Event result: ");
-              console.log(newData[0][0].data + " = " + newData[0][1].data);
-              console.log(newData[1][0].data + " = " + newData[1][1].data);
-              console.log(newData[2][0].data + " = " + newData[2][1].data);
-              console.log(newData[3][0].data + " = " + newData[3][1].data);
-              console.log(newData[4][0].data + " = " + newData[4][1].data);
-          }
-          else if(eventName=="erc20_transfer")
-          {
-              console.log(eventName+ " Event result: ");
-              console.log(newData[0][0].data + " = " + newData[0][1].data);
-              console.log(newData[1][0].data + " = " + newData[1][1].data);
+  // const listener = pair.onEvent(
+  //   [
+  //     PAIREvents.Transfer,
+  //     PAIREvents.Mint,
+  //     PAIREvents.Burn,
+  //     PAIREvents.Sync,
+  //     PAIREvents.Swap,
+  //   ],
+  //   async (eventName, deploy, result) => {
+  //     if (deploy.success) {
+  //       console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+  //         const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+  //         console.log("... Deployhash: ",  deploy.deployHash);
+  //         console.log("... Timestamp: ", timestamp);
+  //         console.log("... Block hash: ", block_hash);
+  //         console.log("result.value(): ",result.value());
+  //         let newData = JSON.parse(JSON.stringify(result.value()));
+  //         if(eventName=="approve")
+  //         {
+  //             console.log(eventName+ " Event result: ");
+  //             console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //             console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //             console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //             console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //             console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //         }
+  //         else if(eventName=="erc20_transfer")
+  //         {
+  //             console.log(eventName+ " Event result: ");
+  //             console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //             console.log(newData[1][0].data + " = " + newData[1][1].data);
   
-              console.log(newData[2][0].data + " = " + newData[2][1].data);
-              console.log(newData[3][0].data + " = " + newData[3][1].data);
-              console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //             console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //             console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //             console.log(newData[4][0].data + " = " + newData[4][1].data);
               
-              var flag=0;
-              var temp=(newData[3][1].data).split('(');
-              console.log("temp[0]: ",temp[0]);
-              if(temp[0] == "Key::Account(")
-              {
-                flag=1;
-              }
-              var from=splitdata(newData[2][1].data);
-              var to=splitdata(newData[3][1].data);
-              var value=parseInt(newData[4][1].data);
+  //             var flag=0;
+  //             var temp=(newData[3][1].data).split('(');
+  //             console.log("temp[0]: ",temp[0]);
+  //             if(temp[0] == "Key::Account(")
+  //             {
+  //               flag=1;
+  //             }
+  //             var from=splitdata(newData[2][1].data);
+  //             var to=splitdata(newData[3][1].data);
+  //             var value=parseInt(newData[4][1].data);
   
-              console.log("from: ", from);
-              console.log("to: ", to);
-              console.log("value: ",value);
+  //             console.log("from: ", from);
+  //             console.log("to: ", to);
+  //             console.log("value: ",value);
               
-              if(flag==0)
-              {
-                request(GRAPHQL!,
-                  `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-                  handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                  result
-                  }
+  //             if(flag==0)
+  //             {
+  //               request(GRAPHQL!,
+  //                 `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //                 handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //                 result
+  //                 }
                 
-                  }`,
-                  {from:from, to: to, value: value, pairAddress: to, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-                  .then(data => console.log(data))
-                  .catch(error => console.error(error));
-              }
+  //                 }`,
+  //                 {from:from, to: to, value: value, pairAddress: to, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //                 .then(data => console.log(data))
+  //                 .catch(error => console.error(error));
+  //             }
             
-          }
-          else if(eventName=="transfer")
-          {
-            console.log(eventName+ " Event result: ");
-            console.log(newData[0][0].data + " = " + newData[0][1].data);
-            console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //         }
+  //         else if(eventName=="transfer")
+  //         {
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
 
-            console.log(newData[2][0].data + " = " + newData[2][1].data);
-            console.log(newData[3][0].data + " = " + newData[3][1].data);
-            console.log(newData[4][0].data + " = " + newData[4][1].data);
-            console.log(newData[5][0].data + " = " + newData[5][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //           console.log(newData[5][0].data + " = " + newData[5][1].data);
 
-            var from=splitdata(newData[2][1].data);
-            var to=splitdata(newData[4][1].data);
-            var value=parseInt(newData[5][1].data);
-            var pair=splitdata(newData[3][1].data);
+  //           var from=splitdata(newData[2][1].data);
+  //           var to=splitdata(newData[4][1].data);
+  //           var value=parseInt(newData[5][1].data);
+  //           var pair=splitdata(newData[3][1].data);
 
-            console.log("from: ", from);
-            console.log("to: ", to);
-            console.log("value: ",value);
-            console.log("pair: ", pair);
+  //           console.log("from: ", from);
+  //           console.log("to: ", to);
+  //           console.log("value: ",value);
+  //           console.log("pair: ", pair);
 
-            request(GRAPHQL!,
-              `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-              handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                 result
-               }
+  //           request(GRAPHQL!,
+  //             `mutation handleTransfer( $from: String!, $to: String!, $value: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //             handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //                result
+  //              }
              
-              }`,
-               {from:from, to: to, value: value, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-               .then(data => console.log(data))
-               .catch(error => console.error(error));
-          }
-          else if (eventName=="mint")
-          {
+  //             }`,
+  //              {from:from, to: to, value: value, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //              .then(data => console.log(data))
+  //              .catch(error => console.error(error));
+  //         }
+  //         else if (eventName=="mint")
+  //         {
 
-            console.log(eventName+ " Event result: ");
-            console.log(newData[0][0].data + " = " + newData[0][1].data);
-            console.log(newData[1][0].data + " = " + newData[1][1].data);
-            console.log(newData[2][0].data + " = " + newData[2][1].data);
-            console.log(newData[3][0].data + " = " + newData[3][1].data);
-            console.log(newData[4][0].data + " = " + newData[4][1].data);
-            console.log(newData[5][0].data + " = " + newData[5][1].data);
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //           console.log(newData[5][0].data + " = " + newData[5][1].data);
 
-            var amount0=parseInt(newData[0][1].data);
-            var amount1=parseInt(newData[1][1].data);
-            var pair=splitdata(newData[4][1].data);
-            var sender=splitdata(newData[5][1].data);
+  //           var amount0=parseInt(newData[0][1].data);
+  //           var amount1=parseInt(newData[1][1].data);
+  //           var pair=splitdata(newData[4][1].data);
+  //           var sender=splitdata(newData[5][1].data);
 
-            console.log("amount0: ", amount0);
-            console.log("amount1: ", amount1);
-            console.log("pair: ",pair);
-            console.log("sender: ", sender);
+  //           console.log("amount0: ", amount0);
+  //           console.log("amount1: ", amount1);
+  //           console.log("pair: ",pair);
+  //           console.log("sender: ", sender);
 
-            request(GRAPHQL!,
-              `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-                handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+  //           request(GRAPHQL!,
+  //             `mutation handleMint( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //               handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //                  result
+  //                }
                
-                }`,
-                 {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
-          }
-          else if (eventName=="burn")
-          {
+  //               }`,
+  //                {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //                .then(data => console.log(data))
+  //                .catch(error => console.error(error));
+  //         }
+  //         else if (eventName=="burn")
+  //         {
 
-            console.log(eventName+ " Event result: ");
-            console.log(newData[0][0].data + " = " + newData[0][1].data);
-            console.log(newData[1][0].data + " = " + newData[1][1].data);
-            console.log(newData[2][0].data + " = " + newData[2][1].data);
-            console.log(newData[3][0].data + " = " + newData[3][1].data);
-            console.log(newData[4][0].data + " = " + newData[4][1].data);
-            console.log(newData[5][0].data + " = " + newData[5][1].data);
-            console.log(newData[6][0].data + " = " + newData[6][1].data);
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //           console.log(newData[5][0].data + " = " + newData[5][1].data);
+  //           console.log(newData[6][0].data + " = " + newData[6][1].data);
             
-            var amount0=parseInt(newData[0][1].data);
-            var amount1=parseInt(newData[1][1].data);
-            var pair=splitdata(newData[4][1].data);
-            var sender=splitdata(newData[5][1].data);
-            var to=splitdata(newData[6][1].data);
+  //           var amount0=parseInt(newData[0][1].data);
+  //           var amount1=parseInt(newData[1][1].data);
+  //           var pair=splitdata(newData[4][1].data);
+  //           var sender=splitdata(newData[5][1].data);
+  //           var to=splitdata(newData[6][1].data);
 
-            console.log("amount0: ", amount0);
-            console.log("amount1: ", amount1);
-            console.log("pair: ",pair);
-            console.log("sender: ", sender);
-            console.log("to: ", to);
+  //           console.log("amount0: ", amount0);
+  //           console.log("amount1: ", amount1);
+  //           console.log("pair: ",pair);
+  //           console.log("sender: ", sender);
+  //           console.log("to: ", to);
 
-            request(GRAPHQL!,
-              `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-                handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+  //           request(GRAPHQL!,
+  //             `mutation handleBurn( $amount0: Int!, $amount1: Int!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //               handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //                  result
+  //                }
                
-                }`,
-                 {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
-          }
-          else if (eventName=="sync")
-          {
+  //               }`,
+  //                {amount0:amount0, amount1: amount1, sender: sender,logIndex:0, to:to,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //                .then(data => console.log(data))
+  //                .catch(error => console.error(error));
+  //         }
+  //         else if (eventName=="sync")
+  //         {
 
-            console.log(eventName+ " Event result: ");
-            console.log(newData[0][0].data + " = " + newData[0][1].data);
-            console.log(newData[1][0].data + " = " + newData[1][1].data);
-            console.log(newData[2][0].data + " = " + newData[2][1].data);
-            console.log(newData[3][0].data + " = " + newData[3][1].data);
-            console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
 
-            var reserve0=parseInt(newData[3][1].data);
-            var reserve1=parseInt(newData[4][1].data);
-            var pair=splitdata(newData[2][1].data);
+  //           var reserve0=parseInt(newData[3][1].data);
+  //           var reserve1=parseInt(newData[4][1].data);
+  //           var pair=splitdata(newData[2][1].data);
 
-            console.log("reserve0: ", reserve0);
-            console.log("reserve1: ", reserve1);
-            console.log("pair: ",pair);
+  //           console.log("reserve0: ", reserve0);
+  //           console.log("reserve1: ", reserve1);
+  //           console.log("pair: ",pair);
            
 
-            request(GRAPHQL!,
-              `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
-               handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
-                result
-               }
+  //           request(GRAPHQL!,
+  //             `mutation handleSync( $reserve0: Int!, $reserve1: Int!, $pairAddress: String!){
+  //              handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
+  //               result
+  //              }
              
-              }`,
-               {reserve0:reserve0, reserve1: reserve1, pairAddress: pair})
-               .then(data => console.log(data))
-               .catch(error => console.error(error));
-          }
-          else if (eventName=="swap")
-          {
+  //             }`,
+  //              {reserve0:reserve0, reserve1: reserve1, pairAddress: pair})
+  //              .then(data => console.log(data))
+  //              .catch(error => console.error(error));
+  //         }
+  //         else if (eventName=="swap")
+  //         {
 
-            console.log(eventName+ " Event result: ");
-            console.log(newData[0][0].data + " = " + newData[0][1].data);
-            console.log(newData[1][0].data + " = " + newData[1][1].data);
-            console.log(newData[2][0].data + " = " + newData[2][1].data);
-            console.log(newData[3][0].data + " = " + newData[3][1].data);
-            console.log(newData[4][0].data + " = " + newData[4][1].data);
-            console.log(newData[5][0].data + " = " + newData[5][1].data);
-            console.log(newData[6][0].data + " = " + newData[6][1].data);
-            console.log(newData[7][0].data + " = " + newData[7][1].data);
-            console.log(newData[8][0].data + " = " + newData[8][1].data);
-            console.log(newData[9][0].data + " = " + newData[9][1].data);
+  //           console.log(eventName+ " Event result: ");
+  //           console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //           console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //           console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //           console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //           console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //           console.log(newData[5][0].data + " = " + newData[5][1].data);
+  //           console.log(newData[6][0].data + " = " + newData[6][1].data);
+  //           console.log(newData[7][0].data + " = " + newData[7][1].data);
+  //           console.log(newData[8][0].data + " = " + newData[8][1].data);
+  //           console.log(newData[9][0].data + " = " + newData[9][1].data);
 
-            var amount0In=parseInt(newData[0][1].data);
-            var amount1In=parseInt(newData[1][1].data);
-            var amount0Out=parseInt(newData[2][1].data);
-            var amount1Out=parseInt(newData[3][1].data);
-            var from=splitdata(newData[6][1].data);
-            var pair=splitdata(newData[7][1].data);
-            var sender=splitdata(newData[8][1].data);
-            var to=splitdata(newData[9][1].data);
+  //           var amount0In=parseInt(newData[0][1].data);
+  //           var amount1In=parseInt(newData[1][1].data);
+  //           var amount0Out=parseInt(newData[2][1].data);
+  //           var amount1Out=parseInt(newData[3][1].data);
+  //           var from=splitdata(newData[6][1].data);
+  //           var pair=splitdata(newData[7][1].data);
+  //           var sender=splitdata(newData[8][1].data);
+  //           var to=splitdata(newData[9][1].data);
 
-            console.log("amount0In: ", amount0In);
-            console.log("amount1In: ", amount1In);
-            console.log("amount0Out: ", amount0Out);
-            console.log("amount1Out: ", amount1Out);
-            console.log("from: ",from);
-            console.log("pair: ",pair);
-            console.log("sender: ", sender);
-            console.log("to: ", to);
+  //           console.log("amount0In: ", amount0In);
+  //           console.log("amount1In: ", amount1In);
+  //           console.log("amount0Out: ", amount0Out);
+  //           console.log("amount1Out: ", amount1Out);
+  //           console.log("from: ",from);
+  //           console.log("pair: ",pair);
+  //           console.log("sender: ", sender);
+  //           console.log("to: ", to);
 
-            request(GRAPHQL!,
-              `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
-                handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
-                   result
-                 }
+  //           request(GRAPHQL!,
+  //             `mutation handleSwap( $amount0In: Int!, $amount1In: Int!, $amount0Out: Int!, $amount1Out: Int!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
+  //               handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //                  result
+  //                }
                
-                }`,
-                 {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
-                 .then(data => console.log(data))
-                 .catch(error => console.error(error));
-          }
+  //               }`,
+  //                {amount0In:amount0In, amount1In: amount1In,amount0Out:amount0Out, amount1Out: amount1Out,to:to,from:from, sender: sender,logIndex:0,pairAddress: pair, deployHash:deploy.deployHash,timeStamp:timestamp.toString(), blockHash:block_hash})
+  //                .then(data => console.log(data))
+  //                .catch(error => console.error(error));
+  //         }
           
           
-      } else {
-        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(`Error: ${deploy.error}`);
-      }
-    }
-  );
+  //     } else {
+  //       console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+  //       console.log(`Error: ${deploy.error}`);
+  //     }
+  //   }
+  // );
 
   await sleep(5 * 1000);
 
@@ -402,9 +402,9 @@ const test = async () => {
   // console.log(`... Total supply: ${totalSupply}`);
 
   // //balanceof
-  let balance = await pair.balanceOf(PAIR_CONTRACT_PACKAGE!);
-  //console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
-  console.log(`... Balance: ${balance}`);
+  // let balance = await pair.balanceOf(PAIR_CONTRACT_PACKAGE!);
+  // //console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
+  // console.log(`... Balance: ${balance}`);
 
   // //balanceof
   // let nonce = await pair.nonce(KEYS.publicKey);
@@ -426,30 +426,36 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, erc20mint0DeployHash);
   // console.log("... Token minted successfully");
 
+  //erc20mint
+  // const erc20mint1DeployHash = await pair.erc20Mint_router(
+  //   KEYS,
+  //   ROUTERKEYS.publicKey,
+  //   "2000",
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", erc20mint1DeployHash);
+
+  // await getDeploy(NODE_ADDRESS!, erc20mint1DeployHash);
+  // console.log("... Token minted successfully");
 
   // //erc20mint
-  // const erc20mint1DeployHash = await pair.erc20Mint(
+  // const erc20mint2DeployHash = await pair.erc20Mint(
   //   KEYS,
   //   PAIR_CONTRACT_PACKAGE!,
   //   "2000",
   //   MINT_PAYMENT_AMOUNT!
   // );
-  // console.log("... Mint deploy hash: ", erc20mint1DeployHash);
+  // console.log("... Mint deploy hash: ", erc20mint2DeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, erc20mint1DeployHash);
+  // await getDeploy(NODE_ADDRESS!, erc20mint2DeployHash);
   // console.log("... Token minted successfully");
 
-  //erc20mint
-  // const erc20mint1DeployHash = await pair.erc20Mint_router(
-  //   KEYS,
-  //   ROUTERKEYS.publicKey!,
-  //   "2000",
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("... Mint deploy hash: ", erc20mint1DeployHash);
-
-  // await getDeploy(NODE_ADDRESS!, erc20mint1DeployHash);
-  // console.log("... Token minted successfully");
+  // //balanceof
+  let balance_router = await pair.balanceOf_router(ROUTERKEYS.publicKey);
+  console.log(`... Balance: ${balance_router}`);
+  //balanceof
+  let balance = await pair.balanceOf((PAIR_CONTRACT_PACKAGE!).toLowerCase());
+  console.log(`... Balance: ${balance}`);
 
   // //sync
   // const syncDeployHash = await pair.sync(
@@ -593,7 +599,7 @@ const test = async () => {
 
 };
 
-test();
+//test();
 
 export const balanceOf = async (contractHash:string, key:string) => {
   

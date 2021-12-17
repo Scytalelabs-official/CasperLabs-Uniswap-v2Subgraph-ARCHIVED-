@@ -160,9 +160,19 @@ class PAIRClient {
     );
     return result.value();
   }
-
+  public async balanceOf_router(account: CLPublicKey) {
+    const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
+    console.log("accoutnHash: ",accountHash);
+    const result = await utils.contractDictionaryGetter(
+      this.nodeAddress,
+      accountHash,
+      this.namedKeys.balances
+    );
+    const maybeValue = result.value().unwrap();
+    return maybeValue.value().toString();
+  }
   public async balanceOf(accountHash: string) {
-    //const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
+    console.log("accoutnHash: ",accountHash);
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
       accountHash,

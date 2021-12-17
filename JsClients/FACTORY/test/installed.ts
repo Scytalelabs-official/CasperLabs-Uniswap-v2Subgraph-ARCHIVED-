@@ -27,6 +27,7 @@ const {
   TOKEN1_CONTRACT,
   PAIR_CONTRACT,
   FACTORY_CONTRACT,
+  PACKAGE_HASH,
   GRAPHQL
 } = process.env;
 
@@ -50,54 +51,54 @@ function splitdata(data:string)
 
 const test = async () => {
   
-  const listener = factory.onEvent(
-    [
-      FACTORYEvents.PairCreated
-    ],
-    async (eventName, deploy, result) => {
-      if (deploy.success) {
-        console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-        const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
-        console.log("... Timestamp: ", timestamp);
-        console.log("... Block hash: ", block_hash);
-        console.log("result.value(): ", result.value());
-        let newData = JSON.parse(JSON.stringify(result.value()));
+  // const listener = factory.onEvent(
+  //   [
+  //     FACTORYEvents.PairCreated
+  //   ],
+  //   async (eventName, deploy, result) => {
+  //     if (deploy.success) {
+  //       console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
+  //       const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
+  //       console.log("... Timestamp: ", timestamp);
+  //       console.log("... Block hash: ", block_hash);
+  //       console.log("result.value(): ", result.value());
+  //       let newData = JSON.parse(JSON.stringify(result.value()));
         
-        console.log(eventName+ " Event result: ");
-        console.log(newData[0][0].data + " = " + newData[0][1].data);
-        console.log(newData[1][0].data + " = " + newData[1][1].data);
-        console.log(newData[2][0].data + " = " + newData[2][1].data);
-        console.log(newData[3][0].data + " = " + newData[3][1].data);
-        console.log(newData[4][0].data + " = " + newData[4][1].data);
-        console.log(newData[5][0].data + " = " + newData[5][1].data);
+  //       console.log(eventName+ " Event result: ");
+  //       console.log(newData[0][0].data + " = " + newData[0][1].data);
+  //       console.log(newData[1][0].data + " = " + newData[1][1].data);
+  //       console.log(newData[2][0].data + " = " + newData[2][1].data);
+  //       console.log(newData[3][0].data + " = " + newData[3][1].data);
+  //       console.log(newData[4][0].data + " = " + newData[4][1].data);
+  //       console.log(newData[5][0].data + " = " + newData[5][1].data);
         
-        var allpairslength=parseInt(newData[0][1].data);
-        var pair=splitdata(newData[3][1].data);
-        var token0=splitdata(newData[4][1].data);
-        var token1=splitdata(newData[5][1].data);
+  //       var allpairslength=parseInt(newData[0][1].data);
+  //       var pair=splitdata(newData[3][1].data);
+  //       var token0=splitdata(newData[4][1].data);
+  //       var token1=splitdata(newData[5][1].data);
         
-        console.log("allpairslength: ", allpairslength);
-        console.log("pair splited: ", pair);
-        console.log("token0 splited: ", token0);
-        console.log("token1 splited: ", token1);
+  //       console.log("allpairslength: ", allpairslength);
+  //       console.log("pair splited: ", pair);
+  //       console.log("token0 splited: ", token0);
+  //       console.log("token1 splited: ", token1);
 
-        request(GRAPHQL!,
-        `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: String!, $blockHash: String!){
-         handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
-           result
-         }
+  //       request(GRAPHQL!,
+  //       `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: String!, $blockHash: String!){
+  //        handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
+  //          result
+  //        }
        
-        }`,
-         {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp.toString(), blockHash:block_hash})
-         .then(data => console.log(data))
-         .catch(error => console.error(error));
+  //       }`,
+  //        {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp.toString(), blockHash:block_hash})
+  //        .then(data => console.log(data))
+  //        .catch(error => console.error(error));
 
-      } else {
-        console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-        console.log(`Error: ${deploy.error}`);
-      }
-    }
-  );
+  //     } else {
+  //       console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
+  //       console.log(`Error: ${deploy.error}`);
+  //     }
+  //   }
+  // );
 
   await sleep(5 * 1000);
 
@@ -126,18 +127,26 @@ const test = async () => {
   // console.log(`... Contract allpairs: ${allpairs}`);
 
   //createpair
-  const createpairDeployHash = await factory.createPair(
+  // const createpairDeployHash = await factory.createPair(
+  //   KEYS,
+  //   TOKEN0_CONTRACT!,
+  //   TOKEN1_CONTRACT!,
+  //   PAIR_CONTRACT!,
+  //   CREATE_PAIR_PAYMENT_AMOUNT!
+  // );
+  // console.log("... CreatePair deploy hash: ", createpairDeployHash);
+
+  // await getDeploy(NODE_ADDRESS!, createpairDeployHash);
+  // console.log("... Pair created successfully");
+  const set_white_list_deployHash = await factory.set_white_list(
     KEYS,
-    TOKEN0_CONTRACT!,
-    TOKEN1_CONTRACT!,
-    PAIR_CONTRACT!,
+    PACKAGE_HASH!,
     CREATE_PAIR_PAYMENT_AMOUNT!
   );
-  console.log("... CreatePair deploy hash: ", createpairDeployHash);
+  console.log("... Set WhiteList deploy hash: ", set_white_list_deployHash);
 
-  await getDeploy(NODE_ADDRESS!, createpairDeployHash);
-  console.log("... Pair created successfully");
-
+  await getDeploy(NODE_ADDRESS!, set_white_list_deployHash);
+  console.log("... Router is whitelisted successfully.");
 
   // //allpairs
   // const allPairs = await factory.allPairs();
@@ -200,18 +209,18 @@ const test = async () => {
   
 // };
 
-// export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
+export const getPair = async (contractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   
-//   console.log(`... Contract Hash: ${contractHash}`);
+  console.log(`... Contract Hash: ${contractHash}`);
 
-//   // We don't need hash- prefix so i'm removing it
-//   await factory.setContractHash(contractHash);
+  // We don't need hash- prefix so i'm removing it
+  await factory.setContractHash(contractHash);
 
-//   //pair
-//   let pair = await factory.getPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT);
-//   console.log(`... Pair: ${pair}`);
+  //pair
+  let pair = await factory.getPair(TOKEN0_CONTRACT, TOKEN1_CONTRACT);
+  console.log(`... Pair: ${pair}`);
 
-//   return pair;
+  return pair;
   
-// };
+};
 

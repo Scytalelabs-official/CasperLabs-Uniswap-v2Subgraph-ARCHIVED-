@@ -185,7 +185,36 @@ class FACTORYClient {
       throw Error("Invalid Deploy");
     }
   }
+  public async set_white_list(
+		keys: Keys.AsymmetricKey,
+		whitelist:string,
+		paymentAmount: string
+	) {
 
+		const white_list = new CLByteArray(
+			Uint8Array.from(Buffer.from(whitelist, "hex"))
+		);
+
+		const runtimeArgs = RuntimeArgs.fromMap({
+			white_list: new CLKey(white_list),
+		});
+
+		const deployHash = await contractCall({
+			chainName: this.chainName,
+			contractHash: this.contractHash,
+			entryPoint: "set_white_list",
+			keys,
+			nodeAddress: this.nodeAddress,
+			paymentAmount,
+			runtimeArgs,
+		});
+
+		if (deployHash !== null) {
+			return deployHash;
+		} else {
+			throw Error("Invalid Deploy");
+		}
+	}
   public async createPair(
     keys: Keys.AsymmetricKey,
     tokenA: String,

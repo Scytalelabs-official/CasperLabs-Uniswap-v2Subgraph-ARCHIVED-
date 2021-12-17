@@ -716,7 +716,7 @@ const handleTransfer = {
 
       if (from != ADDRESS_ZERO && from != pair.id) {
         console.log("burn2");
-        let Balance =await PairContract.balanceOf(args.pairAddress,from);
+        let Balance =await PairContract.balanceOf(args.pairAddress,from.toLowerCase());
         //let Balance=2000;
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
@@ -732,7 +732,7 @@ const handleTransfer = {
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         console.log("burn3");
-        let Balance =await PairContract.balanceOf(args.pairAddress,to);
+        let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
         //let Balance=2000;
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
@@ -804,24 +804,24 @@ const handleSync = {
 
       // update ETH price now that reserves could have changed
       let bundle = await Bundle.findOne({ id: "1" });
-      //bundle.ethPrice = getEthPriceInUSD(); 
-      bundle.ethPrice = 1; //passing one Because Casper don't have the feature right now and zero gives error on the frontend
+      bundle.ethPrice = await getEthPriceInUSD(); 
+      //bundle.ethPrice = 1; //passing one Because Casper don't have the feature right now and zero gives error on the frontend
       await bundle.save();
 
-      // token0.derivedETH = findEthPerToken(token0);
-      // token1.derivedETH = findEthPerToken(token1);
-      token0.derivedETH = 0; //passing zero Because Casper don't have the feature right now
-      token1.derivedETH = 0; //passing zero Because Casper don't have the feature right now
+      token0.derivedETH = await findEthPerToken(token0);
+      token1.derivedETH = await findEthPerToken(token1);
+      //token0.derivedETH = 0; //passing zero Because Casper don't have the feature right now
+      //token1.derivedETH = 0; //passing zero Because Casper don't have the feature right now
       await token0.save();
       await token1.save();
 
       // get tracked liquidity - will be 0 if neither is in whitelist
       let trackedLiquidityETH;
       if (bundle.ethPrice != ZERO_BD) {
-        // trackedLiquidityETH =
-        //   getTrackedLiquidityUSD(pair.reserve0, token0, pair.reserve1, token1) /
-        //   bundle.ethPrice;
-        trackedLiquidityETH = 0; //passing zero Because Casper don't have the feature right now
+        trackedLiquidityETH =
+          await getTrackedLiquidityUSD(pair.reserve0, token0, pair.reserve1, token1) /
+          bundle.ethPrice;
+        //trackedLiquidityETH = 0; //passing zero Because Casper don't have the feature right now
       } else {
         trackedLiquidityETH = ZERO_BD;
       }
@@ -1130,14 +1130,14 @@ const handleSwap = {
       let derivedAmountUSD = derivedAmountETH * bundle.ethPrice;
 
       // only accounts for volume through white listed tokens
-      // let trackedAmountUSD = getTrackedVolumeUSD(
-      //   amount0Total,
-      //   token0,
-      //   amount1Total,
-      //   token1,
-      //   pair
-      // );
-      let trackedAmountUSD = 0; //passing zero Because Casper don't have the feature right now
+      let trackedAmountUSD = await getTrackedVolumeUSD(
+        amount0Total,
+        token0,
+        amount1Total,
+        token1,
+        pair
+      );
+      //let trackedAmountUSD = 0; //passing zero Because Casper don't have the feature right now
 
       let trackedAmountETH;
       if (bundle.ethPrice == ZERO_BD) {
