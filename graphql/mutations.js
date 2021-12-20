@@ -716,8 +716,8 @@ const handleTransfer = {
 
       if (from != ADDRESS_ZERO && from != pair.id) {
         console.log("burn2");
-        let Balance =await PairContract.balanceOf(args.pairAddress,from.toLowerCase());
-        //let Balance=2000;
+        //let Balance =await PairContract.balanceOf(args.pairAddress,from.toLowerCase());
+        let Balance=2000;
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
         let fromUserLiquidityPosition = null;
@@ -732,8 +732,8 @@ const handleTransfer = {
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         console.log("burn3");
-        let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
-        //let Balance=2000;
+       //let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
+        let Balance=2000;
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
         let toUserLiquidityPosition = null;

@@ -11,10 +11,10 @@ const {
   //UNTRACKED_PAIRS
 } = require("./helpers");
 
-const WETH_ADDRESS = "2C2DeECA03Aa772E44189F6529dcad4380C5617D9F1f3C662a48cfc10Da2588A".toLowerCase();
-const USDC_WETH_PAIR = "D1aAfd97D233249aab1F8a8Bd7a9D30f411ADd645bD29Dd02fe4610300e80A31".toLowerCase(); // created 10008355
-const DAI_WETH_PAIR = "93855DECcfcD71b5d181ECf71e1987E353EE8eF75C25ED226172a2770d38d328".toLowerCase(); // created block 10042267
-const USDT_WETH_PAIR = "e40798524C0d6F7c7a82B74Bc097e8daC114e30b1daC9CDfF91a1bCB6FDC02c1".toLowerCase(); // created block 10093341
+const WETH_ADDRESS = "b0F4A61cdD8F0995cE84185598CB8A59682A20fa5C5FF95c00EFd268AE62AccF".toLowerCase();
+const USDC_WETH_PAIR = "F41eea03821F59de6a3d48161dA1ba267Fc4048B7d6761Cb18E80C5C68049388".toLowerCase(); // created 10008355
+const DAI_WETH_PAIR = "d56974F48C484D73dD61b6C34Ec532123bF11C231600e8fb1F6D349D52658700".toLowerCase(); // created block 10042267
+const USDT_WETH_PAIR = "d94b6EF6f2d47C7A054dfF699CB0B3A8294AE7221107aF837F9A78Fc3e795f72".toLowerCase(); // created block 10093341
 
 async function getEthPriceInUSD() {
   // fetch eth prices for each stablecoin
@@ -50,10 +50,10 @@ async function getEthPriceInUSD() {
 
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST = [
-  "2C2DeECA03Aa772E44189F6529dcad4380C5617D9F1f3C662a48cfc10Da2588A".toLowerCase(), // WETH
-  "a29715B3d683D5D36F46AfaD71b8f7eaAb7B3c7aE554A86a09c6B101fa7264A0".toLowerCase(), // DAI
-  "EE26EFaD06408306D167fD2DB83bf00fEef8268C50a8AAbEA8cfDF18A2C4EFB8".toLowerCase(), // USDC
-  "077075BD6876a372cC2A60B078aD95C8B49Bd953C9C76d1b90D437Bf9c0369c3".toLowerCase(), // USDT
+  "b0F4A61cdD8F0995cE84185598CB8A59682A20fa5C5FF95c00EFd268AE62AccF".toLowerCase(), // WETH
+  "22b311471Fc4CeBA1b10204A4939A7772483C017CE74a1807f053D69F813714F".toLowerCase(), // DAI
+  "5572759df79b1DbaE68270FbAd493dcFBc477097C63eEE88f3b57Bd07F5013b5".toLowerCase(), // USDC
+  "F8D63B789784e150018dEc41236BeaF018061AFa44AA85E4A6e3D3d7Eaa13B07".toLowerCase(), // USDT
 ];
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
@@ -74,7 +74,8 @@ async function findEthPerToken(token) {
   }
   // loop through whitelist and check if paired with any
   for (let i = 0; i < WHITELIST.length; ++i) {
-    let pairAddress = await factory.getPair(process.env.FACTORY_CONTRACT,token.id, WHITELIST[i]);
+    //let pairAddress = await factory.getPair(process.env.FACTORY_CONTRACT,token.id, WHITELIST[i]);
+    let pairAddress="0000000000000000000000000000000000000000000000000000000000000000";
     
     if (pairAddress != ADDRESS_ZERO) {
       let pair = await Pair.findOne({ id: pairAddress });

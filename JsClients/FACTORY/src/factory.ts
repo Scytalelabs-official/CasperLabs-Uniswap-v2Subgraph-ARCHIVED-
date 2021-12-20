@@ -116,7 +116,7 @@ class FACTORYClient {
     );
     return result.value();
   }
-
+ 
   public async getPair(tokenA: String, tokenB: String) {
 
     const tokenAContractHash = new CLByteArray(Uint8Array.from(Buffer.from(tokenA, 'hex')));
