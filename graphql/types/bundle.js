@@ -3,6 +3,7 @@ const {
   GraphQLID,
   GraphQLString,
   GraphQLInt,
+  GraphQLFloat,
 } = require("graphql");
 
 const bundleType = new GraphQLObjectType({
@@ -11,7 +12,7 @@ const bundleType = new GraphQLObjectType({
   fields: () => ({
     _id: {type: GraphQLID },
     id:{type:GraphQLString},
-    ethPrice:{type:GraphQLInt}, // price of ETH usd
+    ethPrice:{type:GraphQLFloat}, // price of ETH usd
     //bundleuser:{type:GraphQLObjectType}
   })
 });
