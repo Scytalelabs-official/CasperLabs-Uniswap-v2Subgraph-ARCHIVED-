@@ -10,7 +10,7 @@ require("dotenv").config();
 const { graphqlHTTP } = require("express-graphql");
 const schema = require("./graphql/schema");
 var listenerRouter = require('./routes/listenerroutes');
-var tokensListRouter = require('./routes/tokensList');
+var tokensListRouter = require('./routes/tokenslist');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
