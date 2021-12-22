@@ -717,6 +717,8 @@ const handleTransfer = {
       if (from != ADDRESS_ZERO && from != pair.id) {
         console.log("burn2");
         //let Balance =await PairContract.balanceOf(args.pairAddress,from.toLowerCase());
+        //console.log("Balance at  "+from+" is = "+ Balance);
+
         let Balance=2000;
         await createLiquidityPosition(args.pairAddress, from, Balance);
         
@@ -732,7 +734,9 @@ const handleTransfer = {
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         console.log("burn3");
-       //let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
+        //let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
+        //console.log("Balance at  "+to+" is = "+ Balance);
+        
         let Balance=2000;
         await createLiquidityPosition(args.pairAddress, to, Balance);
         
@@ -951,11 +955,11 @@ const handleMint = {
       token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
       token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
       
-      await uniswapDayData.save();
-      await pairDayData.save();
-      await pairHourData.save();
-      await token0DayData.save();
-      await token1DayData.save();
+      console.log("pairDayData: ",pairDayData);
+      console.log("pairHourData: ",pairHourData);
+      console.log("uniswapDayData: ",uniswapDayData);
+      console.log("token0DayData: ",token0DayData);
+      console.log("token1DayData: ",token1DayData);
 
       let response = await Response.findOne({ id: "1" });
       if(response=== null)
@@ -1064,11 +1068,11 @@ const handleBurn = {
       token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
       token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
      
-      await uniswapDayData.save();
-      await pairDayData.save();
-      await pairHourData.save();
-      await token0DayData.save();
-      await token1DayData.save();
+      console.log("pairDayData: ",pairDayData);
+      console.log("pairHourData: ",pairHourData);
+      console.log("uniswapDayData: ",uniswapDayData);
+      console.log("token0DayData: ",token0DayData);
+      console.log("token1DayData: ",token1DayData);
 
       let response = await Response.findOne({ id: "1" });
       if(response=== null)
@@ -1247,6 +1251,12 @@ const handleSwap = {
       token0DayData = await updateTokenDayData(token0,parseInt(parseInt(args.timeStamp)/1000));
       token1DayData = await updateTokenDayData(token1,parseInt(parseInt(args.timeStamp)/1000));
 
+      console.log("pairDayData: ",pairDayData);
+      console.log("pairHourData: ",pairHourData);
+      console.log("uniswapDayData: ",uniswapDayData);
+      console.log("token0DayData: ",token0DayData);
+      console.log("token1DayData: ",token1DayData);
+      
       // swap specific updating
       uniswapDayData.dailyVolumeUSD =
         uniswapDayData.dailyVolumeUSD + trackedAmountUSD;

@@ -108,7 +108,8 @@ export const contractDictionaryGetter = async (
     dictionaryItemKey,
     seedUref
   );
-
+ 
+  console.log(" storedValue: ", storedValue);
   if (storedValue && storedValue.CLValue instanceof CLValue) {
     return storedValue.CLValue!;
   } else {

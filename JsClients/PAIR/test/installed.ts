@@ -451,11 +451,12 @@ const test = async () => {
   // console.log("... Token minted successfully");
 
   // //balanceof
-  let balance_router = await pair.balanceOf_router(ROUTERKEYS.publicKey);
-  console.log(`... Balance: ${balance_router}`);
+  // let balance_router = await pair.balanceOf_router(ROUTERKEYS.publicKey);
+  // console.log(`... Balance: ${balance_router}`);
   //balanceof
-  let balance = await pair.balanceOf((PAIR_CONTRACT_PACKAGE!).toLowerCase());
-  console.log(`... Balance: ${balance}`);
+  //await pair.balanceOf(("C83Fc787656Cf682e8C77A542C636bcA1d46d5f8C011B64ADB2c6596eD7E9280").toLowerCase());
+  //await pair.balanceOf((PAIR_CONTRACT_PACKAGE!).toLowerCase());
+  //console.log(`... Balance: ${balance}`);
 
   // //sync
   // const syncDeployHash = await pair.sync(

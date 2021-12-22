@@ -18,6 +18,7 @@ const {
 async function updateUniswapDayData (timeStamp) {
   
     try {
+      console.log("hello.");
       let uniswap = await UniswapFactory.findOne({
         id: process.env.FACTORY_CONTRACT,
       });
@@ -29,7 +30,7 @@ async function updateUniswapDayData (timeStamp) {
         id: dayID.toString(),
       });
       if (uniswapDayData === null) {
-        uniswapDayData = new UniswapDayData({
+          let newData = new UniswapDayData({
           id: (parseInt(dayID)).toString(),
           date: parseInt(dayStartTimestamp),
           dailyVolumeUSD: ZERO_BD,
@@ -37,13 +38,21 @@ async function updateUniswapDayData (timeStamp) {
           totalVolumeUSD: ZERO_BD,
           totalVolumeETH: ZERO_BD,
           dailyVolumeUntracked: ZERO_BD,
+          uniswapDaytotalLiquidityUSD : uniswap.totalLiquidityUSD,
+          totalLiquidityETH : uniswap.totalLiquidityETH,
+          txCount : uniswap.txCount
         });
+        let newdocument = await UniswapDayData.create(newData);
+        console.log("newdocument: ",newdocument);
+        return newdocument;
       }
       uniswapDayData.totalLiquidityUSD = uniswap.totalLiquidityUSD;
       uniswapDayData.totalLiquidityETH = uniswap.totalLiquidityETH;
       uniswapDayData.txCount = uniswap.txCount;
       await uniswapDayData.save();
 
+      console.log("uniswapDayData: ",uniswapDayData);
+      
       return uniswapDayData;
 
     } catch (error) {
@@ -64,7 +73,7 @@ async function updatePairDayData (timeStamp,pairAddress){
       let pair = await Pair.findOne({ id: pairAddress });
       let pairDayData = await PairDayData.findOne({ id: dayPairID });
       if (pairDayData === null) {
-        pairDayData = new PairDayData({
+        let newData = new PairDayData({
           id: dayPairID,
           date: parseInt(dayStartTimestamp),
           token0: pair.token0.id,
@@ -74,15 +83,24 @@ async function updatePairDayData (timeStamp,pairAddress){
           dailyVolumeToken1: ZERO_BD,
           dailyVolumeUSD: ZERO_BD,
           dailyTxns: ZERO_BI,
+          totalSupply : pair.totalSupply,
+          reserve0 : pair.reserve0,
+          reserve1 : pair.reserve1,
+          reserveUSD : pair.reserveUSD,
+          dailyTxns : ONE_BI
         });
+        let newdocument = await PairDayData.create(newData);
+        console.log("newdocument: ",newdocument);
+        return newdocument;
       }
-
       pairDayData.totalSupply = pair.totalSupply;
       pairDayData.reserve0 = pair.reserve0;
       pairDayData.reserve1 = pair.reserve1;
       pairDayData.reserveUSD = pair.reserveUSD;
       pairDayData.dailyTxns = pairDayData.dailyTxns + ONE_BI;
       await pairDayData.save();
+
+      console.log("pairDayData: ",pairDayData);
 
       return pairDayData;
     } catch (error) {
@@ -103,15 +121,23 @@ async function updatePairHourData (timeStamp,pairAddress){
       let pair = await Pair.findOne({ id: pairAddress });
       let pairHourData = await PairHourData.findOne({ id: hourPairID });
       if (pairHourData === null) {
-        pairHourData = new PairHourData({
+        let newData = new PairHourData({
           id: hourPairID,
           hourStartUnix: parseInt(hourStartUnix),
           pair: pairAddress,
           hourlyVolumeToken0: ZERO_BD,
           hourlyVolumeToken1: ZERO_BD,
           hourlyVolumeUSD: ZERO_BD,
-          hourlyTxns: ZERO_BI,
+          hourlyTxns : ZERO_BI,
+          totalSupply : pair.totalSupply,
+          reserve0 : pair.reserve0,
+          reserve1 : pair.reserve1,
+          reserveUSD : pair.reserveUSD,
+          hourlyTxns : ONE_BI
         });
+        let newdocument = await PairHourData.create(newData);
+        console.log("newdocument: ",newdocument);
+        return newdocument;
       }
 
       pairHourData.totalSupply = pair.totalSupply;
@@ -120,6 +146,8 @@ async function updatePairHourData (timeStamp,pairAddress){
       pairHourData.reserveUSD = pair.reserveUSD;
       pairHourData.hourlyTxns = pairHourData.hourlyTxns + ONE_BI;
       await pairHourData.save();
+
+      console.log("pairHourData: ",pairHourData);
 
       return pairHourData;
     } catch (error) {
@@ -141,7 +169,7 @@ async function updateTokenDayData (token,timeStamp) {
       let tokenDayData = await TokenDayData.findOne({ id: tokenDayID });
       let tokendata = await Token.findOne({ id: token.id });
       if (tokenDayData === null) {
-        tokenDayData = new TokenDayData({
+        let newData = new TokenDayData({
           id: tokenDayID,
           date: parseInt(dayStartTimestamp),
           token: token.id,
@@ -151,8 +179,17 @@ async function updateTokenDayData (token,timeStamp) {
           dailyVolumeUSD: ZERO_BD,
           dailyTxns: ZERO_BI,
           totalLiquidityUSD: ZERO_BD,
+          priceUSD : tokendata.derivedETH * bundle.ethPrice,
+          totalLiquidityToken : tokendata.totalLiquidity,
+          totalLiquidityETH : tokendata.totalLiquidity * tokendata.derivedETH,
+          totalLiquidityUSD : (tokendata.totalLiquidity * tokendata.derivedETH) * bundle.ethPrice,
+          dailyTxns : ONE_BI
         });
+        let newdocument = await TokenDayData.create(newData);
+        console.log("newdocument: ",newdocument);
+        return newdocument;
       }
+
       tokenDayData.priceUSD = tokendata.derivedETH * bundle.ethPrice;
       tokenDayData.totalLiquidityToken = tokendata.totalLiquidity;
       tokenDayData.totalLiquidityETH =
@@ -161,6 +198,8 @@ async function updateTokenDayData (token,timeStamp) {
         tokenDayData.totalLiquidityETH * bundle.ethPrice;
       tokenDayData.dailyTxns = tokenDayData.dailyTxns + ONE_BI;
       await tokenDayData.save();
+
+      console.log("tokenDayData: ",tokenDayData);
 
       return tokenDayData;
     } catch (error) {

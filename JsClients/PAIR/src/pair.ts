@@ -19,6 +19,7 @@ import {
 import { PAIREvents } from "./constants";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
+import { consoleTestResultHandler } from "tslint/lib/test";
 
 class PAIRClient {
   private contractName: string = "pair";
@@ -178,8 +179,9 @@ class PAIRClient {
       accountHash,
       this.namedKeys.balances
     );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+    console.log("result: ",result);
+    //const maybeValue = result.value().unwrap();
+    //return maybeValue.value().toString();
   }
 
 
