@@ -11,6 +11,7 @@ const { graphqlHTTP } = require("express-graphql");
 const schema = require("./graphql/schema");
 var listenerRouter = require('./routes/listenerroutes');
 var tokensListRouter = require('./routes/tokenslist');
+var coinsmarketcapapiRouter = require('./routes/coinsmarketcapapi');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -67,6 +68,7 @@ app.get("/", (req, res) => {
 });
 app.use('/', listenerRouter);
 app.use('/', tokensListRouter);
+app.use('/', coinsmarketcapapiRouter);
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,
