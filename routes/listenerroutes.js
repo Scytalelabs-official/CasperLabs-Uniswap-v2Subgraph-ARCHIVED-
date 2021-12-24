@@ -31,8 +31,10 @@ router.route("/addpaircontractandpackageHash").post(async function (req, res, ne
 			message: "There is no packageHash specified in the req body.",
 			});
 		}
-		
-		var newpair = new hashesofpairsModel({contractHash:req.body.contractHash,packageHash:req.body.packageHash});
+
+		let contractHash=(req.body.contractHash).toLowerCase();
+		let packageHash=(req.body.packageHash).toLowerCase();
+		var newpair = new hashesofpairsModel({contractHash:contractHash,packageHash:packageHash});
 		await hashesofpairsModel.create(newpair);
 		
 		return res.status(200).json({
