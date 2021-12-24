@@ -43,11 +43,12 @@ router.route("/tokensList").get(async function (req, res, next) {
 				message: "There is no data in tokensList Collection.",
 			});
 		}
-		return res.status(200).json({
-			success: true,
-			message: "Token List Data: ",
-			data: tokensList.data
-		});
+		// return res.status(200).json({
+		// 	success: true,
+		// 	message: "Token List Data: ",
+		// 	data: tokensList.data
+		// });
+		return res.send(tokensList.data);
     
     } catch (error) {
       console.log("error (try-catch) : " + error);

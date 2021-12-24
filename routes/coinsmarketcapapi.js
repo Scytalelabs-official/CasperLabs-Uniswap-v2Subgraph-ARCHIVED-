@@ -1,22 +1,8 @@
 require('dotenv').config()
 var express = require('express');
 var router = express.Router();
-const axios = require('axios').default;
-
-const requestOptions = {
-    method: 'GET',
-    url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
-    qs: {
-        'start': '1',
-        'limit': '5000',
-        'convert': 'USD'
-    },
-    headers: {
-        'X-CMC_PRO_API_KEY': process.env.COIN_MARKET_CAP_API_KEY
-    },
-    json: true,
-    gzip: true
-};
+const rp = require('request-promise');
+const { resolveProjectReferencePath } = require('typescript');
 
 router.route("/getworthinUSD").post(async function (req, res, next) {
     try {
@@ -35,24 +21,52 @@ router.route("/getworthinUSD").post(async function (req, res, next) {
                 message: "amount not found in the request body."
             });
         }
+        if(!req.body.start)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "start not found in the request body."
+            });
+        }
+        if(!req.body.end)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "end not found in the request body."
+            });
+        }
+        const requestOptions = {
+            method: 'GET',
+            url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
+            qs: {
+                'start': req.body.start,
+                'limit': req.body.end,
+                'convert': 'USD'
+            },
+            headers: {
+                'X-CMC_PRO_API_KEY': process.env.COIN_MARKET_CAP_API_KEY
+            },
+            json: true,
+            gzip: true
+        };
 
-        axios(requestOptions)
+        rp(requestOptions)
         .then(response => {
 
-            for(var i=0; i<(response.data).data.length;i++)
+            for(var i=0; i<response.data.length;i++)
             {
-                console.log("symbol: ",response.data.data[i].symbol);
-                if(response.data.data[i].symbol == req.body.symbol)
+                console.log("symbol: ",response.data[i].symbol);
+                if(response.data[i].symbol == req.body.symbol)
                 {
                     return res.status(200).json({
                         success: true,
-                        message:  req.body.symbol+" worth in USD is = "+response.data.data[i].quote.USD.price,
-                        worth:response.data.data[i].quote.USD.price,
-                        worthforamountpassed:req.body.amount*(response.data.data[i].quote.USD.price)
+                        message:  req.body.symbol+" worth in USD is = "+response.data[i].quote.USD.price,
+                        worth:response.data[i].quote.USD.price,
+                        worthforamountpassed:req.body.amount*(response.data[i].quote.USD.price)
                     });
                 }
               
-                if(i==(response.data.data.length)-1)
+                if(i==(response.data.length)-1)
                 {
                     console.log(req.body.symbol+" not found in the coinmarketcap Api cryptocurrencies");
                     return res.status(400).json({
@@ -105,28 +119,57 @@ router.route("/tokensworthconversion").post(async function (req, res, next) {
                 message: "amount not found in the request body."
             });
         }
+        if(!req.body.start)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "start not found in the request body."
+            });
+        }
+        if(!req.body.end)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "end not found in the request body."
+            });
+        }
+        const requestOptions = {
+            method: 'GET',
+            url: "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
+            qs: {
+                'start': req.body.start,
+                'limit': req.body.end,
+                'convert': 'USD'
+            },
+            headers: {
+                'X-CMC_PRO_API_KEY': process.env.COIN_MARKET_CAP_API_KEY
+            },
+            json: true,
+            gzip: true
+        };
+
         let symboltoconverttoworthinUSD;
         let symbolforconvertionworthinUSD;
         let count=0;
         let flag=0;
     
-        axios(requestOptions)
+        rp(requestOptions)
         .then(response => {
 
             //console.log('API call response: ', response.data);
-            for(var i=0; i<(response.data).data.length;i++)
+            for(var i=0; i<response.data.length;i++)
             {
-                console.log("symbol: ",response.data.data[i].symbol);
-                if(response.data.data[i].symbol == req.body.symbolforconversion)
+                console.log("symbol: ",response.data[i].symbol);
+                if(response.data[i].symbol == req.body.symbolforconversion)
                 {
-                    symbolforconvertionworthinUSD=response.data.data[i].quote.USD.price;
+                    symbolforconvertionworthinUSD=response.data[i].quote.USD.price;
                     console.log("symbolforconverion worth in USD: ",symbolforconvertionworthinUSD);
                     count++;
                     flag=1;
                 }
-                if(response.data.data[i].symbol == req.body.symboltoconvertto)
+                if(response.data[i].symbol == req.body.symboltoconvertto)
                 {
-                    symboltoconverttoworthinUSD=response.data.data[i].quote.USD.price;
+                    symboltoconverttoworthinUSD=response.data[i].quote.USD.price;
                     console.log("symboltoconverttoworthinUSD worth in USD: ",symboltoconverttoworthinUSD);
                     count++;
                     flag=2;
@@ -144,7 +187,7 @@ router.route("/tokensworthconversion").post(async function (req, res, next) {
                          
                     });
                 }
-                if(i==(response.data.data.length)-1)
+                if(i==(response.data.length)-1)
                 {
                     if(flag==1)
                     {
@@ -186,5 +229,71 @@ router.route("/tokensworthconversion").post(async function (req, res, next) {
     }
 });
 
+router.route("/priceconversion").post(async function (req, res, next) {
+    try {
+
+        if(!req.body.symbolforconversion)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "symbolforconversion not found in the request body."
+            });
+        }
+        if(!req.body.symboltoconvertto)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "symboltoconvertto not found in the request body."
+            });
+        }
+        if(!req.body.amount)
+        {
+            return res.status(400).json({
+                success: false,
+                message: "amount not found in the request body."
+            });
+        }
+        const requestOptions = {
+            method: 'GET',
+            uri: "https://pro-api.coinmarketcap.com/v1/tools/price-conversion",
+            qs: {
+                'amount':req.body.amount,
+                'symbol':req.body.symbolforconversion,
+                'convert': req.body.symboltoconvertto
+            },
+            headers: {
+                'X-CMC_PRO_API_KEY': process.env.COIN_MARKET_CAP_API_KEY
+            },
+            json: true,
+            gzip: true
+        };
+    
+        rp(requestOptions)
+        .then(response => {
+
+            console.log('API call response: ', response.data);
+            return res.status(400).json({
+                success: false,
+                worth: response.data.quote
+            });
+            
+        }).catch((err) => {
+
+            console.log('API call error:', err.message);
+            return res.status(400).json({
+                success: false,
+                message: err.message
+            });
+        });
+
+    
+    } catch (error) {
+      console.log("error (try-catch) : " + error);
+      return res.status(500).json({
+        success: false,
+        err: error,
+      });
+    }
+});
 
 module.exports = router;
