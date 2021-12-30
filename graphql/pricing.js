@@ -11,16 +11,17 @@ const {
   //UNTRACKED_PAIRS
 } = require("./helpers");
 
-const WETH_ADDRESS = "b0F4A61cdD8F0995cE84185598CB8A59682A20fa5C5FF95c00EFd268AE62AccF".toLowerCase();
-const USDC_WETH_PAIR = "F41eea03821F59de6a3d48161dA1ba267Fc4048B7d6761Cb18E80C5C68049388".toLowerCase(); // created 10008355
-const DAI_WETH_PAIR = "d56974F48C484D73dD61b6C34Ec532123bF11C231600e8fb1F6D349D52658700".toLowerCase(); // created block 10042267
-const USDT_WETH_PAIR = "d94b6EF6f2d47C7A054dfF699CB0B3A8294AE7221107aF837F9A78Fc3e795f72".toLowerCase(); // created block 10093341
+const WCSPR_ADDRESS = "d540e0435C6Be6E7f359e132a99566d8da9d4aDc6bF19254072F32cc62A922bB".toLowerCase();
+const WCSPR_USDC__PAIR = "27982d94c019D7E51c43C5aA60b771f458DcEddC7CEFFcc6d120f62B7321a610".toLowerCase(); // created 10008355
+const WCSPR_DAI_PAIR = "0000000000000000000000000000000000000000000000000000000000000000".toLowerCase(); // created block 10042267
+const WCSPR_USDT_PAIR = "0000000000000000000000000000000000000000000000000000000000000000".toLowerCase(); // created block 10093341
 
 async function getEthPriceInUSD() {
+
   // fetch eth prices for each stablecoin
-  let daiPair = await Pair.findOne({ id: DAI_WETH_PAIR }); // dai is token0
-  let usdcPair = await Pair.findOne({ id: USDC_WETH_PAIR }); // usdc is token0
-  let usdtPair = await Pair.findOne({ id: USDT_WETH_PAIR }); // usdt is token1
+  let daiPair = await Pair.findOne({ id: WCSPR_DAI_PAIR }); // dai is token0
+  let usdcPair = await Pair.findOne({ id: WCSPR_USDC__PAIR }); // usdc is token0
+  let usdtPair = await Pair.findOne({ id: WCSPR_USDT_PAIR }); // usdt is token1
 
   // all 3 have been created
   if (daiPair !== null && usdcPair !== null && usdtPair !== null) {
@@ -50,10 +51,10 @@ async function getEthPriceInUSD() {
 
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST = [
-  "b0F4A61cdD8F0995cE84185598CB8A59682A20fa5C5FF95c00EFd268AE62AccF".toLowerCase(), // WETH
-  "22b311471Fc4CeBA1b10204A4939A7772483C017CE74a1807f053D69F813714F".toLowerCase(), // DAI
-  "5572759df79b1DbaE68270FbAd493dcFBc477097C63eEE88f3b57Bd07F5013b5".toLowerCase(), // USDC
-  "F8D63B789784e150018dEc41236BeaF018061AFa44AA85E4A6e3D3d7Eaa13B07".toLowerCase(), // USDT
+  "d540e0435C6Be6E7f359e132a99566d8da9d4aDc6bF19254072F32cc62A922bB".toLowerCase(), // WCSPR
+  "0000000000000000000000000000000000000000000000000000000000000000".toLowerCase(), // DAI
+  "45825eA26146D81EC58b7566B25757cD03B4e4F447Af1573E22EBeF38D93a6c1".toLowerCase(), // USDC
+  "0000000000000000000000000000000000000000000000000000000000000000".toLowerCase(), // USDT
 ];
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
@@ -69,7 +70,7 @@ let MINIMUM_LIQUIDITY_THRESHOLD_ETH = 2;
  * @todo update to be derived ETH (add stablecoin estimates)
  **/
 async function findEthPerToken(token) {
-  if (token.id == WETH_ADDRESS) {
+  if (token.id == WCSPR_ADDRESS) {
     return ONE_BD;
   }
   // loop through whitelist and check if paired with any

@@ -158,8 +158,9 @@ const handleNewPair = {
 
         let TokenName=await fetchTokenName(args.token1);
         let TokenSymbol=await fetchTokenSymbol(args.token1);
-        let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
-
+        //let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
+        let TokenTotalSupply=10000;
+        
         token1 = new Token({
           id: args.token1,
           symbol: TokenSymbol,

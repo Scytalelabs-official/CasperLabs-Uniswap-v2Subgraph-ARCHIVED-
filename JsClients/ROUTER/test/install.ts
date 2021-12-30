@@ -18,7 +18,7 @@ const {
   MASTER_KEY_PAIR_PATH,
   TOKEN_NAME,
   TOKEN_SYMBOL,
-  FACTORY,
+  FACTORY_CONTRACT,
   WCSPR,
   LIBRARY,
   CONTRACT_NAME,
@@ -59,7 +59,7 @@ const test = async () => {
 
   const installDeployHash = await uniswapRouter.install(
     KEYS,
-    FACTORY!,
+    FACTORY_CONTRACT!,
     WCSPR!,
     LIBRARY!,
     'UniSwapRouter',
@@ -67,7 +67,7 @@ const test = async () => {
     WASM_PATH!
   );
 
-  console.log("Passed Parameters: \nfactory: \t", FACTORY,
+  console.log("Passed Parameters: \nfactory: \t", FACTORY_CONTRACT,
   "\nwcspr: \t", WCSPR,
   "\nlibrary: \t", LIBRARY,
   "\ncontract_name: \t", CONTRACT_NAME, "\n");
