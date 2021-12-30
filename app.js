@@ -12,6 +12,7 @@ const schema = require("./graphql/schema");
 var listenerRouter = require('./routes/listenerroutes');
 var tokensListRouter = require('./routes/tokenslist');
 var pairsListRouter = require('./routes/pairslist');
+var deploypairRouter = require('./routes/deploypair');
 var coinsmarketcapapiRouter = require('./routes/coinsmarketcapapi');
 
 // view engine setup
@@ -69,6 +70,7 @@ app.get("/", (req, res) => {
 });
 app.use('/', listenerRouter);
 app.use('/', tokensListRouter);
+app.use('/', deploypairRouter);
 app.use('/', pairsListRouter);
 app.use('/', coinsmarketcapapiRouter);
 

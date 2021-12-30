@@ -101,7 +101,47 @@ class PAIRClient {
       throw Error("Problem with installation");
     }
   }
+  public async makedeployJSON(
+    signerkey:string,
+    contractName: string,
+    tokenName: string,
+    tokenSymbol: string,
+    decimals: string,
+    totalSupply: string,
+    factoryContractHash: String,
+    calleeContractHash: String,
+    paymentAmount: string,
+    wasmPath: string
+  ) {
 
+    // convert string addresses to 8 bits hex arrays
+    const _factoryContractHash = new CLByteArray(Uint8Array.from(Buffer.from(factoryContractHash, 'hex')));
+    const _calleeContractHash = new CLByteArray(Uint8Array.from(Buffer.from(calleeContractHash, 'hex')));
+
+    const runtimeArgs = RuntimeArgs.fromMap({
+      contract_name: CLValueBuilder.string(contractName),
+      name: CLValueBuilder.string(tokenName),
+      symbol: CLValueBuilder.string(tokenSymbol),
+      decimals: CLValueBuilder.u8(decimals),
+      initial_supply: CLValueBuilder.u256(totalSupply),
+      factory_hash: CLValueBuilder.key(_factoryContractHash),
+      callee_contract_hash: CLValueBuilder.key(_calleeContractHash),
+    });
+
+    const deployJSON = await makeDeploy({
+      chainName: this.chainName,
+      paymentAmount,
+      signerkey:signerkey,
+      pathToContract: wasmPath,
+      runtimeArgs,
+    });
+
+    if (deployJSON  !== null) {
+      return deployJSON;
+    } else {
+      throw Error("Problem with make Deploy.");
+    }
+  }
   public async setContractHash(hash: string) {
     const stateRootHash = await utils.getStateRootHash(this.nodeAddress);
     const contractData = await utils.getContractData(
@@ -824,6 +864,42 @@ const installWasmFile = async ({
 
   // Dispatch deploy to node.
   return await client.putDeploy(deploy);
+};
+
+interface MakeDeployParams {
+  signerkey:string,
+  chainName: string;
+  pathToContract: string;
+  runtimeArgs: RuntimeArgs;
+  paymentAmount: string;
+}
+
+const makeDeploy = async ({
+  signerkey,
+  chainName,
+  pathToContract,
+  runtimeArgs,
+  paymentAmount,
+}: MakeDeployParams): Promise<string> => {
+
+  let deploy = DeployUtil.makeDeploy(
+    new DeployUtil.DeployParams(
+      CLPublicKey.fromHex(signerkey),
+      chainName
+    ),
+    DeployUtil.ExecutableDeployItem.newModuleBytes(
+      utils.getBinary(pathToContract),
+      runtimeArgs
+    ),
+    DeployUtil.standardPayment(paymentAmount)
+  );
+  console.log("deploy: ",deploy);
+
+  let deployJSON = DeployUtil.deployToJson(deploy);
+  console.log("deployJSON: ",deployJSON);
+
+  return JSON.parse(JSON.stringify(deployJSON));
+
 };
 
 interface IContractCallParams {

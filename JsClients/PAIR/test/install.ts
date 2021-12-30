@@ -27,13 +27,14 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${PAIR_MASTER_KEY_PAIR_PATH}/public_key.pem`,
   `${PAIR_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
+const pair = new PAIRClient(
+  NODE_ADDRESS!,
+  CHAIN_NAME!,
+  EVENT_STREAM_ADDRESS!
+);
 
 const test = async () => {
-  const pair = new PAIRClient(
-    NODE_ADDRESS!,
-    CHAIN_NAME!,
-    EVENT_STREAM_ADDRESS!
-  );
+  
 
   const installDeployHash = await pair.install(
     KEYS,
@@ -74,6 +75,30 @@ const test = async () => {
   console.log(`... Contract Hash: ${contractHash}`);
   console.log(`... Package Hash: ${packageHash}`);
  
+};
+
+export const makedeploypaircontract = async (
+	FACTORY_CONTRACT: string,
+	CALLEE_CONTRACT: string,
+	signerkey:string,
+) => {
+	
+	const deployJSON = await pair.makedeployJSON(
+		signerkey,
+    PAIR_CONTRACT_NAME!,
+    PAIR_TOKEN_NAME!,
+    PAIR_TOKEN_SYMBOL!,
+    PAIR_DECIMALS!,
+    PAIR_TOTAL_SUPPLY!,
+    FACTORY_CONTRACT,
+    CALLEE_CONTRACT,
+    PAIR_INSTALL_PAYMENT_AMOUNT!,
+    PAIR_WASM_PATH!
+	);
+
+	console.log(`... Contract make deploy SuccessFull: ${deployJSON}`);
+	return deployJSON;
+  
 };
 
 //test();
