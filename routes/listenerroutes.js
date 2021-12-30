@@ -62,7 +62,7 @@ router.route("/startListener").post(async function (req, res, next) {
         });
       }
    
-      await axios.post('http://localhost:3001/listener/initiateListener', {
+      await axios.post('https://listener-backend.herokuapp.com/listener/initiateListener', {
         contractPackageHashes: req.body.contractPackageHashes
       })
       .then(function (response) {
