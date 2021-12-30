@@ -273,7 +273,7 @@ router.route("/priceconversion").post(async function (req, res, next) {
 
             console.log('API call response: ', response.data);
             return res.status(200).json({
-                success: false,
+                success: true,
                 worth: response.data.quote
             });
             
