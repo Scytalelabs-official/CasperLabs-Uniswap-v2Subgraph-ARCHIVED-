@@ -177,15 +177,6 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.PairCreated, deployHash);
-			this.addPendingDeploy(RouterEvents.Erc20Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Approval, deployHash);
-			this.addPendingDeploy(RouterEvents.Erc20Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Approval, deployHash);
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Mint, deployHash);
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -227,10 +218,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.PairCreated, deployHash);
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Mint, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -277,9 +265,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Burn, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -319,9 +305,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Burn, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -377,10 +361,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Approval, deployHash);
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Burn, deployHash);
+		
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -428,10 +409,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Approval, deployHash);
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Burn, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -481,9 +459,6 @@ class UniswapRouterClient {
 
 		if (deployHash !== null) {
 
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -526,9 +501,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -570,9 +543,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
+			
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -614,9 +585,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
+		
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -658,9 +627,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
+		
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");
@@ -710,9 +677,7 @@ class UniswapRouterClient {
 		});
 
 		if (deployHash !== null) {
-			this.addPendingDeploy(RouterEvents.Transfer, deployHash);
-			this.addPendingDeploy(RouterEvents.Sync, deployHash);
-			this.addPendingDeploy(RouterEvents.Swap, deployHash);
+		
 			return deployHash;
 		} else {
 			throw Error("Invalid Deploy");

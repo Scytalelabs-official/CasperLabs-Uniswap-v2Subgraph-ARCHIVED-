@@ -51,55 +51,6 @@ function splitdata(data:string)
 
 const test = async () => {
   
-  // const listener = factory.onEvent(
-  //   [
-  //     FACTORYEvents.PairCreated
-  //   ],
-  //   async (eventName, deploy, result) => {
-  //     if (deploy.success) {
-  //       console.log(`Successfull deploy of: ${eventName}, deployHash: ${deploy.deployHash}`);
-  //       const [timestamp,block_hash]= await getDeploy(NODE_ADDRESS!, deploy.deployHash);
-  //       console.log("... Timestamp: ", timestamp);
-  //       console.log("... Block hash: ", block_hash);
-  //       console.log("result.value(): ", result.value());
-  //       let newData = JSON.parse(JSON.stringify(result.value()));
-        
-  //       console.log(eventName+ " Event result: ");
-  //       console.log(newData[0][0].data + " = " + newData[0][1].data);
-  //       console.log(newData[1][0].data + " = " + newData[1][1].data);
-  //       console.log(newData[2][0].data + " = " + newData[2][1].data);
-  //       console.log(newData[3][0].data + " = " + newData[3][1].data);
-  //       console.log(newData[4][0].data + " = " + newData[4][1].data);
-  //       console.log(newData[5][0].data + " = " + newData[5][1].data);
-        
-  //       var allpairslength=parseInt(newData[0][1].data);
-  //       var pair=splitdata(newData[3][1].data);
-  //       var token0=splitdata(newData[4][1].data);
-  //       var token1=splitdata(newData[5][1].data);
-        
-  //       console.log("allpairslength: ", allpairslength);
-  //       console.log("pair splited: ", pair);
-  //       console.log("token0 splited: ", token0);
-  //       console.log("token1 splited: ", token1);
-
-  //       request(GRAPHQL!,
-  //       `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!, $timeStamp: String!, $blockHash: String!){
-  //        handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, timeStamp: $timeStamp, blockHash: $blockHash) {
-  //          result
-  //        }
-       
-  //       }`,
-  //        {token0:token0, token1:token1, pair: pair, all_pairs_length: allpairslength, timeStamp:timestamp.toString(), blockHash:block_hash})
-  //        .then(data => console.log(data))
-  //        .catch(error => console.error(error));
-
-  //     } else {
-  //       console.log(`Failed deploy of ${eventName}, deployHash: ${deploy.deployHash}`);
-  //       console.log(`Error: ${deploy.error}`);
-  //     }
-  //   }
-  // );
-
   await sleep(5 * 1000);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);

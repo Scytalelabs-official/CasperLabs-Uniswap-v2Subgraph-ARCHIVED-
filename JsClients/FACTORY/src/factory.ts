@@ -244,7 +244,7 @@ class FACTORYClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(FACTORYEvents.PairCreated, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

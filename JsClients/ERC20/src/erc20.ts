@@ -234,7 +234,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Approval, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -264,7 +264,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -296,7 +296,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -325,7 +325,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -355,7 +355,7 @@ class ERC20Client {
   //   });
 
   //   if (deployHash !== null) {
-  //     this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+ 
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -385,7 +385,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Transfer, deployHash);
+     
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -423,7 +423,7 @@ class ERC20Client {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(ERC20Events.Approval, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");

@@ -266,7 +266,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Approval, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -297,7 +297,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -329,7 +329,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -357,8 +357,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Sync, deployHash);
-      this.addPendingDeploy(PAIREvents.Mint, deployHash);
+     
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -385,8 +384,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Sync, deployHash);
-      this.addPendingDeploy(PAIREvents.Burn, deployHash);
+     
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -424,7 +422,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Approval, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -481,7 +479,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -512,7 +510,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+     
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -540,7 +538,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Sync, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -574,8 +572,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Sync, deployHash);
-      this.addPendingDeploy(PAIREvents.Swap, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -641,7 +638,7 @@ class PAIRClient {
     });
 
     if (deployHash !== null) {
-      this.addPendingDeploy(PAIREvents.Transfer, deployHash);
+      
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
