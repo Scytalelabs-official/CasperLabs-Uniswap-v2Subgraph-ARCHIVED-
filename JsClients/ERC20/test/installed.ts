@@ -101,16 +101,16 @@ const test = async () => {
   // // // console.log(`... Allowance: ${allowance}`);
 
   //mint
-  const mintDeployHash = await erc20.mint(
-    ROUTERKEYS,
-    ROUTERKEYS.publicKey,
-    MINT_AMOUNT!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
+  // const mintDeployHash = await erc20.mint(
+  //   ROUTERKEYS,
+  //   ROUTERKEYS.publicKey,
+  //   MINT_AMOUNT!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
-  console.log("... Token minted successfully.");
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // console.log("... Token minted successfully.");
 
   //  balanceof
   // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);

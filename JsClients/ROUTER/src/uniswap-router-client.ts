@@ -450,7 +450,7 @@ class UniswapRouterClient {
 		const deployHash = await contractCall({
 			chainName: this.chainName,
 			contractHash: this.contractHash,
-			entryPoint: "swap_exact_tokens_for_tokens",
+			entryPoint: "swap_exact_tokens_for_tokens_js_client",
 			keys,
 			nodeAddress: this.nodeAddress,
 			paymentAmount,

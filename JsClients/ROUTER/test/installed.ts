@@ -210,7 +210,7 @@ const swap_exact_tokens_for_tokens_test = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = SETFT_PATH!.split(",");
-
+	
 	return await UniswapRouter.swap_exact_tokens_for_tokens(
 		KEYS,
 		SETFT_AMOUNT_IN!,
