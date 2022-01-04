@@ -67,27 +67,27 @@ function splitdata(data:string)
 
 const test = async () => {
   
-  await sleep(5 * 1000);
+  // await sleep(5 * 1000);
 
-  let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+  // let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 
-  console.log(`... Account Info: `);
-  console.log(JSON.stringify(accountInfo, null, 2));
+  // console.log(`... Account Info: `);
+  // console.log(JSON.stringify(accountInfo, null, 2));
 
-  const contractHash = await utils.getAccountNamedKeyValue(
-    accountInfo,
-    `${PAIR_CONTRACT_NAME!}_contract_hash`
-  );
+  // const contractHash = await utils.getAccountNamedKeyValue(
+  //   accountInfo,
+  //   `${PAIR_CONTRACT_NAME!}_contract_hash`
+  // );
 
-  console.log(`... Contract Hash: ${contractHash}`);
+  // console.log(`... Contract Hash: ${contractHash}`);
 
   // We don't need hash- prefix so i'm removing it
   //await pair.setContractHash(contractHash.slice(5));
   await pair.setContractHash(PAIR_CONTRACT!);
-
+  console.log("... Contract Hash:", PAIR_CONTRACT!);
   //name
-  // const name = await pair.name();
-  // console.log(`... Contract name: ${name}`);
+  const liquidity = await pair.liquidity();
+  console.log(`... Liquidity: ${liquidity}`);
 
   // //symbol
   // const symbol = await pair.symbol();

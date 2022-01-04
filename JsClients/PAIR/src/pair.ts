@@ -183,6 +183,15 @@ class PAIRClient {
     );
     return result.value();
   }
+  
+  public async liquidity() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["liquidity"]
+    );
+    return result.value();
+  }
 
   public async symbol() {
     const result = await contractSimpleGetter(

@@ -485,7 +485,7 @@ const test = async () => {
 	//add_liquidity_cspr(uniswapRouter);
 
 	// Test remove_liquidity
-	// remove_liquidity(uniswapRouter);
+	 remove_liquidity(uniswapRouter);
 
 	// Test remove_liquidity_cspr
 	//remove_liquidity_cspr(uniswapRouter);
@@ -497,7 +497,7 @@ const test = async () => {
 	//remove_liquidity_cspr_with_permit(uniswapRouter);
 
 	// Test swap_exact_tokens_for_tokens
-	swap_exact_tokens_for_tokens(uniswapRouter);
+	//swap_exact_tokens_for_tokens(uniswapRouter);
 
 	// Test swap_tokens_for_exact_tokens
 	//swap_tokens_for_exact_tokens(uniswapRouter);
