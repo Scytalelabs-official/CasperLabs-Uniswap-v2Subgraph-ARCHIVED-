@@ -27,6 +27,7 @@ import { RouterEvents } from "./constants";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
 import { ContractType } from "casper-js-sdk/dist/lib/DeployUtil";
+import { Key } from "readline";
 const axios = require("axios").default;
 
 class UniswapRouterClient {
@@ -425,8 +426,9 @@ class UniswapRouterClient {
 		deadline: string,
 		paymentAmount: string
 	) {
-		console.log("Path (before): ", path[0]);
-		console.log("to (before): ", to);
+		console.log("Path : ", path);
+		// console.log("Path (before): ", path[0]);
+		// console.log("to (before): ", to);
 
 		// MAPPED THIS ACCORDING TO UTIL createRecipientAddress function
 		let _paths: CLKey[] = [];
@@ -435,9 +437,7 @@ class UniswapRouterClient {
 			_paths.push(utils.createRecipientAddress(p));
 		}
 
-		const _to = new CLByteArray(Uint8Array.from(Buffer.from(to, "hex")));
-
-		console.log("\n_to (After): ", utils.createRecipientAddress(_to));
+		const _to = CLPublicKey.fromHex(to);
 
 		const runtimeArgs = RuntimeArgs.fromMap({
 			amount_in: CLValueBuilder.u256(amount_in),
@@ -464,7 +464,50 @@ class UniswapRouterClient {
 			throw Error("Invalid Deploy");
 		}
 	}
+	public async swap_exact_tokens_for_tokensinterface(
+		keys: string,
+		amount_in: string,
+		amount_out_min: string,
+		path: string[],
+		to: string,
+		deadline: string,
+		paymentAmount: string
+	) {
+		console.log("Path : ", path);
+		
+		// MAPPED THIS ACCORDING TO UTIL createRecipientAddress function
+		let _paths: CLKey[] = [];
+		for (let i = 0; i < path.length; i++) {
+			const p = new CLByteArray(Uint8Array.from(Buffer.from(path[i], "hex")));
+			_paths.push(utils.createRecipientAddress(p));
+		}
 
+		const _to = CLPublicKey.fromHex(to);
+
+		const runtimeArgs = RuntimeArgs.fromMap({
+			amount_in: CLValueBuilder.u256(amount_in),
+			amount_out_min: CLValueBuilder.u256(amount_out_min),
+			path: new CLList(_paths),
+			to: utils.createRecipientAddress(_to),
+			deadline: CLValueBuilder.u256(deadline),
+		});
+
+		const deployHash = await contractCallinterface({
+			chainName: this.chainName,
+			contractHash: this.contractHash,
+			entryPoint: "swap_exact_tokens_for_tokens_js_client",
+			keys,
+			paymentAmount,
+			runtimeArgs,
+		});
+
+		if (deployHash !== null) {
+
+			return deployHash;
+		} else {
+			throw Error("Invalid Deploy");
+		}
+	}
 	public async swap_tokens_for_exact_tokens(
 		keys: Keys.AsymmetricKey,
 		amount_out: string,
@@ -929,6 +972,46 @@ const contractCall = async ({
 	const deployHash = await client.putDeploy(deploy);
 
 	return deployHash;
+};
+
+interface IContractInterfaceCallParams {
+	keys: string;
+	chainName: string;
+	entryPoint: string;
+	runtimeArgs: RuntimeArgs;
+	paymentAmount: string;
+	contractHash: string;
+}
+
+const contractCallinterface = async ({
+	keys,
+	chainName,
+	contractHash,
+	entryPoint,
+	runtimeArgs,
+	paymentAmount,
+}: IContractInterfaceCallParams) => {
+	console.log("hello");
+	const contractHashAsByteArray = utils.contractHashToByteArray(contractHash);
+	console.log("hello2");
+	console.log("contractHashAsByteArray",contractHashAsByteArray);
+	console.log("key",keys);
+	let deploy = DeployUtil.makeDeploy(
+		new DeployUtil.DeployParams(CLPublicKey.fromHex(keys), chainName),
+		DeployUtil.ExecutableDeployItem.newStoredContractByHash(
+			contractHashAsByteArray,
+			entryPoint,
+			runtimeArgs
+		),
+		DeployUtil.standardPayment(paymentAmount)
+	);
+	console.log("hello3");
+	console.log("deploy: ",deploy);
+
+	let deployJSON = DeployUtil.deployToJson(deploy);
+	console.log("deployJSON: ",deployJSON);
+
+	return JSON.parse(JSON.stringify(deployJSON));
 };
 
 const contractSimpleGetter = async (

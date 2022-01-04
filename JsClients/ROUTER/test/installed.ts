@@ -479,7 +479,7 @@ const test = async () => {
 	await uniswapRouter.setContractHash(CONTRACT_HASH!);
 	
 	// Test add_liquidity
-	await add_liquidity(uniswapRouter);
+	//await add_liquidity(uniswapRouter);
 
 	// Test add_liquidity_cspr
 	//add_liquidity_cspr(uniswapRouter);
@@ -497,7 +497,7 @@ const test = async () => {
 	//remove_liquidity_cspr_with_permit(uniswapRouter);
 
 	// Test swap_exact_tokens_for_tokens
-	//swap_exact_tokens_for_tokens(uniswapRouter);
+	swap_exact_tokens_for_tokens(uniswapRouter);
 
 	// Test swap_tokens_for_exact_tokens
 	//swap_tokens_for_exact_tokens(uniswapRouter);
@@ -529,3 +529,30 @@ const test = async () => {
 };
 
 //test();
+
+export const swapforinterface = async (
+	signerkey:string,
+	amountin: string,
+	amountout: string,
+	paths:string[],
+	to:string,
+	deadline:string,
+	installpaymentamount:string
+) => {
+
+	await uniswapRouter.setContractHash(CONTRACT_HASH!);
+	console.log("key:",signerkey);
+	const deploy = await uniswapRouter.swap_exact_tokens_for_tokensinterface(
+		signerkey,
+		amountin,
+		amountout,
+		paths,
+		to,
+		deadline,
+		installpaymentamount
+	);
+
+	console.log(`... Swap make deploy SuccessFull: ${deploy}`);
+	return deploy;
+  
+};

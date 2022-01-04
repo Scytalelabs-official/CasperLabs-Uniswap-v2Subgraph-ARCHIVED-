@@ -13,6 +13,7 @@ var listenerRouter = require('./routes/listenerroutes');
 var tokensListRouter = require('./routes/tokenslist');
 var pairsListRouter = require('./routes/pairslist');
 var deploypairRouter = require('./routes/deploypair');
+var swapRouter = require('./routes/swaproutes');
 var coinsmarketcapapiRouter = require('./routes/coinsmarketcapapi');
 
 // view engine setup
@@ -72,6 +73,7 @@ app.use('/', listenerRouter);
 app.use('/', tokensListRouter);
 app.use('/', deploypairRouter);
 app.use('/', pairsListRouter);
+app.use('/', swapRouter);
 app.use('/', coinsmarketcapapiRouter);
 
 app.use('/graphql', graphqlHTTP({
