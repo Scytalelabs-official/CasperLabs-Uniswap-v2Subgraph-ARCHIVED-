@@ -229,8 +229,8 @@ class PAIRClient {
       this.namedKeys.balances
     );
     console.log("result: ",result);
-    //const maybeValue = result.value().unwrap();
-    //return maybeValue.value().toString();
+    const maybeValue = result.value().unwrap();
+    return maybeValue.value().toString();
   }
 
 

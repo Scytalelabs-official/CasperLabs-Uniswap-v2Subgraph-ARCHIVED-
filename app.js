@@ -14,7 +14,7 @@ var tokensListRouter = require('./routes/tokenslist');
 var pairsListRouter = require('./routes/pairslist');
 var deploypairRouter = require('./routes/deploypair');
 var swapRouter = require('./routes/swaproutes');
-var mintRouter = require('./routes/mintroutes');
+var liquidityRouter = require('./routes/liquidityroutes');
 var coinsmarketcapapiRouter = require('./routes/coinsmarketcapapi');
 
 // view engine setup
@@ -75,7 +75,7 @@ app.use('/', tokensListRouter);
 app.use('/', deploypairRouter);
 app.use('/', pairsListRouter);
 app.use('/', swapRouter);
-app.use('/', mintRouter);
+app.use('/', liquidityRouter);
 app.use('/', coinsmarketcapapiRouter);
 
 app.use('/graphql', graphqlHTTP({
