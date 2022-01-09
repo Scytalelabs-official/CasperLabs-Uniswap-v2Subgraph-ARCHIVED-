@@ -2,8 +2,8 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt,
     GraphQLBoolean,
+    GraphQLInt,
     GraphQLFloat
 } = require("graphql");
 
@@ -24,14 +24,14 @@ const swapType = new GraphQLObjectType({
         // populated from the Swap event
         sender:{type:GraphQLString},
         from:{type:GraphQLString},//the EOA that initiated the txn
-        amount0In:{type:GraphQLInt},
-        amount1In:{type:GraphQLInt},
-        amount0Out:{type:GraphQLInt},
-        amount1Out:{type:GraphQLInt},
+        amount0In:{type:GraphQLString},
+        amount1In:{type:GraphQLString},
+        amount0Out:{type:GraphQLString},
+        amount1Out:{type:GraphQLString},
         // populated from the primary Transfer event
         to:{type:GraphQLString},
         logIndex:{type:GraphQLInt},
-        amountUSD:{type:GraphQLInt}, // derived amount based on available prices of tokens
+        amountUSD:{type:GraphQLString}, // derived amount based on available prices of tokens
 
   })
 });

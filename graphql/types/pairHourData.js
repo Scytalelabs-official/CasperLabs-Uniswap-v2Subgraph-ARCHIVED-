@@ -2,7 +2,7 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt
+    GraphQLFloat
 } = require("graphql");
   
 
@@ -14,18 +14,18 @@ const pairHourDataType = new GraphQLObjectType({
   
         _id: {type: GraphQLID },
         id:{type:GraphQLString},
-        hourStartUnix: {type:GraphQLInt},// unix timestamp for start of hour
+        hourStartUnix: {type:GraphQLFloat},// unix timestamp for start of hour
         pair: {type:GraphQLString},
         // reserves
-        reserve0: {type:GraphQLInt},
-        reserve1: {type:GraphQLInt},
-        totalSupply: {type:GraphQLInt},// total supply for LP historical returns
-        reserveUSD: {type:GraphQLInt},// derived liquidity
+        reserve0: {type:GraphQLString},
+        reserve1: {type:GraphQLString},
+        totalSupply: {type:GraphQLString},// total supply for LP historical returns
+        reserveUSD: {type:GraphQLString},// derived liquidity
         // volume stats
-        hourlyVolumeToken0: {type:GraphQLInt},
-        hourlyVolumeToken1: {type:GraphQLInt},
-        hourlyVolumeUSD: {type:GraphQLInt},
-        hourlyTxns: {type:GraphQLInt}
+        hourlyVolumeToken0: {type:GraphQLString},
+        hourlyVolumeToken1: {type:GraphQLString},
+        hourlyVolumeUSD: {type:GraphQLString},
+        hourlyTxns: {type:GraphQLString}
         
   })
 });

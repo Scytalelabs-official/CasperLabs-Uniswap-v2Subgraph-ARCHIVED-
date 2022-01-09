@@ -17,32 +17,32 @@ const tokenDayDataSchema = new Schema({
 
     // volume stats
     dailyVolumeToken: {
-      type:Number
+      type:String
     },
     dailyVolumeETH: {
-      type:Number
+      type:String
     },
     dailyVolumeUSD: {
-      type:Number
+      type:String
     },
     dailyTxns: {
-      type:Number
+      type:String
     },
 
     // liquidity stats
     totalLiquidityToken: {
-      type:Number
+      type:String
     },
     totalLiquidityETH: {
-      type:Number
+      type:String
     },
     totalLiquidityUSD: {
-      type:Number
+      type:String
     },
     
     // price stats
     priceUSD: {
-      type:Number
+      type:String
     },
     
     mostLiquidPairs : [{ type : String}]

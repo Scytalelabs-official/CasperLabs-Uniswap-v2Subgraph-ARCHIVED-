@@ -2,7 +2,6 @@ const {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt,
   GraphQLFloat
 } = require("graphql");
 
@@ -15,14 +14,14 @@ const uniswapDayDataType = new GraphQLObjectType({
       _id: {type: GraphQLID },
       id:{type:GraphQLString},// timestamp rounded to current day by dividing by 86400
       date: {type:GraphQLFloat},
-      dailyVolumeETH: {type:GraphQLInt},
-      dailyVolumeUSD: {type:GraphQLInt},
-      dailyVolumeUntracked: {type:GraphQLInt},
-      totalVolumeETH: {type:GraphQLInt},
-      totalLiquidityETH: {type:GraphQLInt},
-      totalVolumeUSD: {type:GraphQLInt}, // Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
-      totalLiquidityUSD: {type:GraphQLInt},
-      txCount: {type:GraphQLInt}
+      dailyVolumeETH: {type:GraphQLString},
+      dailyVolumeUSD: {type:GraphQLString},
+      dailyVolumeUntracked: {type:GraphQLString},
+      totalVolumeETH: {type:GraphQLString},
+      totalLiquidityETH: {type:GraphQLString},
+      totalVolumeUSD: {type:GraphQLString}, // Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
+      totalLiquidityUSD: {type:GraphQLString},
+      txCount: {type:GraphQLString}
       
 })
 });

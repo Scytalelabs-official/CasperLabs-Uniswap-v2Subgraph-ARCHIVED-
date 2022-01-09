@@ -33,22 +33,22 @@ const test = async () => {
     EVENT_STREAM_ADDRESS!
   );
 
-  const installDeployHash = await erc20.install(
-    KEYS,
-    ERC20_TOKEN_NAME!,
-    ERC20_TOKEN_SYMBOL!,
-    ERC20_DECIMALS!,
-    ERC20_TOTAL_SUPPLY!,
-    ERC20_CONTRACT_NAME!,
-    ERC20_INSTALL_PAYMENT_AMOUNT!,
-    ERC20_WASM_PATH!
-  );
+  // const installDeployHash = await erc20.install(
+  //   KEYS,
+  //   ERC20_TOKEN_NAME!,
+  //   ERC20_TOKEN_SYMBOL!,
+  //   ERC20_DECIMALS!,
+  //   ERC20_TOTAL_SUPPLY!,
+  //   ERC20_CONTRACT_NAME!,
+  //   ERC20_INSTALL_PAYMENT_AMOUNT!,
+  //   ERC20_WASM_PATH!
+  // );
 
-  console.log(`... Contract installation deployHash: ${installDeployHash}`);
+  // console.log(`... Contract installation deployHash: ${installDeployHash}`);
 
-  await getDeploy(NODE_ADDRESS!, installDeployHash);
+  // await getDeploy(NODE_ADDRESS!, installDeployHash);
 
-  console.log(`... Contract installed successfully.`);
+  // console.log(`... Contract installed successfully.`);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 

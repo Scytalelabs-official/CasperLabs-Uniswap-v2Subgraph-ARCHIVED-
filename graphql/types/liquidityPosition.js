@@ -17,7 +17,7 @@ const liquidityPositionType = new GraphQLObjectType({
         id: {type: GraphQLString},
         user: {type: userType},
         pair: {type: pairType},
-        liquidityTokenBalance:{type: GraphQLInt}
+        liquidityTokenBalance:{type: GraphQLString}
 
   })
 });

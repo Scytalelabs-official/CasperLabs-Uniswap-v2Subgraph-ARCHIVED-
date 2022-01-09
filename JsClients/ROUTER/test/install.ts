@@ -57,26 +57,26 @@ const test = async () => {
     EVENT_STREAM_ADDRESS!
   );
 
-  const installDeployHash = await uniswapRouter.install(
-    KEYS,
-    FACTORY_CONTRACT!,
-    WCSPR!,
-    LIBRARY!,
-    'UniSwapRouter',
-    INSTALL_PAYMENT_AMOUNT!,
-    WASM_PATH!
-  );
+  // const installDeployHash = await uniswapRouter.install(
+  //   KEYS,
+  //   FACTORY_CONTRACT!,
+  //   WCSPR!,
+  //   LIBRARY!,
+  //   'UniSwapRouter',
+  //   INSTALL_PAYMENT_AMOUNT!,
+  //   WASM_PATH!
+  // );
 
-  console.log("Passed Parameters: \nfactory: \t", FACTORY_CONTRACT,
-  "\nwcspr: \t", WCSPR,
-  "\nlibrary: \t", LIBRARY,
-  "\ncontract_name: \t", CONTRACT_NAME, "\n");
+  // console.log("Passed Parameters: \nfactory: \t", FACTORY_CONTRACT,
+  // "\nwcspr: \t", WCSPR,
+  // "\nlibrary: \t", LIBRARY,
+  // "\ncontract_name: \t", CONTRACT_NAME, "\n");
 
-  console.log(`... Contract installation deployHash: ${installDeployHash}\n`);
+  // console.log(`... Contract installation deployHash: ${installDeployHash}\n`);
 
-  await getDeploy(NODE_ADDRESS!, installDeployHash);
+  // await getDeploy(NODE_ADDRESS!, installDeployHash);
 
-  console.log(`... Contract installed successfully.`);
+  // console.log(`... Contract installed successfully.`);
   
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);

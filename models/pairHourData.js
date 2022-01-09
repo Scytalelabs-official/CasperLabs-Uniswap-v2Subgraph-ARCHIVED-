@@ -17,34 +17,34 @@ const pairHourDataSchema = new Schema({
 
     // reserves
     reserve0: {
-      type:Number
+      type:String
     },
     reserve1: {
-      type:Number
+      type:String
     },
 
     // total supply for LP historical returns
     totalSupply: {
-      type:Number
+      type:String
     },
 
     // derived liquidity
     reserveUSD: {
-      type:Number
+      type:String
     },
 
     // volume stats
     hourlyVolumeToken0: {
-      type:Number
+      type:String
     },
     hourlyVolumeToken1: {
-      type:Number
+      type:String
     },
     hourlyVolumeUSD: {
-      type:Number
+      type:String
     },
     hourlyTxns: {
-      type:Number
+      type:String
     }
   
 });

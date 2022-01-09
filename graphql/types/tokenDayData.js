@@ -2,7 +2,6 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt,
     GraphQLList,
     GraphQLFloat
 } = require("graphql");
@@ -21,15 +20,15 @@ const tokenDayDataType = new GraphQLObjectType({
         date: {type:GraphQLFloat},
         token: {type:GraphQLString},
         // volume stats
-        dailyVolumeToken: {type:GraphQLInt},
-        dailyVolumeETH: {type:GraphQLInt},
-        dailyVolumeUSD: {type:GraphQLInt},
-        dailyTxns: {type:GraphQLInt},
+        dailyVolumeToken: {type:GraphQLString},
+        dailyVolumeETH: {type:GraphQLString},
+        dailyVolumeUSD: {type:GraphQLString},
+        dailyTxns: {type:GraphQLString},
         // liquidity stats
-        totalLiquidityToken: {type:GraphQLInt},
-        totalLiquidityETH: {type:GraphQLInt},
-        totalLiquidityUSD: {type:GraphQLInt},
-        priceUSD: {type:GraphQLInt},// price stats
+        totalLiquidityToken: {type:GraphQLString},
+        totalLiquidityETH: {type:GraphQLString},
+        totalLiquidityUSD: {type:GraphQLString},
+        priceUSD: {type:GraphQLString},// price stats
         mostLiquidPairs: {type: GraphQLList(GraphQLString)}
   })
 });

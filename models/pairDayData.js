@@ -26,34 +26,34 @@ const pairDayDataSchema = new Schema({
 
     // reserves
     reserve0: {
-      type:Number
+      type:String
     },
     reserve1: {
-      type:Number
+      type:String
     },
 
     // total supply for LP historical returns
     totalSupply: {
-      type:Number
+      type:String
     },
 
     // derived liquidity
     reserveUSD: {
-      type:Number
+      type:String
     },
 
     // volume stats
     dailyVolumeToken0: {
-      type:Number
+      type:String
     },
     dailyVolumeToken1: {
-      type:Number
+      type:String
     },
     dailyVolumeUSD: {
-      type:Number
+      type:String
     },
     dailyTxns: {
-      type:Number
+      type:String
     }
   
 });

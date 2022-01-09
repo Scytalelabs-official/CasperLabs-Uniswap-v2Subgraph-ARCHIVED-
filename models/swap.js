@@ -49,16 +49,16 @@ const swapSchema = new Schema({
       type:String
     },//the EOA that initiated the txn
     amount0In:{
-      type:Number
+      type:String
     },
     amount1In:{
-      type:Number
+      type:String
     },
     amount0Out:{
-      type:Number
+      type:String
     },
     amount1Out:{
-      type:Number
+      type:String
     },
     to:{
       type:String
@@ -69,7 +69,7 @@ const swapSchema = new Schema({
     
     // derived amount based on available prices of tokens
     amountUSD:{
-      type:Number
+      type:String
     }
   
 });

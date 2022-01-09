@@ -12,11 +12,11 @@ require("dotenv").config();
 const ADDRESS_ZERO =
   "0000000000000000000000000000000000000000000000000000000000000000";
 
-let ZERO_BI = 0;
-let ONE_BI = 1;
-let ZERO_BD = 0;
-let ONE_BD = 1;
-let BI_18 = 18;
+let ZERO_BI = "0";
+let ONE_BI = "1";
+let ZERO_BD = "0";
+let ONE_BD = "1";
+let BI_18 = "18";
 
 // // rebass tokens, dont count in tracked volume
 let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
@@ -62,37 +62,43 @@ let UNTRACKED_PAIRS = ["hash-0x9ea3b5b4ec044b70375236a281986106457b20ef"];
 function fromAddress(tokenAddress) {
   let staticDefinitions = [
     {
-      address: "52718191a7a3561a4731bdfe8a6c5cdb5b461f3ff4f108d992631e6546b6cf46", // Add DGD
+      address:
+        "52718191a7a3561a4731bdfe8a6c5cdb5b461f3ff4f108d992631e6546b6cf46", // Add DGD
       symbol: "DGD",
       name: "DGD",
       decimals: 9,
     },
     {
-      address: "fa38deb158ea1726452ccbbc9dc04ef591f4796efa710962e561ecb92e8194ff", // Add AAVE
+      address:
+        "fa38deb158ea1726452ccbbc9dc04ef591f4796efa710962e561ecb92e8194ff", // Add AAVE
       symbol: "AAVE",
       name: "Aave Token",
       decimals: 18,
     },
     {
-      address: "0f744d1f61294f0ae3ed5d42383ebb2c5e7d4c0c815083538783007686175d8d", // Add LIF
+      address:
+        "0f744d1f61294f0ae3ed5d42383ebb2c5e7d4c0c815083538783007686175d8d", // Add LIF
       symbol: "LIF",
       name: "Lif",
       decimals: 18,
     },
     {
-      address: "8e0645dd0bf4c13d9f06ee1833168a2db4af7d34226138a5029e04516e8c07b9", // Add SVD
+      address:
+        "8e0645dd0bf4c13d9f06ee1833168a2db4af7d34226138a5029e04516e8c07b9", // Add SVD
       symbol: "SVD",
       name: "savedroid",
       decimals: 18,
     },
     {
-      address: "5b28b445ad942a24bb5c540deb016a13a86fd1e13e9a4d3f711daa214b0fb595", //Add THEDAO
+      address:
+        "5b28b445ad942a24bb5c540deb016a13a86fd1e13e9a4d3f711daa214b0fb595", //Add THEDAO
       symbol: "THEDAO",
       name: "THEDAO",
       decimals: 16,
     },
     {
-      address: "10bf7479c48e961c3852acdf9f08ed96acefbc30e4b999e3aad73d22c69785ea", //ADD HPB
+      address:
+        "10bf7479c48e961c3852acdf9f08ed96acefbc30e4b999e3aad73d22c69785ea", //ADD HPB
       symbol: "HPB",
       name: "HPBCoin",
       decimals: 18,
@@ -127,8 +133,8 @@ async function fetchTokenName(tokenAddress) {
 async function fetchTokenSymbol(tokenAddress) {
   // static definitions overrides
   let staticDefinition = fromAddress(tokenAddress);
-  if(staticDefinition != null) {
-    return (staticDefinition).symbol;
+  if (staticDefinition != null) {
+    return staticDefinition.symbol;
   }
 
   let contractsymbol = await ERC20.getSymbol(tokenAddress);
@@ -143,8 +149,8 @@ async function fetchTokenTotalSupply(tokenAddress) {
 async function fetchTokenDecimals(tokenAddress) {
   // static definitions overrides
   let staticDefinition = fromAddress(tokenAddress);
-  if(staticDefinition != null) {
-    return (staticDefinition).decimals;
+  if (staticDefinition != null) {
+    return staticDefinition.decimals;
   }
 
   let contractdecimal = await ERC20.getDecimals(tokenAddress);
@@ -161,16 +167,31 @@ async function createLiquidityPosition(exchange, user, value) {
       pair.liquidityProviderCount = pair.liquidityProviderCount + ONE_BI;
       liquidityTokenBalance = new LiquidityPosition({
         id: exchange + "-" + user,
-        liquidityTokenBalance: value,
-        pair: {id:pair.id,reserve0:pair.reserve0,reserve1:pair.reserve1,reserveUSD:pair.reserveUSD,totalSupply:pair.totalSupply,token0:{id:pair.token0.id,symbol:pair.token0.symbol,derivedETH:pair.token0.derivedETH},token1:{id:pair.token1.id,symbol:pair.token1.symbol,derivedETH:pair.token1.derivedETH}},
-        //pair:pair,
-        user: {id:user},
+        liquidityTokenBalance: value.toString(),
+        pair: {
+          id: pair.id,
+          reserve0: pair.reserve0,
+          reserve1: pair.reserve1,
+          reserveUSD: pair.reserveUSD,
+          totalSupply: pair.totalSupply,
+          token0: {
+            id: pair.token0.id,
+            symbol: pair.token0.symbol,
+            derivedETH: pair.token0.derivedETH,
+          },
+          token1: {
+            id: pair.token1.id,
+            symbol: pair.token1.symbol,
+            derivedETH: pair.token1.derivedETH,
+          },
+        },
+        user: { id: user },
       });
 
       await liquidityTokenBalance.save();
       await pair.save();
     } else {
-      liquidityTokenBalance.liquidityTokenBalance = value;
+      liquidityTokenBalance.liquidityTokenBalance = value.toString();
       await liquidityTokenBalance.save();
     }
   } catch (error) {
@@ -206,16 +227,27 @@ async function createLiquiditySnapshot(position, timeStamp, blockHash) {
       id: position.id + timeStamp.toString(),
       liquidityPosition: position.id,
       timestamp: timeStamp,
-      block : blockHash,
+      block: blockHash,
       user: position.user.id,
-      pair: {id:position.pair.id,reserve0:pair.reserve0,reserve1:pair.reserve1,reserveUSD:pair.reserveUSD,token0:{id:pair.token0.id},token1:{id:pair.token1.id}},
-      token0PriceUSD: token0.derivedETH * bundle.ethPrice,
-      token1PriceUSD: token1.derivedETH * bundle.ethPrice,
+      pair: {
+        id: position.pair.id,
+        reserve0: pair.reserve0,
+        reserve1: pair.reserve1,
+        reserveUSD: pair.reserveUSD,
+        token0: { id: pair.token0.id },
+        token1: { id: pair.token1.id },
+      },
+      token0PriceUSD: (
+        BigInt(token0.derivedETH) * BigInt(bundle.ethPrice)
+      ).toString(),
+      token1PriceUSD: (
+        BigInt(token1.derivedETH) * BigInt(bundle.ethPrice)
+      ).toString(),
       reserve0: pair.reserve0,
       reserve1: pair.reserve1,
       reserveUSD: pair.reserveUSD,
       liquidityTokenTotalSupply: pair.totalSupply,
-      liquidityTokenBalance: position.liquidityTokenBalance
+      liquidityTokenBalance: position.liquidityTokenBalance,
     });
 
     await snapshot.save();

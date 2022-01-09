@@ -25,7 +25,7 @@ const pairSchema = new Schema({
             type : String
         },
         derivedETH:{
-            type : Number
+            type : String
         } 
     },
     token1: { 
@@ -42,55 +42,55 @@ const pairSchema = new Schema({
             type : String
         },
         derivedETH:{
-            type : Number
+            type : String
         } 
     },
 
     reserve0: {
-        type: Number,
+        type: String,
     },
     reserve1: {
-        type: Number,
+        type: String,
     },
     totalSupply:{
-        type: Number,
+        type: String,
     },
   
     //derived liquidity
     reserveETH: {
-        type: Number,
+        type: String,
     },
     reserveUSD: {
-        type: Number,
+        type: String,
     },
     // used for separating per pair reserves and global
     trackedReserveETH: {
-        type: Number,
+        type: String,
     },
   
     // Price in terms of the asset pair
     token0Price: {
-        type: Number,
+        type: String,
     },
     token1Price: {
-        type: Number,
+        type: String,
     },
   
     // lifetime volume stats
     volumeToken0: {
-        type: Number,
+        type: String,
     },
     volumeToken1: {
-        type: Number,
+        type: String,
     },
     volumeUSD: {
-        type: Number,
+        type: String,
     },
     untrackedVolumeUSD: {
-        type: Number,
+        type: String,
     },
     txCount: {
-        type: Number,
+        type: String,
     },
   
     // creation stats
@@ -103,7 +103,7 @@ const pairSchema = new Schema({
   
     // Fields used to help derived relationship
     liquidityProviderCount: {
-        type: Number,
+        type: String,
     }, // used to detect new exchanges
 
 });

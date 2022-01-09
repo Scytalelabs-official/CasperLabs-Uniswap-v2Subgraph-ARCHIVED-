@@ -2,16 +2,10 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt,
     GraphQLFloat,
     GraphQLOutputType
 } = require("graphql");
 
-// var GraphQLOutputType={
-//     id: {type: GraphQLString},
-//     name: {type: GraphQLString},
-//     symbol: {type: GraphQLString}
-// };
 const { tokenType } = require("./token");
 const pairType = new GraphQLObjectType({
   
@@ -25,32 +19,32 @@ const pairType = new GraphQLObjectType({
         // mirrored from the smart contract
         token0: {type:tokenType},
         token1: {type:tokenType},
-        reserve0: {type: GraphQLInt},
-        reserve1: {type: GraphQLInt},
-        totalSupply:{type: GraphQLInt},
+        reserve0: {type: GraphQLString},
+        reserve1: {type: GraphQLString},
+        totalSupply:{type: GraphQLString},
 
         //derived liquidity
-        reserveETH: {type: GraphQLInt},
-        reserveUSD: {type: GraphQLInt},
-        trackedReserveETH: {type: GraphQLInt},// used for separating per pair reserves and global
+        reserveETH: {type: GraphQLString},
+        reserveUSD: {type: GraphQLString},
+        trackedReserveETH: {type: GraphQLString},// used for separating per pair reserves and global
     
         // Price in terms of the asset pair
-        token0Price: {type: GraphQLFloat},
-        token1Price: {type: GraphQLFloat},
+        token0Price: {type: GraphQLString},
+        token1Price: {type: GraphQLString},
         
         // lifetime volume stats
-        volumeToken0: {type: GraphQLInt},
-        volumeToken1: {type: GraphQLInt},
-        volumeUSD: {type: GraphQLInt},
-        untrackedVolumeUSD: {type: GraphQLInt},
-        txCount: {type: GraphQLInt},
+        volumeToken0: {type: GraphQLString},
+        volumeToken1: {type: GraphQLString},
+        volumeUSD: {type: GraphQLString},
+        untrackedVolumeUSD: {type: GraphQLString},
+        txCount: {type: GraphQLString},
 
         // creation stats
         createdAtTimestamp: {type: GraphQLFloat},
         createdAtBlockNumber: {type: GraphQLString},
 
         // Fields used to help derived relationship
-        liquidityProviderCount: {type: GraphQLInt}, // used to detect new exchanges
+        liquidityProviderCount: {type: GraphQLString}, // used to detect new exchanges
         
     })
   });

@@ -83,7 +83,7 @@ const test = async () => {
 
   // We don't need hash- prefix so i'm removing it
   //await pair.setContractHash(contractHash.slice(5));
-  await pair.setContractHash(PAIR_CONTRACT!);
+  await pair.setContractHash("53a8121f219ad2c6420f007a2016ed320c519579112b81d505cb15715404b264");
   console.log("... Contract Hash:", PAIR_CONTRACT!);
   //name
   const liquidity = await pair.liquidity();

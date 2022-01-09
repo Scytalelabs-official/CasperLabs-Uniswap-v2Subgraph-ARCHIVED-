@@ -46,7 +46,7 @@ const mintSchema = new Schema({
       type:String
     },
     liquidity:{
-      type:Number
+      type:String
     },
 
     // populated from the Mint event
@@ -54,17 +54,17 @@ const mintSchema = new Schema({
       type:String
     },
     amount0:{
-      type:Number
+      type:String
     },
     amount1:{
-      type:Number
+      type:String
     },
     logIndex:{
       type:Number
     },
     // derived amount based on available prices of tokens
     amountUSD:{
-      type:Number
+      type:String
     },
 
     // optional fee fields, if a Transfer event is fired in _mintFee
@@ -72,7 +72,7 @@ const mintSchema = new Schema({
       type:String
     },
     feeLiquidity:{
-      type:Number
+      type:String
     }
   
 });

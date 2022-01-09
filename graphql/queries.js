@@ -133,7 +133,6 @@ const tokenbyId = {
   type: tokenType,
   description: "Retrieves token against Id",
   args: {
-
     id: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
@@ -150,7 +149,6 @@ const tokenbyname = {
   type: tokenType,
   description: "Retrieves token against name",
   args: {
-
     name: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
@@ -167,7 +165,6 @@ const tokensbysymbol = {
   type: GraphQLList(tokenType),
   description: "Retrieves token against Id",
   args: {
-
     symbol: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
@@ -182,18 +179,17 @@ const tokensbysymbol = {
 };
 
 const tokensbyId = {
-  type:  GraphQLList(tokenType),
+  type: GraphQLList(tokenType),
   description: "Retrieves tokens against Id",
   args: {
     first: { type: GraphQLInt },
-    id: { type: GraphQLList (GraphQLString)}
+    id: { type: GraphQLList(GraphQLString) },
   },
   async resolve(parent, args, context) {
     try {
-      let tokens=[];
-      for(var i=0;i<args.id.length;i++)
-      {
-        let token= await Token.findOne({ id: args.id[i] });
+      let tokens = [];
+      for (var i = 0; i < args.id.length; i++) {
+        let token = await Token.findOne({ id: args.id[i] });
         tokens.push(token);
       }
 
@@ -214,7 +210,6 @@ const pairs = {
     try {
       let pairs = await Pair.find();
       return pairs.splice(0, args.first);
-
     } catch (error) {
       throw new Error(error);
     }
@@ -230,15 +225,12 @@ const allpairs = {
   },
   async resolve(parent, args, context) {
     try {
-
-      let pairs=[];
-      for(var i=0;i<args.id.length;i++)
-      {
-        let pair= await Pair.findOne({ id: args.id[i] });
+      let pairs = [];
+      for (var i = 0; i < args.id.length; i++) {
+        let pair = await Pair.findOne({ id: args.id[i] });
         pairs.push(pair);
       }
       return pairs.splice(0, args.first);
-
     } catch (error) {
       throw new Error(error);
     }
@@ -249,13 +241,12 @@ const pairbyId = {
   type: GraphQLList(pairType),
   description: "Retrieves pair against id",
   args: {
-    id: { type: GraphQLString }
+    id: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let pair = await Pair.find({id:args.id});
+      let pair = await Pair.find({ id: args.id });
       return pair;
-
     } catch (error) {
       throw new Error(error);
     }
@@ -267,25 +258,22 @@ const pairsbyId = {
   description: "Retrieves pair against id",
   args: {
     first: { type: GraphQLInt },
-    id: { type: GraphQLList (GraphQLString)}
+    id: { type: GraphQLList(GraphQLString) },
   },
   async resolve(parent, args, context) {
     try {
-      let pairs=[];
-      for(var i=0;i<args.id.length;i++)
-      {
-        let pair= await Pair.findOne({ id: args.id[i] });
+      let pairs = [];
+      for (var i = 0; i < args.id.length; i++) {
+        let pair = await Pair.findOne({ id: args.id[i] });
         pairs.push(pair);
       }
 
       return pairs.splice(0, args.first);
-
     } catch (error) {
       throw new Error(error);
     }
   },
 };
-
 
 const pairsbytoken0 = {
   type: GraphQLList(pairType),
@@ -297,11 +285,9 @@ const pairsbytoken0 = {
   async resolve(parent, args, context) {
     try {
       let pairs = await Pair.find({});
-      let pairsbytoken0=[];
-      for (var i=0; i< pairs.length;i++)
-      {
-        if( pairs[i].token0.id == args.token0)
-        {
+      let pairsbytoken0 = [];
+      for (var i = 0; i < pairs.length; i++) {
+        if (pairs[i].token0.id == args.token0) {
           pairsbytoken0.push(pairs[i]);
         }
       }
@@ -321,11 +307,9 @@ const pairsbytoken1 = {
   async resolve(parent, args, context) {
     try {
       let pairs = await Pair.find({});
-      let pairsbytoken1=[];
-      for (var i=0; i< pairs.length;i++)
-      {
-        if( pairs[i].token1.id == args.token1)
-        {
+      let pairsbytoken1 = [];
+      for (var i = 0; i < pairs.length; i++) {
+        if (pairs[i].token1.id == args.token1) {
           pairsbytoken1.push(pairs[i]);
         }
       }
@@ -345,18 +329,15 @@ const pairsbytoken0array = {
   async resolve(parent, args, context) {
     try {
       let pairs = await Pair.find({});
-      let pairsbytoken0=[];
-      for (var j=0; j< args.token0.length;j++)
-      {
-        for (var i=0; i< pairs.length;i++)
-        {
-          if( pairs[i].token0.id == args.token0[j])
-          {
+      let pairsbytoken0 = [];
+      for (var j = 0; j < args.token0.length; j++) {
+        for (var i = 0; i < pairs.length; i++) {
+          if (pairs[i].token0.id == args.token0[j]) {
             pairsbytoken0.push(pairs[i]);
           }
         }
       }
-      
+
       return pairsbytoken0;
     } catch (error) {
       throw new Error(error);
@@ -372,18 +353,15 @@ const pairsbytoken1array = {
   async resolve(parent, args, context) {
     try {
       let pairs = await Pair.find({});
-      let pairsbytoken1=[];
-      for (var j=0; j< args.token1.length;j++)
-      {
-        for (var i=0; i< pairs.length;i++)
-        {
-          if( pairs[i].token1.id == args.token1[j])
-          {
+      let pairsbytoken1 = [];
+      for (var j = 0; j < args.token1.length; j++) {
+        for (var i = 0; i < pairs.length; i++) {
+          if (pairs[i].token1.id == args.token1[j]) {
             pairsbytoken1.push(pairs[i]);
           }
         }
       }
-      
+
       return pairsbytoken1;
     } catch (error) {
       throw new Error(error);
@@ -401,14 +379,11 @@ const liquiditypositions = {
   async resolve(parent, args, context) {
     try {
       let liquiditypositions = await LiquidityPosition.find({});
-      let liquiditypositionsbypair=[];
-      for(var i=0;i<liquiditypositions.length;i++)
-      {
-        if(liquiditypositions[i].pair.id == args.id)
-        {
+      let liquiditypositionsbypair = [];
+      for (var i = 0; i < liquiditypositions.length; i++) {
+        if (liquiditypositions[i].pair.id == args.id) {
           liquiditypositionsbypair.push(liquiditypositions[i]);
         }
-        
       }
       return liquiditypositionsbypair.splice(0, args.first);
     } catch (error) {
@@ -426,14 +401,11 @@ const liquidityPositionsagainstuserId = {
   async resolve(parent, args, context) {
     try {
       let liquiditypositions = await LiquidityPosition.find({});
-      let liquiditypositionsbyuser=[];
-      for(var i=0;i<liquiditypositions.length;i++)
-      {
-        if(liquiditypositions[i].user.id == args.user)
-        {
+      let liquiditypositionsbyuser = [];
+      for (var i = 0; i < liquiditypositions.length; i++) {
+        if (liquiditypositions[i].user.id == args.user) {
           liquiditypositionsbyuser.push(liquiditypositions[i]);
         }
-        
       }
       return liquiditypositionsbyuser;
     } catch (error) {
@@ -452,7 +424,9 @@ const liquiditypositionsnapshots = {
   },
   async resolve(parent, args, context) {
     try {
-      let liquiditypositionsnapshots = await LiquidityPositionSnapshot.find({user:args.user});
+      let liquiditypositionsnapshots = await LiquidityPositionSnapshot.find({
+        user: args.user,
+      });
 
       return liquiditypositionsnapshots.splice(0, args.first);
     } catch (error) {
@@ -519,14 +493,12 @@ const transactions = {
   type: GraphQLList(transactionType),
   description: "Retrieves list of transactions ",
   args: {
-    first: { type: GraphQLInt }
+    first: { type: GraphQLInt },
   },
   async resolve(parent, args, context) {
     try {
-      
       let transactions = await Transaction.find({});
-      return transactions.splice(0,args.first);
-
+      return transactions.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -559,15 +531,12 @@ const mints = {
   },
   async resolve(parent, args, context) {
     try {
-      let mints = await MintEvent.find({to:args.to});
-      let mintsbypair=[];
-      for(var i=0;i<mints.length;i++)
-      {
-        if(mints[i].pair.id == args.pair)
-        {
+      let mints = await MintEvent.find({ to: args.to });
+      let mintsbypair = [];
+      for (var i = 0; i < mints.length; i++) {
+        if (mints[i].pair.id == args.pair) {
           mintsbypair.push(mints[i]);
         }
-      
       }
 
       return mintsbypair;
@@ -598,26 +567,22 @@ const mintsallpairs = {
   type: GraphQLList(mintType),
   description: "Retrieves list of mint against allpairs",
   args: {
-    first:{type:GraphQLInt},
+    first: { type: GraphQLInt },
     pair: { type: GraphQLList(GraphQLString) },
   },
   async resolve(parent, args, context) {
     try {
-      
       let mints = await MintEvent.find({});
-      let mintsbyallpairs=[];
-      for (var j=0;j<args.pair.length;j++)
-      {
-        for (var i=0;i<mints.length;i++)
-        {
-            if(mints[i].pair.id == args.pair[j])
-            {
-              mintsbyallpairs.push(mints[i]);
-            }
+      let mintsbyallpairs = [];
+      for (var j = 0; j < args.pair.length; j++) {
+        for (var i = 0; i < mints.length; i++) {
+          if (mints[i].pair.id == args.pair[j]) {
+            mintsbyallpairs.push(mints[i]);
+          }
         }
       }
-      
-      return mintsbyallpairs.splice(0,args.first);
+
+      return mintsbyallpairs.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -633,15 +598,12 @@ const burns = {
   },
   async resolve(parent, args, context) {
     try {
-      let burns = await BurnEvent.find({sender:args.sender});
-      let burnsbypair=[];
-      for(var i=0;i<burns.length;i++)
-      {
-        if(burns[i].pair.id == args.pair)
-        {
+      let burns = await BurnEvent.find({ sender: args.sender });
+      let burnsbypair = [];
+      for (var i = 0; i < burns.length; i++) {
+        if (burns[i].pair.id == args.pair) {
           burnsbypair.push(burns[i]);
         }
-      
       }
       return burnsbypair;
     } catch (error) {
@@ -671,26 +633,22 @@ const burnsallpairs = {
   type: GraphQLList(burnType),
   description: "Retrieves list of burn against allpairs",
   args: {
-    first:{type:GraphQLInt},
+    first: { type: GraphQLInt },
     pair: { type: GraphQLList(GraphQLString) },
   },
   async resolve(parent, args, context) {
     try {
-      
       let burns = await BurnEvent.find({});
-      let burnsbyallpairs=[];
-      for (var j=0;j<args.pair.length;j++)
-      {
-        for (var i=0;i<burns.length;i++)
-        {
-            if(burns[i].pair.id == args.pair[j])
-            {
-              burnsbyallpairs.push(burns[i]);
-            }
+      let burnsbyallpairs = [];
+      for (var j = 0; j < args.pair.length; j++) {
+        for (var i = 0; i < burns.length; i++) {
+          if (burns[i].pair.id == args.pair[j]) {
+            burnsbyallpairs.push(burns[i]);
+          }
         }
       }
-      
-      return burnsbyallpairs.splice(0,args.first);
+
+      return burnsbyallpairs.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -700,7 +658,7 @@ const swaps = {
   type: GraphQLList(swapType),
   description: "Retrieves list of swaps against to",
   args: {
-    to: { type: GraphQLString }
+    to: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
@@ -717,26 +675,22 @@ const swapsallpairs = {
   type: GraphQLList(swapType),
   description: "Retrieves list of swap against allpairs",
   args: {
-    first:{type:GraphQLInt},
+    first: { type: GraphQLInt },
     pair: { type: GraphQLList(GraphQLString) },
   },
   async resolve(parent, args, context) {
     try {
-      
       let swaps = await SwapEvent.find({});
-      let swapsbyallpairs=[];
-      for (var j=0;j<args.pair.length;j++)
-      {
-        for (var i=0;i<swaps.length;i++)
-        {
-            if(swaps[i].pair.id == args.pair[j])
-            {
-              swapsbyallpairs.push(swaps[i]);
-            }
+      let swapsbyallpairs = [];
+      for (var j = 0; j < args.pair.length; j++) {
+        for (var i = 0; i < swaps.length; i++) {
+          if (swaps[i].pair.id == args.pair[j]) {
+            swapsbyallpairs.push(swaps[i]);
+          }
         }
       }
-      
-      return swapsbyallpairs.splice(0,args.first);
+
+      return swapsbyallpairs.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
     }
@@ -765,23 +719,23 @@ const pairdaydatas = {
   args: {
     first: { type: GraphQLInt },
     pairAddress: { type: GraphQLList(GraphQLString) },
-    date: {type: GraphQLString}
+    date: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
       let pairdaydatas = await PairDayData.find();
-      let pairdaydatasresult=[];
-      for (var j=0; j<args.pairAddress.length;j++)
-      {
-        for (var i=0;i<pairdaydatas.length;i++)
-        {
-          if(pairdaydatas[i].pairAddress == args.pairAddress[j] && pairdaydatas[i].date == parseFloat(args.date))
-          {
+      let pairdaydatasresult = [];
+      for (var j = 0; j < args.pairAddress.length; j++) {
+        for (var i = 0; i < pairdaydatas.length; i++) {
+          if (
+            pairdaydatas[i].pairAddress == args.pairAddress[j] &&
+            pairdaydatas[i].date == parseFloat(args.date)
+          ) {
             pairdaydatasresult.push(pairdaydatas[i]);
           }
         }
       }
-     
+
       return pairdaydatasresult.splice(0, args.first);
     } catch (error) {
       throw new Error(error);
@@ -794,12 +748,15 @@ const pairdaydata = {
   description: "Retrieves pairdaydata against pairAddress and date",
   args: {
     first: { type: GraphQLInt },
-    pairAddress: { type: GraphQLString},
-    date: {type: GraphQLInt}
+    pairAddress: { type: GraphQLString },
+    date: { type: GraphQLInt },
   },
   async resolve(parent, args, context) {
     try {
-      let pairdaydata = await PairDayData.find({ pairAddress: args.pairAddress, date:args.date });
+      let pairdaydata = await PairDayData.find({
+        pairAddress: args.pairAddress,
+        date: args.date,
+      });
 
       return pairdaydata.splice(0, args.first);
     } catch (error) {
@@ -814,11 +771,13 @@ const pairdaydatasbypairAddress = {
   args: {
     first: { type: GraphQLInt },
     skip: { type: GraphQLInt },
-    pairAddress: { type: GraphQLString},
+    pairAddress: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let pairdaydata = await PairDayData.find({ pairAddress: args.pairAddress});
+      let pairdaydata = await PairDayData.find({
+        pairAddress: args.pairAddress,
+      });
 
       return pairdaydata.splice(0, args.first);
     } catch (error) {
@@ -867,11 +826,11 @@ const tokendaydatas = {
   args: {
     first: { type: GraphQLInt },
     skip: { type: GraphQLInt },
-    token: {type: GraphQLString}
+    token: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      let tokendaydatas = await TokenDayData.find({token:args.token});
+      let tokendaydatas = await TokenDayData.find({ token: args.token });
 
       return tokendaydatas.splice(0, args.first);
     } catch (error) {
@@ -885,12 +844,13 @@ const tokendaydatasbydate = {
   description: "Retrieves list of tokendaydatas against date",
   args: {
     first: { type: GraphQLInt },
-    date: {type: GraphQLString}
+    date: { type: GraphQLString },
   },
   async resolve(parent, args, context) {
     try {
-      
-      let tokendaydatas = await TokenDayData.find({date:parseFloat(args.date)});
+      let tokendaydatas = await TokenDayData.find({
+        date: parseFloat(args.date),
+      });
 
       return tokendaydatas.splice(0, args.first);
     } catch (error) {
@@ -943,7 +903,9 @@ const uniswapdaydatasbydate = {
   },
   async resolve(parent, args, context) {
     try {
-      let uniswapdaydatas = await UniswapDayData.find({date:parseFloat(args.date)});
+      let uniswapdaydatas = await UniswapDayData.find({
+        date: parseFloat(args.date),
+      });
 
       return uniswapdaydatas.splice(0, args.first);
     } catch (error) {
@@ -1014,5 +976,5 @@ module.exports = {
   pairhourdata,
   tokendaydatas,
   tokendaydata,
-  tokendaydatasbydate
+  tokendaydatasbydate,
 };

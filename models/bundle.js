@@ -8,7 +8,7 @@ const bundleSchema = new Schema({
     },
 
     ethPrice:{
-      type:Number
+      type:String
     } // price of ETH usd
   
 });

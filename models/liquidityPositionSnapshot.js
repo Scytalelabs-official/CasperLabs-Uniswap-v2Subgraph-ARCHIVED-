@@ -27,13 +27,13 @@ const liquidityPositionSnapshotSchema = new Schema({
             type : String
         },
         reserve0:{
-            type : Number
+            type : String
         },
         reserve1:{
-            type : Number
+            type : String
         },
         reserveUSD:{
-            type : Number
+            type : String
         },
         token0:{
             id:{
@@ -48,31 +48,31 @@ const liquidityPositionSnapshotSchema = new Schema({
     }, // reference to pair
 
     token0PriceUSD:{
-        type: Number,
+        type: String,
     }, //snapshot of token0 price
 
     token1PriceUSD:{
-        type: Number,
+        type: String,
     }, //snapshot of token1 price
 
     reserve0:{
-        type: Number,
+        type: String,
     }, //snapshot of pair token0 reserves
 
     reserve1:{
-        type: Number,
+        type: String,
     }, //snapshot of pair token1 reserves
 
     reserveUSD:{
-        type: Number,
+        type: String,
     }, //snapshot of pair reserves in USD
 
     liquidityTokenTotalSupply:{
-        type: Number,
+        type: String,
     }, // snapshot of pool token supply
     
     liquidityTokenBalance:{
-        type: Number,
+        type: String,
     }, // snapshot of users pool token balance
     
 });

@@ -17,16 +17,16 @@ const liquidityPositionSchema = new Schema({
             type : String
         },
         reserve0:{
-            type : Number
+            type : String
         },
         reserve1:{
-            type : Number
+            type : String
         },
         reserveUSD:{
-            type : Number
+            type : String
         },
         totalSupply:{
-            type : Number
+            type : String
         },
         token0:{
             id:{
@@ -36,7 +36,7 @@ const liquidityPositionSchema = new Schema({
                 type : String
             },
             derivedETH:{
-                type : Number
+                type : String
             }
         },
         token1:{
@@ -47,13 +47,13 @@ const liquidityPositionSchema = new Schema({
                 type : String
             },
             derivedETH:{
-                type : Number
+                type : String
             }
         }
     }, // reference to pair
     
     liquidityTokenBalance:{
-        type: Number,
+        type: String,
     }
 });
 

@@ -12,8 +12,6 @@ class TokenDefinition {
     this.name = name;
     this.decimals = decimals;
   }
-
-  
 }
 
-module.exports= TokenDefinition;
+module.exports = TokenDefinition;

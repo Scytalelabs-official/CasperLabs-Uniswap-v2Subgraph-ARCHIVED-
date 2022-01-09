@@ -20,33 +20,33 @@ const tokenSchema = new Schema({
     },
     // used for other stats like marketcap
     totalSupply: {
-      type: Number,
+      type: String,
     },
 
     //token specific volume
     tradeVolume: {
-      type: Number,
+      type: String,
     },
     tradeVolumeUSD: {
-      type: Number,
+      type: String,
     },
     untrackedVolumeUSD: {
-      type: Number,
+      type: String,
     },
 
     //transactions across all pairs
     txCount: {
-      type: Number,
+      type: String,
     },
 
     //liquidity across all pairs
     totalLiquidity: {
-      type: Number,
+      type: String,
     },
 
     //derived prices
     derivedETH: {
-      type: Number,
+      type: String,
     },
 
     mostLiquidPairs : [{

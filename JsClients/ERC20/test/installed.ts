@@ -70,7 +70,7 @@ const erc20 = new ERC20Client(
 const test = async () => {
 
   await erc20.setContractHash(TOKEN1_CONTRACT!);
-
+  //getTotalSupply(TOKEN1_CONTRACT!);
   // // //name
   // // const name = await erc20.name();
   // // console.log(`... Contract name: ${name}`);

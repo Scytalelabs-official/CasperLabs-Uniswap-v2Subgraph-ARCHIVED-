@@ -19,14 +19,14 @@ const tokenType = new GraphQLObjectType({
     symbol: {type: GraphQLString},
     name: {type: GraphQLString},
     decimals: {type: GraphQLInt},
-    totalSupply: {type: GraphQLInt},// used for other stats like marketcap
+    totalSupply: {type: GraphQLString},// used for other stats like marketcap
     //token specific volume
-    tradeVolume: {type: GraphQLInt},
-    tradeVolumeUSD: {type: GraphQLInt},
-    untrackedVolumeUSD: {type: GraphQLInt},
-    txCount: {type: GraphQLInt},//transactions across all pairs
-    totalLiquidity: {type: GraphQLInt},//liquidity across all pairs
-    derivedETH: {type: GraphQLInt},//derived prices
+    tradeVolume: {type: GraphQLString},
+    tradeVolumeUSD: {type: GraphQLString},
+    untrackedVolumeUSD: {type: GraphQLString},
+    txCount: {type: GraphQLString},//transactions across all pairs
+    totalLiquidity: {type: GraphQLString},//liquidity across all pairs
+    derivedETH: {type: GraphQLString},//derived prices
     mostLiquidPairs: {type: GraphQLList(GraphQLString)}
 
   })

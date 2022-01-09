@@ -474,20 +474,17 @@ class UniswapRouterClient {
 		paymentAmount: string
 	) {
 		console.log("Path : ", path);
+	
 		
-		// MAPPED THIS ACCORDING TO UTIL createRecipientAddress function
-		let _paths: CLKey[] = [];
-		for (let i = 0; i < path.length; i++) {
-			const p = new CLByteArray(Uint8Array.from(Buffer.from(path[i], "hex")));
-			_paths.push(utils.createRecipientAddress(p));
-		}
-
+		const tokena = new CLByteArray(Uint8Array.from(Buffer.from(path[0], "hex")));
+		const tokenb = new CLByteArray(Uint8Array.from(Buffer.from(path[1], "hex")));
 		const _to = CLPublicKey.fromHex(to);
 
 		const runtimeArgs = RuntimeArgs.fromMap({
 			amount_in: CLValueBuilder.u256(amount_in),
 			amount_out_min: CLValueBuilder.u256(amount_out_min),
-			path: new CLList(_paths),
+			token_a:utils.createRecipientAddress(tokena),
+			token_b:utils.createRecipientAddress(tokenb),
 			to: utils.createRecipientAddress(_to),
 			deadline: CLValueBuilder.u256(deadline),
 		});

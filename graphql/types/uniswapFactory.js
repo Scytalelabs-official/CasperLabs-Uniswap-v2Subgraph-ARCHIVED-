@@ -2,7 +2,6 @@ const {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt,
   GraphQLList
 } = require("graphql");
 
@@ -12,13 +11,13 @@ const uniswapFactoryType = new GraphQLObjectType({
   fields: () => ({
     _id: {type: GraphQLID },
     id: { type: GraphQLString },//factory address
-    pairCount: {type: GraphQLInt},// pair info
-    totalVolumeUSD: {type: GraphQLInt},// total volume
-    totalVolumeETH: {type: GraphQLInt},
-    untrackedVolumeUSD: {type: GraphQLInt},//untracked values - less confident USD scores
-    totalLiquidityUSD: {type: GraphQLInt},//total liquidity
-    totalLiquidityETH: {type: GraphQLInt},
-    txCount: {type: GraphQLInt},//transactions
+    pairCount: {type: GraphQLString},// pair info
+    totalVolumeUSD: {type: GraphQLString},// total volume
+    totalVolumeETH: {type: GraphQLString},
+    untrackedVolumeUSD: {type: GraphQLString},//untracked values - less confident USD scores
+    totalLiquidityUSD: {type: GraphQLString},//total liquidity
+    totalLiquidityETH: {type: GraphQLString},
+    txCount: {type: GraphQLString},//transactions
     mostLiquidTokens: {type: GraphQLList(GraphQLString)}
 
   })

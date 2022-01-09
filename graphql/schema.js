@@ -47,7 +47,7 @@ const {
   pairhourdata,
   tokendaydatas,
   tokendaydata,
-  tokendaydatasbydate
+  tokendaydatasbydate,
 } = require("./queries");
 
 // Import mutations
@@ -109,7 +109,7 @@ const QueryType = new GraphQLObjectType({
     pairhourdata,
     tokendaydatas,
     tokendaydata,
-    tokendaydatasbydate
+    tokendaydatasbydate,
   },
 });
 

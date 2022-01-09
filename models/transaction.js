@@ -7,7 +7,7 @@ const transactionSchema = new Schema({
         type: String,
     },// txn hash
 
-    blockNumber: {
+    blockString: {
         type: String,
     },
 
@@ -54,19 +54,19 @@ const transactionSchema = new Schema({
                 type:String
             },
             liquidity:{
-                type:Number
+                type:String
             },
             timestamp:{
               type:Number
             },
             amount0:{
-                type:Number
+                type:String
             },
             amount1:{
-                type:Number
+                type:String
             },
             amountUSD:{
-                type:Number
+                type:String
             },
             
         }
@@ -110,19 +110,19 @@ const transactionSchema = new Schema({
                 type:String
             },
             liquidity:{
-                type:Number
+                type:String
             },
             timestamp:{
               type:Number
             },
             amount0:{
-                type:Number
+                type:String
             },
             amount1:{
-                type:Number
+                type:String
             },
             amountUSD:{
-                type:Number
+                type:String
             },
             needsComplete:{
               type:Boolean
@@ -165,19 +165,19 @@ const transactionSchema = new Schema({
                 type:String
             },
             amount0In:{
-                type:Number
+                type:String
             },
             amount1In:{
-                type:Number
+                type:String
             },
             amount0Out:{
-                type:Number
+                type:String
             },
             amount1Out:{
-                type:Number
+                type:String
             },
             amountUSD:{
-                type:Number
+                type:String
             }
         }
     ]

@@ -12,30 +12,30 @@ const uniswapDayDataSchema = new Schema({
     },
 
     dailyVolumeETH: {
-      type:Number
+      type:String
     },
     dailyVolumeUSD: {
-      type:Number
+      type:String
     },
     dailyVolumeUntracked: {
-      type:Number
+      type:String
     },
 
     totalVolumeETH: {
-      type:Number
+      type:String
     },
     totalLiquidityETH: {
-      type:Number
+      type:String
     },
     totalVolumeUSD: {
-      type:Number
+      type:String
     }, // Accumulate at each trade, not just calculated off whatever totalVolume is. making it more accurate as it is a live conversion
     totalLiquidityUSD: {
-      type:Number
+      type:String
     },
 
     txCount: {
-      type:Number
+      type:String
     }
   
 });

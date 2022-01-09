@@ -2,8 +2,8 @@ const {
     GraphQLObjectType,
     GraphQLID,
     GraphQLString,
-    GraphQLInt,
-    GraphQLList
+    GraphQLList,
+    GraphQLFloat
 } = require("graphql");
 
 const  {mintType} = require("./mint");
@@ -19,7 +19,7 @@ const transactionType = new GraphQLObjectType({
         _id: {type: GraphQLID },
         id: {type: GraphQLString},// txn hash
         blockNumber: {type: GraphQLString},
-        timestamp: {type: GraphQLInt},
+        timestamp: {type: GraphQLFloat},
         // This is not the reverse of Mint.transaction; it is only used to
         // track incomplete mints (similar for burns and swaps)
         mints: {type: GraphQLList(mintType)},

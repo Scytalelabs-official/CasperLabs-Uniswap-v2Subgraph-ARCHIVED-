@@ -479,13 +479,13 @@ const test = async () => {
 	await uniswapRouter.setContractHash(CONTRACT_HASH!);
 	
 	// Test add_liquidity
-	//await add_liquidity(uniswapRouter);
+	await add_liquidity(uniswapRouter);
 
 	// Test add_liquidity_cspr
 	//add_liquidity_cspr(uniswapRouter);
 
 	// Test remove_liquidity
-	 remove_liquidity(uniswapRouter);
+	// remove_liquidity(uniswapRouter);
 
 	// Test remove_liquidity_cspr
 	//remove_liquidity_cspr(uniswapRouter);

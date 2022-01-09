@@ -10,33 +10,33 @@ const uniswapFactorySchema = new Schema({
 
     // pair info
     pairCount: {
-      type: Number,
+      type: String,
     },
 
     // total volume
     totalVolumeUSD: {
-      type: Number,
+      type: String,
     },
     totalVolumeETH: {
-      type: Number,
+      type: String,
     },
 
     //untracked values - less confident USD scores
     untrackedVolumeUSD: {
-      type: Number,
+      type: String,
     },
 
     //total liquidity
     totalLiquidityUSD: {
-      type: Number,
+      type: String,
     },
     totalLiquidityETH: {
-      type: Number,
+      type: String,
     },
 
     //transactions
     txCount: {
-      type: Number
+      type: String
     },
 
     mostLiquidTokens: [{ type : String}]

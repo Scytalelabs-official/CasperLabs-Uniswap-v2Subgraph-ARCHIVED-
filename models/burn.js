@@ -41,7 +41,7 @@ const burnSchema = new Schema({
     }, //need this to pull recent txns for specific token or pair
 
     liquidity:{
-      type:Number
+      type:String
     },
 
     // populated from the Burn event
@@ -49,10 +49,10 @@ const burnSchema = new Schema({
       type:String
     },
     amount0:{
-      type:Number
+      type:String
     },
     amount1:{
-      type:Number
+      type:String
     },
     to:{
       type:String
@@ -63,7 +63,7 @@ const burnSchema = new Schema({
 
     // derived amount based on available prices of tokens
     amountUSD:{
-      type:Number
+      type:String
     },
     
     // mark uncomplete in ETH case
@@ -76,7 +76,7 @@ const burnSchema = new Schema({
       type:String
     },
     feeLiquidity:{
-      type:Number
+      type:String
     }
   
 });

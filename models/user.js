@@ -8,7 +8,7 @@ const userSchema = new Schema({
         type: String,
     },
     usdSwapped: {
-        type: Number,
+        type: String,
     },
     liquidityPositions: [{type:String}]
 });

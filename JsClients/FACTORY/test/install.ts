@@ -29,20 +29,20 @@ const test = async () => {
     EVENT_STREAM_ADDRESS!
   );
 
-  const installDeployHash = await factory.install(
-    KEYS,
-    FACTORY_CONTRACT_NAME!,
-    KEYS.publicKey!,
-    // KEYS.publicKey,
-    FACTORY_INSTALL_PAYMENT_AMOUNT!,
-    FACTORY_WASM_PATH!
-  );
+  // const installDeployHash = await factory.install(
+  //   KEYS,
+  //   FACTORY_CONTRACT_NAME!,
+  //   KEYS.publicKey!,
+  //   // KEYS.publicKey,
+  //   FACTORY_INSTALL_PAYMENT_AMOUNT!,
+  //   FACTORY_WASM_PATH!
+  // );
 
-  console.log(`... Contract installation deployHash: ${installDeployHash}`);
+  // console.log(`... Contract installation deployHash: ${installDeployHash}`);
 
-  await getDeploy(NODE_ADDRESS!, installDeployHash);
+  // await getDeploy(NODE_ADDRESS!, installDeployHash);
 
-  console.log(`... Contract installed successfully.`);
+  // console.log(`... Contract installed successfully.`);
 
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
 
