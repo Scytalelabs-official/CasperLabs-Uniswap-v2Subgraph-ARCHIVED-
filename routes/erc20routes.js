@@ -38,4 +38,45 @@ router
     }
   });
 
+router
+  .route("/allowanceagainstownerandspender")
+  .post(async function (req, res, next) {
+    try {
+
+      if (!req.body.contractHash) {
+            return res.status(400).json({
+              success: false,
+              message: "contractHash not found in request body",
+            });
+      }
+
+      if (!req.body.owner) {
+        return res.status(400).json({
+          success: false,
+          message: "owner not found in request body",
+        });
+      }
+
+      if (!req.body.spender) {
+        return res.status(400).json({
+          success: false,
+          message: "spender not found in request body",
+        });
+      }
+
+      let allowance = await erc20.allowance(req.body.contractHash,req.body.onwer,req.body.spender);
+      return res.status(200).json({
+        success: true,
+        message:
+          "Allowance has been found against this owner and spender ",
+          allowance:allowance,
+      });
+    } catch (error) {
+      console.log("error (try-catch) : " + error);
+      return res.status(500).json({
+        success: false,
+        err: error,
+      });
+    }
+  });
 module.exports = router;

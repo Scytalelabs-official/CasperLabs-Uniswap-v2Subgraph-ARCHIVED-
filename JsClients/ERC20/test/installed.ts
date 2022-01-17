@@ -88,17 +88,17 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   // // // //balanceof
-  let balance = await erc20.balanceOf("7b217a09296d5ce360847a7d20f623476157c5f022333c4e988a464035cadd80");
-  console.log(`... Balance: ${balance}`);
+  // let balance = await erc20.balanceOf("7b217a09296d5ce360847a7d20f623476157c5f022333c4e988a464035cadd80");
+  // console.log(`... Balance: ${balance}`);
 
   // // //nonce
   // // let nonce = await erc20.nonce(KEYS.publicKey);
   // // console.log(`... Nonce: ${nonce}`);
 
   // // // //allowance
-  // // // let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
-  // // // console.log(`... Allowance: ${allowance}`);
-
+  //let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
+ // console.log(`... Allowance: ${allowance}`);
+ 
   //mint
   // const mintDeployHash = await erc20.mint(
   //   ROUTERKEYS,
@@ -240,3 +240,22 @@ export const balanceOf = async (contractHash:string, key:string) => {
   return balance;
 
 };
+
+export const allowance = async (contractHash:string, ownerKey:string, spenderkey:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash);
+
+ //balanceof
+  let allowance = await erc20.allowance(ownerKey,spenderkey);
+
+  console.log(`... Allowance: ${allowance}`);
+
+  return allowance;
+
+};
+//console.log(KEYS.publicKey);
+//console.log(CLPublicKey.fromHex("015a5b4ae1e1ff10fd610c7d6323d3c331438a81eef7bcd3aa4783f6f264fa3aa4"));
+//allowance("6ab4a5bf100fb9f444a12e92c663e3cf65a8c3ef4523cb2f80bed4fd41f85706","8b217a09296d5ce360847a7d20f623476157c5f022333c4e988a464035cadd80","8a74e1ae230936013f3b544182b8011435f4a457d9444fa879ab483fdf829dc8");

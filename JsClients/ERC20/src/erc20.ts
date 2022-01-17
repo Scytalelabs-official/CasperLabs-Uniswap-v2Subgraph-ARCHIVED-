@@ -17,9 +17,12 @@ import {
   RuntimeArgs,
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
+import * as blake from "blakejs";
+import { concat } from "@ethersproject/bytes";
 import { ERC20Events } from "./constants";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
+import {createRecipientAddress } from "./utils";
 
 class ERC20Client {
   private contractName: string = "erc20";
@@ -190,19 +193,29 @@ class ERC20Client {
     return maybeValue.value().toString();
   }
 
-  public async allowance(owner: CLPublicKey, spender: CLPublicKey) {
-    const ownerAccountHash = Buffer.from(owner.toAccountHash()).toString("hex");
-    const spenderAccountHash = Buffer.from(spender.toAccountHash()).toString("hex");
-    const accountHash: string = `${ownerAccountHash}_${spenderAccountHash}`;
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.allowances
-    );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
-  }
+  public async allowance(owner: string, spender:string) {
+    try {
+      
+      const keyOwner = createRecipientAddress(CLPublicKey.fromHex(owner));
+      const keySpender = createRecipientAddress(CLPublicKey.fromHex(spender));
+      const finalBytes = concat([CLValueParsers.toBytes(keyOwner).unwrap(), CLValueParsers.toBytes(keySpender).unwrap()]);
+      const blaked = blake.blake2b(finalBytes, undefined, 32);
+      const encodedBytes = Buffer.from(blaked).toString("hex");
 
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        encodedBytes,
+        this.namedKeys.allowances
+      );
+
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+    } catch (error) {
+      return "0";
+    }
+
+  }
+  
   public async totalSupply() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
