@@ -151,16 +151,21 @@ class ERC20Client {
     );
     return result.value();
   }
-  public async balanceOf(account: CLPublicKey) {
+  public async balanceOf(account: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        account,
+        this.namedKeys.balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
 
-    const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.balances
-    );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+    } catch (error) {
+      return "0";
+    }
+    
   }
   public async balanceOfcontract(accountHash: string) {
 

@@ -88,9 +88,8 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   // // // //balanceof
-  // // let balance = await erc20.balanceOf(KEYS.publicKey);
-  // // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
-  // // console.log(`... Balance: ${balance}`);
+  let balance = await erc20.balanceOf("7b217a09296d5ce360847a7d20f623476157c5f022333c4e988a464035cadd80");
+  console.log(`... Balance: ${balance}`);
 
   // // //nonce
   // // let nonce = await erc20.nonce(KEYS.publicKey);
@@ -133,16 +132,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  const approveDeployHash = await erc20.approve(
-    ROUTERKEYS,
-    PACKAGE_HASH!,
-    AMOUNT_B_DESIRED!,
-    APPROVE_PAYMENT_AMOUNT!
-  );
-  console.log("... Approve deploy hash: ", approveDeployHash);
+  // const approveDeployHash = await erc20.approve(
+  //   ROUTERKEYS,
+  //   PACKAGE_HASH!,
+  //   AMOUNT_B_DESIRED!,
+  //   APPROVE_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Approve deploy hash: ", approveDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  console.log("... Token approved successfully");
+  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  // console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(
@@ -224,4 +223,20 @@ export const getTotalSupply = async (contractHash:string) => {
 
   return totalSupply;
   
+};
+
+export const balanceOf = async (contractHash:string, key:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await erc20.setContractHash(contractHash);
+
+ //balanceof
+  let balance = await erc20.balanceOf(key);
+
+  console.log(`... Balance: ${balance}`);
+
+  return balance;
+
 };
