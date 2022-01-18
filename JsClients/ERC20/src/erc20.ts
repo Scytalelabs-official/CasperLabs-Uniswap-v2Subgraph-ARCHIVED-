@@ -214,7 +214,7 @@ class ERC20Client {
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
     } catch (error) {
-      return error;
+      return "0";
     }
 
   }
