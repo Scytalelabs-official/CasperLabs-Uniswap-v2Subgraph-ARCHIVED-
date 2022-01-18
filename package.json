@@ -16,7 +16,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "blakejs": "^1.1.1",
-    "casper-js-sdk": "^2.7.2",
+    "casper-js-sdk": "^2.7.5",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
