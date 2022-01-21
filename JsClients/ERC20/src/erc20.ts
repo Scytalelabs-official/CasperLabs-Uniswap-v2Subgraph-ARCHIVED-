@@ -172,14 +172,19 @@ class ERC20Client {
   }
   public async balanceOfcontract(accountHash: string) {
 
-    //const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.balances
-    );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        accountHash,
+        this.namedKeys.balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
   }
 
   public async nonce(account: CLPublicKey) {

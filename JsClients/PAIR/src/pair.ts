@@ -16,10 +16,12 @@ import {
   Keys,
   RuntimeArgs,
 } from "casper-js-sdk";
+import * as blake from "blakejs";
+import { concat } from "@ethersproject/bytes";
 import { PAIREvents } from "./constants";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
-import { consoleTestResultHandler } from "tslint/lib/test";
+import {createRecipientAddress } from "./utils";
 
 class PAIRClient {
   private contractName: string = "pair";
@@ -211,26 +213,34 @@ class PAIRClient {
     return result.value();
   }
   public async balanceOf_router(account: CLPublicKey) {
-    const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
-    console.log("accoutnHash: ",accountHash);
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.balances
-    );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+    try {
+      const accountHash = Buffer.from(account.toAccountHash()).toString("hex");
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        accountHash,
+        this.namedKeys.balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
   }
   public async balanceOf(accountHash: string) {
-    console.log("accoutnHash: ",accountHash);
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.balances
-    );
-    console.log("result: ",result);
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        accountHash,
+        this.namedKeys.balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
   }
 
 
@@ -245,17 +255,30 @@ class PAIRClient {
     return maybeValue.value().toString();
   }
 
-  public async allowance(owner: CLPublicKey, spender: CLPublicKey) {
-    const ownerAccountHash = Buffer.from(owner.toAccountHash()).toString("hex");
-    const spenderAccountHash = Buffer.from(spender.toAccountHash()).toString("hex");
-    const accountHash: string = `${ownerAccountHash}_${spenderAccountHash}`;
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      accountHash,
-      this.namedKeys.allowances
-    );
-    const maybeValue = result.value().unwrap();
-    return maybeValue.value().toString();
+  public async allowance(owner:string, spender:string) {
+    try {
+      const _spender = new CLByteArray(
+        Uint8Array.from(Buffer.from(spender, "hex"))
+      );
+
+      const keyOwner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const keySpender = createRecipientAddress(_spender);
+      const finalBytes = concat([CLValueParsers.toBytes(keyOwner).unwrap(), CLValueParsers.toBytes(keySpender).unwrap()]);
+      const blaked = blake.blake2b(finalBytes, undefined, 32);
+      const encodedBytes = Buffer.from(blaked).toString("hex");
+
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        encodedBytes,
+        this.namedKeys.allowances
+      );
+
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+    } catch (error) {
+      return "0";
+    }
+
   }
 
 

@@ -369,3 +369,17 @@ export const balanceOf = async (contractHash:string, key:string) => {
   return balance;
 
 };
+export const allowance = async (contractHash:string, ownerkey:string, spenderkey:string) => {
+  
+  console.log(`... Contract Hash: ${contractHash}`);
+
+  // We don't need hash- prefix so i'm removing it
+  await pair.setContractHash(contractHash);
+
+  let allowance = await pair.allowance(ownerkey,spenderkey);
+
+  console.log(`... Allowance: ${allowance}`);
+
+  return allowance;
+
+};

@@ -14,7 +14,7 @@ var tokensListRouter = require("./routes/tokenslist");
 var pairsListRouter = require("./routes/pairslist");
 var deploypairRouter = require("./routes/deploypair");
 var swapRouter = require("./routes/swaproutes");
-var liquidityRouter = require("./routes/liquidityroutes");
+var pairRouter = require("./routes/pairroutes");
 var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 
@@ -76,7 +76,7 @@ app.use("/", tokensListRouter);
 app.use("/", deploypairRouter);
 app.use("/", pairsListRouter);
 app.use("/", swapRouter);
-app.use("/", liquidityRouter);
+app.use("/", pairRouter);
 app.use("/", erc20Router);
 app.use("/", coinsmarketcapapiRouter);
 
