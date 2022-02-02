@@ -260,25 +260,24 @@ class PAIRClient {
       const _spender = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
-
+  
       const keyOwner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const keySpender = createRecipientAddress(_spender);
       const finalBytes = concat([CLValueParsers.toBytes(keyOwner).unwrap(), CLValueParsers.toBytes(keySpender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
-
+  
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         encodedBytes,
         this.namedKeys.allowances
       );
-
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
     } catch (error) {
       return "0";
     }
-
+    
   }
 
 
