@@ -23,21 +23,58 @@
 // var j=parseFloat(i);
 // console.log("j: ",j);
 
-var a = BigInt(
-  "782910138827292261791972728324982565756575668687686786786786787686786786"
-);
-var b = BigInt(
-  "782910138827292261791972728324982565756575668687686786786786787686786786"
-);
+// var a = BigInt(
+//   "782910138827292261791972728324982565756575668687686786786786787686786786"
+// );
+// var b = BigInt(
+//   "782910138827292261791972728324982565756575668687686786786786787686786786"
+// );
 
-console.log(a);
-console.log(b.toString());
-console.log((a * b).toString());
-console.log(((a * b) / b).toString());
+// console.log(a);
+// console.log(b.toString());
+// console.log((a * b).toString());
+// console.log(((a * b) / b).toString());
 
-console.log(BigInt(000000000));
-console.log(2 * 1 + (9 + 1) * 3);
-if(BigInt(1)>BigInt(0))
-{
-  console.log(2 * 1 + (9 + 1) * 3);
-}
+// console.log(BigInt(000000000));
+// console.log(2 * 1 + (9 + 1) * 3);
+// if(BigInt(1)>BigInt(0))
+// {
+//   console.log(2 * 1 + (9 + 1) * 3);
+// }
+
+ const Graph = require('node-dijkstra');
+ 
+const route = new Graph();
+ 
+route.addNode('WCSPR', { WISER:1 });
+route.addNode('WISER', { WCSPR:1 ,USDC:1 });
+route.addNode('USDC', { WISER:1, USDT:1,WETH:1});
+route.addNode('USDT', { USDC:1 });
+route.addNode('ETH', { WETH:1 });
+route.addNode('WETH', { ETH:1 ,USDC:1});
+
+console.log("graph: ",route);
+console.log("path: ",route.path('WCSPR', 'USDC'));
+console.log("path: ",route.path('WISER', 'USDT'));
+console.log("path: ",route.path('USDT', 'WISER'));
+console.log("path: ",route.path('WCSPR', 'ETH'));
+console.log("path: ",route.path('ETH','WETH'));
+console.log("path: ",route.path('WETH','ETH'));
+
+
+
+// const graph = new Map()
+ 
+// const a = new Map()
+// a.set('B', 1)
+ 
+// const b = new Map()
+// b.set('C', 1)
+
+
+// graph.set('A', a)
+// graph.set('B', b);
+ 
+// const route = new Graph(graph)
+
+// console.log("path: ",route.path('A', 'C'));

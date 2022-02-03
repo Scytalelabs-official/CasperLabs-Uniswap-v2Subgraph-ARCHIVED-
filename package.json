@@ -28,6 +28,7 @@
     "jade": "~1.11.0",
     "mongoose": "^6.0.8",
     "morgan": "~1.9.1",
+    "node-dijkstra": "^2.5.0",
     "nodemon": "^2.0.13",
     "prettier": "^2.3.2",
     "request": "^2.88.2",
