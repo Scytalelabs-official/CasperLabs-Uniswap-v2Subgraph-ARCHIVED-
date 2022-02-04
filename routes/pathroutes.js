@@ -132,12 +132,12 @@ router.route("/getpathreserves").post(async function (req, res, next) {
             if (i == 0) {
               if (pairs[j].token1.symbol == path[i + 1]) {
                 reserve0 =
-                  parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1);
+                  parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0);
                 break;
               }
             } else if (i != path.length - 1) {
               if (pairs[j].token1.symbol == path[i + 1]) {
-                reserve0 = reserve0 / (parseFloat(pairs[j].reserve1)/10**9);
+                reserve0 = parseFloat(reserve0) *(parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0));
                 break;
               }
             }
@@ -145,12 +145,12 @@ router.route("/getpathreserves").post(async function (req, res, next) {
             if (i == 0) {
               if (pairs[j].token0.symbol == path[i + 1]) {
                 reserve0 =
-                  parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0);
+                  parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1);
                 break;
               }
             } else if (i != path.length - 1) {
               if (pairs[j].token0.symbol == path[i + 1]) {
-                reserve0 = reserve0 / (parseFloat(pairs[j].reserve0)/10**9);
+                reserve0 = parseFloat(reserve0) * (parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1));
                 break;
               }
             }
@@ -165,12 +165,12 @@ router.route("/getpathreserves").post(async function (req, res, next) {
             if (i == 0) {
               if (pairs[j].token1.symbol == path[i + 1]) {
                 reserve1 =
-                  parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1);
+                  parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0);
                 break;
               }
             } else if (i != path.length - 1) {
               if (pairs[j].token1.symbol == path[i + 1]) {
-                reserve1 = reserve1 / (parseFloat(pairs[j].reserve1)/10**9);
+                reserve1 = parseFloat(reserve1) * (parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0));
                 break;
               }
             }
@@ -178,12 +178,12 @@ router.route("/getpathreserves").post(async function (req, res, next) {
             if (i == 0) {
               if (pairs[j].token0.symbol == path[i + 1]) {
                 reserve1 =
-                  parseFloat(pairs[j].reserve1) / parseFloat(pairs[j].reserve0);
+                  parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1);
                 break;
               }
             } else if (i != path.length - 1) {
               if (pairs[j].token0.symbol == path[i + 1]) {
-                reserve1 = reserve1 / (parseFloat(pairs[j].reserve0)/10**9);
+                reserve1 = parseFloat(reserve1) * ( parseFloat(pairs[j].reserve0) / parseFloat(pairs[j].reserve1));
                 break;
               }
             }
