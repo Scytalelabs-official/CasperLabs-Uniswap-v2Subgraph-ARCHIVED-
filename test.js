@@ -42,24 +42,24 @@
 //   console.log(2 * 1 + (9 + 1) * 3);
 // }
 
- const Graph = require('node-dijkstra');
+//  const Graph = require('node-dijkstra');
  
-const route = new Graph();
+// const route = new Graph();
  
-route.addNode('WCSPR', { WISER:1 });
-route.addNode('WISER', { WCSPR:1 ,USDC:1 });
-route.addNode('USDC', { WISER:1, USDT:1,WETH:1});
-route.addNode('USDT', { USDC:1 });
-route.addNode('ETH', { WETH:1 });
-route.addNode('WETH', { ETH:1 ,USDC:1});
+// route.addNode('WCSPR', { WISER:1 });
+// route.addNode('WISER', { WCSPR:1 ,USDC:1 });
+// route.addNode('USDC', { WISER:1, USDT:1,WETH:1});
+// route.addNode('USDT', { USDC:1 });
+// route.addNode('ETH', { WETH:1 });
+// route.addNode('WETH', { ETH:1 ,USDC:1});
 
-console.log("graph: ",route);
-console.log("path: ",route.path('WCSPR', 'USDC'));
-console.log("path: ",route.path('WISER', 'USDT'));
-console.log("path: ",route.path('USDT', 'WISER'));
-console.log("path: ",route.path('WCSPR', 'ETH'));
-console.log("path: ",route.path('ETH','WETH'));
-console.log("path: ",route.path('WETH','ETH'));
+// console.log("graph: ",route);
+// console.log("path: ",route.path('WCSPR', 'USDC'));
+// console.log("path: ",route.path('WISER', 'USDT'));
+// console.log("path: ",route.path('USDT', 'WISER'));
+// console.log("path: ",route.path('WCSPR', 'ETH'));
+// console.log("path: ",route.path('ETH','WETH'));
+// console.log("path: ",route.path('WETH','ETH'));
 
 
 
@@ -78,3 +78,7 @@ console.log("path: ",route.path('WETH','ETH'));
 // const route = new Graph(graph)
 
 // console.log("path: ",route.path('A', 'C'));
+
+console.log(parseFloat("1000000000")/parseFloat("10000000000"));
+console.log(0.1/parseFloat("10"));
+
