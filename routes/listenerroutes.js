@@ -61,7 +61,7 @@ router.route("/startListener").post(async function (req, res, next) {
     }
 
     await axios
-      .post("https://listener-backend.herokuapp.com/listener/initiateListener", {
+      .post("http://casperswapeventlistener-env.eba-hryscbuc.us-east-1.elasticbeanstalk.com/listener/initiateListener", {
         contractPackageHashes: req.body.contractPackageHashes,
       })
       .then(function (response) {
