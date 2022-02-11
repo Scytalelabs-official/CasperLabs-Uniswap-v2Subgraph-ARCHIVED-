@@ -164,7 +164,7 @@ async function createLiquidityPosition(exchange, user, value) {
     });
     if (liquidityTokenBalance === null) {
       let pair = await Pair.findOne({ id: exchange });
-      pair.liquidityProviderCount = pair.liquidityProviderCount + ONE_BI;
+      pair.liquidityProviderCount = (BigInt(pair.liquidityProviderCount) + BigInt(ONE_BI)).toString();
       liquidityTokenBalance = new LiquidityPosition({
         id: exchange + "-" + user,
         liquidityTokenBalance: value.toString(),

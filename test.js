@@ -79,6 +79,24 @@
 
 // console.log("path: ",route.path('A', 'C'));
 
-console.log(parseFloat("1000000000")/parseFloat("10000000000"));
-console.log(0.1/parseFloat("10"));
+// console.log(parseFloat("1000000000")/parseFloat("10000000000"));
+// console.log(0.1/parseFloat("10"));
+
+// let pairagainstuserresult = await pairagainstuser.findOne({
+//     id: args.to,
+//     pair: args.pairAddress,
+//   });
+//   if (pairagainstuserresult == null) {
+//     let newData = new pairagainstuser({
+//       id: args.to,
+//       pair: args.pairAddress,
+//       reserve0: args.amount0,
+//       reserve1: args.amount1,
+//     });
+//     await pairagainstuser.create(newData);
+//   } else {
+//     pairagainstuserresult.reserve0 = args.amount0;
+//     pairagainstuserresult.reserve1 = args.amount1;
+//     await pairagainstuserresult.save();
+//   }
 

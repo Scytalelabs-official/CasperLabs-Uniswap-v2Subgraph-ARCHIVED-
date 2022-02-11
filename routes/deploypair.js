@@ -3,6 +3,7 @@ var express = require("express");
 var router = express.Router();
 var pair = require("../JsClients/PAIR/test/install.ts");
 var pairsagainstuser = require("../models/pairsagainstuser");
+var pairagainstuser = require("../models/pairagainstuser");
 var pairsModel = require("../models/pair");
 
 router.route("/makedeploypaircontract").post(async function (req, res, next) {
@@ -118,6 +119,39 @@ router.route("/getpairsagainstuser").post(async function (req, res, next) {
           });
         }
       }
+    }
+  } catch (error) {
+    console.log("error (try-catch) : " + error);
+    return res.status(500).json({
+      success: false,
+      err: error,
+    });
+  }
+});
+
+router.route("/getpairagainstuser").post(async function (req, res, next) {
+  try {
+    if (!req.body.user) {
+      return res.status(400).json({
+        success: false,
+        message: "user not found in request body",
+      });
+    }
+
+    let result = await pairagainstuser.find({
+      id: req.body.user.toLowerCase(),
+    });
+    if (result.length == 0) {
+      return res.status(400).json({
+        success: false,
+        message: "This user has not added liquidity against any pair.",
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "This User has added liquidity against following pairs.",
+        userpairs: result,
+      });
     }
   } catch (error) {
     console.log("error (try-catch) : " + error);

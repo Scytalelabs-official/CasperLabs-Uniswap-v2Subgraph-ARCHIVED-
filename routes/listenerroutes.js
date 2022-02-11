@@ -6,6 +6,7 @@ var { request } = require("graphql-request");
 var pairModel = require("../models/pair");
 var hashesofpairsModel = require("../models/hashesofpairs");
 var eventsModel = require("../models/events");
+var pairagainstuser = require("../models/pairagainstuser");
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -61,9 +62,12 @@ router.route("/startListener").post(async function (req, res, next) {
     }
 
     await axios
-      .post("http://casperswapeventlistener-env.eba-hryscbuc.us-east-1.elasticbeanstalk.com/listener/initiateListener", {
-        contractPackageHashes: req.body.contractPackageHashes,
-      })
+      .post(
+        "http://casperswapeventlistener-env.eba-hryscbuc.us-east-1.elasticbeanstalk.com/listener/initiateListener",
+        {
+          contractPackageHashes: req.body.contractPackageHashes,
+        }
+      )
       .then(function (response) {
         console.log(response);
         return res.status(200).json({
@@ -644,6 +648,82 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           .catch(function (error) {
             console.log(error);
           });
+      }
+    } else if (eventName == "addreserves") {
+      console.log(eventName + " Event result: ");
+      console.log(newData[0][0].data + " = " + newData[0][1].data);
+      console.log(newData[1][0].data + " = " + newData[1][1].data);
+      console.log(newData[2][0].data + " = " + newData[2][1].data);
+      console.log(newData[3][0].data + " = " + newData[3][1].data);
+      console.log(newData[4][0].data + " = " + newData[4][1].data);
+      console.log(newData[5][0].data + " = " + newData[5][1].data);
+
+      var user = splitdata(newData[2][1].data);
+      var pair = splitdata(newData[3][1].data);
+      var reserve0 = newData[4][1].data;
+      var reserve1 = newData[5][1].data;
+
+      console.log("user: ", user);
+      console.log("pair: ", pair);
+      console.log("reserve0: ", reserve0);
+      console.log("reserve1: ", reserve1);
+
+      let pairagainstuserresult = await pairagainstuser.findOne({
+        id: user,
+        pair: pair,
+      });
+      if (pairagainstuserresult == null) {
+        let newData = new pairagainstuser({
+          id: user,
+          pair: pair,
+          reserve0: reserve0,
+          reserve1: reserve1,
+        });
+        await pairagainstuser.create(newData);
+      } else {
+        pairagainstuserresult.reserve0 =
+          pairagainstuserresult.reserve0 + reserve0;
+        pairagainstuserresult.reserve1 =
+          pairagainstuserresult.reserve1 + reserve1;
+        await pairagainstuserresult.save();
+      }
+    } else if (eventName == "removereserves") {
+      console.log(eventName + " Event result: ");
+      console.log(newData[0][0].data + " = " + newData[0][1].data);
+      console.log(newData[1][0].data + " = " + newData[1][1].data);
+      console.log(newData[2][0].data + " = " + newData[2][1].data);
+      console.log(newData[3][0].data + " = " + newData[3][1].data);
+      console.log(newData[4][0].data + " = " + newData[4][1].data);
+      console.log(newData[5][0].data + " = " + newData[5][1].data);
+
+      var user = splitdata(newData[2][1].data);
+      var pair = splitdata(newData[3][1].data);
+      var reserve0 = newData[4][1].data;
+      var reserve1 = newData[5][1].data;
+
+      console.log("user: ", user);
+      console.log("pair: ", pair);
+      console.log("reserve0: ", reserve0);
+      console.log("reserve1: ", reserve1);
+
+      let pairagainstuserresult = await pairagainstuser.findOne({
+        id: user,
+        pair: pair,
+      });
+      if (pairagainstuserresult == null) {
+        let newData = new pairagainstuser({
+          id: user,
+          pair: pair,
+          reserve0: reserve0,
+          reserve1: reserve1,
+        });
+        await pairagainstuser.create(newData);
+      } else {
+        pairagainstuserresult.reserve0 =
+          pairagainstuserresult.reserve0 - reserve0;
+        pairagainstuserresult.reserve1 =
+          pairagainstuserresult.reserve1 - reserve1;
+        await pairagainstuserresult.save();
       }
     }
   } catch (error) {
