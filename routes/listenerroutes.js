@@ -681,10 +681,12 @@ router.route("/geteventsdata").post(async function (req, res, next) {
         });
         await pairagainstuser.create(newData);
       } else {
-        pairagainstuserresult.reserve0 =
-          pairagainstuserresult.reserve0 + reserve0;
-        pairagainstuserresult.reserve1 =
-          pairagainstuserresult.reserve1 + reserve1;
+        pairagainstuserresult.reserve0 = (
+          BigInt(pairagainstuserresult.reserve0) + BigInt(reserve0)
+        ).toString();
+        pairagainstuserresult.reserve1 = (
+          BigInt(pairagainstuserresult.reserve1) + BigInt(reserve1)
+        ).toString();
         await pairagainstuserresult.save();
       }
     } else if (eventName == "removereserves") {
@@ -719,10 +721,12 @@ router.route("/geteventsdata").post(async function (req, res, next) {
         });
         await pairagainstuser.create(newData);
       } else {
-        pairagainstuserresult.reserve0 =
-          pairagainstuserresult.reserve0 - reserve0;
-        pairagainstuserresult.reserve1 =
-          pairagainstuserresult.reserve1 - reserve1;
+        pairagainstuserresult.reserve0 = (
+          BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+        ).toString();
+        pairagainstuserresult.reserve1 = (
+          BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+        ).toString();
         await pairagainstuserresult.save();
       }
     }
