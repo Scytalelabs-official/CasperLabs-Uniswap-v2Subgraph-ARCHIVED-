@@ -99,4 +99,3 @@
 //     pairagainstuserresult.reserve1 = args.amount1;
 //     await pairagainstuserresult.save();
 //   }
-

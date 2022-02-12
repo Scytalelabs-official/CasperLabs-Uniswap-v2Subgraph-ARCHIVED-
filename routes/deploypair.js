@@ -147,10 +147,17 @@ router.route("/getpairagainstuser").post(async function (req, res, next) {
         message: "This user has not added liquidity against any pair.",
       });
     } else {
+      let pairsdata=[];
+      for(var i=0;i<result.length;i++)
+      {
+        let pairsresult = await pairsModel.findOne({id:result[i].pair});
+        pairsdata.push(pairsresult);
+      }
       return res.status(200).json({
         success: true,
         message: "This User has added liquidity against following pairs.",
         userpairs: result,
+        pairsdata:pairsdata
       });
     }
   } catch (error) {
