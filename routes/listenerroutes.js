@@ -658,10 +658,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       console.log(newData[4][0].data + " = " + newData[4][1].data);
       console.log(newData[5][0].data + " = " + newData[5][1].data);
 
-      var user = splitdata(newData[2][1].data);
-      var pair = splitdata(newData[3][1].data);
-      var reserve0 = newData[4][1].data;
-      var reserve1 = newData[5][1].data;
+      var user = splitdata(newData[5][1].data);
+      var pair = newData[2][1].data;
+      var reserve0 = newData[3][1].data;
+      var reserve1 = newData[4][1].data;
 
       console.log("user: ", user);
       console.log("pair: ", pair);
@@ -698,10 +698,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       console.log(newData[4][0].data + " = " + newData[4][1].data);
       console.log(newData[5][0].data + " = " + newData[5][1].data);
 
-      var user = splitdata(newData[2][1].data);
-      var pair = splitdata(newData[3][1].data);
-      var reserve0 = newData[4][1].data;
-      var reserve1 = newData[5][1].data;
+      var user = splitdata(newData[5][1].data);
+      var pair = newData[2][1].data;
+      var reserve0 = newData[3][1].data;
+      var reserve1 = newData[4][1].data;
 
       console.log("user: ", user);
       console.log("pair: ", pair);
