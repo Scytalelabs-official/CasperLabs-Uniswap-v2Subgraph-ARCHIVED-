@@ -5,6 +5,8 @@ var pair = require("../JsClients/PAIR/test/install.ts");
 var pairsagainstuser = require("../models/pairsagainstuser");
 var pairagainstuser = require("../models/pairagainstuser");
 var pairsModel = require("../models/pair");
+var pair = require("../JsClients/PAIR/test/installed.ts");
+const { reset } = require("nodemon");
 
 router.route("/makedeploypaircontract").post(async function (req, res, next) {
   try {
@@ -147,17 +149,30 @@ router.route("/getpairagainstuser").post(async function (req, res, next) {
         message: "This user has not added liquidity against any pair.",
       });
     } else {
-      let pairsdata=[];
-      for(var i=0;i<result.length;i++)
-      {
-        let pairsresult = await pairsModel.findOne({id:result[i].pair});
+      for (var i = 0; i < result.length; i++) {
+        let liquidity = await pair.balanceOf(
+          result[i].pair,
+          result[i].id.toLowerCase()
+        );
+        if (liquidity == "0") {
+          await pairagainstuser.deleteOne({ _id: result[i]._id });
+        }
+      }
+      let result1 = await pairagainstuser.find({
+        id: req.body.user.toLowerCase(),
+      });
+
+      let pairsdata = [];
+      for (var i = 0; i < result1.length; i++) {
+        let pairsresult = await pairsModel.findOne({ id: result1[i].pair });
         pairsdata.push(pairsresult);
       }
+      
       return res.status(200).json({
         success: true,
         message: "This User has added liquidity against following pairs.",
-        userpairs: result,
-        pairsdata:pairsdata
+        userpairs: result1,
+        pairsdata: pairsdata,
       });
     }
   } catch (error) {

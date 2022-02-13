@@ -721,24 +721,13 @@ router.route("/geteventsdata").post(async function (req, res, next) {
         });
         await pairagainstuser.create(newData);
       } else {
-        if (
-          (
-            BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
-          ).toString() == "0" &&
-          (
-            BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
-          ).toString() == "0"
-        ) {
-          await pairagainstuser.deleteOne({ _id: pairagainstuserresult._id });
-        } else {
-          pairagainstuserresult.reserve0 = (
-            BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
-          ).toString();
-          pairagainstuserresult.reserve1 = (
-            BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
-          ).toString();
-          await pairagainstuserresult.save();
-        }
+        pairagainstuserresult.reserve0 = (
+          BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+        ).toString();
+        pairagainstuserresult.reserve1 = (
+          BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+        ).toString();
+        await pairagainstuserresult.save();
       }
     }
   } catch (error) {
