@@ -7,6 +7,7 @@ var pairModel = require("../models/pair");
 var hashesofpairsModel = require("../models/hashesofpairs");
 var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
+var pair = require("../JsClients/PAIR/test/installed.ts");
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -680,6 +681,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           reserve1: reserve1,
         });
         await pairagainstuser.create(newData);
+        return res.status(200).json({
+          success: true,
+          message: "Pair against User with reserves created Successfully.",
+        });
       } else {
         pairagainstuserresult.reserve0 = (
           BigInt(pairagainstuserresult.reserve0) + BigInt(reserve0)
@@ -688,6 +693,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           BigInt(pairagainstuserresult.reserve1) + BigInt(reserve1)
         ).toString();
         await pairagainstuserresult.save();
+        return res.status(200).json({
+          success: true,
+          message: "User Reserves against pair Added Successfully.",
+        });
       }
     } else if (eventName == "removereserves") {
       console.log(eventName + " Event result: ");
@@ -713,21 +722,35 @@ router.route("/geteventsdata").post(async function (req, res, next) {
         pair: pair,
       });
       if (pairagainstuserresult == null) {
-        let newData = new pairagainstuser({
-          id: user,
-          pair: pair,
-          reserve0: reserve0,
-          reserve1: reserve1,
+        return res.status(400).json({
+          success: false,
+          message: "There is no pair against this user to remove reserves.",
         });
-        await pairagainstuser.create(newData);
       } else {
-        pairagainstuserresult.reserve0 = (
-          BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
-        ).toString();
-        pairagainstuserresult.reserve1 = (
-          BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
-        ).toString();
-        await pairagainstuserresult.save();
+        let liquidity = await pair.balanceOf(
+          pairagainstuserresult.pair,
+          pairagainstuserresult.id.toLowerCase()
+        );
+        if (liquidity == "0") {
+          await pairagainstuser.deleteOne({ _id: pairagainstuserresult._id });
+          return res.status(200).json({
+            success: true,
+            message:
+              "Record deleted because this pair against user has zero liquidity.",
+          });
+        } else {
+          pairagainstuserresult.reserve0 = (
+            BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+          ).toString();
+          pairagainstuserresult.reserve1 = (
+            BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+          ).toString();
+          await pairagainstuserresult.save();
+          return res.status(200).json({
+            success: true,
+            message: "User Reserves against pair removed Successfully.",
+          });
+        }
       }
     }
   } catch (error) {
