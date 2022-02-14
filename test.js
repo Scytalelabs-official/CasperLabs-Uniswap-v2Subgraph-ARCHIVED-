@@ -99,3 +99,5 @@
 //     pairagainstuserresult.reserve1 = args.amount1;
 //     await pairagainstuserresult.save();
 //   }
+console.log(BigInt(31627572002)-BigInt(7906866420));
+console.log(BigInt(299999)-BigInt(74999));

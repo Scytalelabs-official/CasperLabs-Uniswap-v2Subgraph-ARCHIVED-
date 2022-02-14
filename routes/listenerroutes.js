@@ -7,7 +7,7 @@ var pairModel = require("../models/pair");
 var hashesofpairsModel = require("../models/hashesofpairs");
 var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
-var pair = require("../JsClients/PAIR/test/installed.ts");
+var paircontract = require("../JsClients/PAIR/test/installed.ts");
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -727,7 +727,7 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           message: "There is no pair against this user to remove reserves.",
         });
       } else {
-        let liquidity = await pair.balanceOf(
+        let liquidity = await paircontract.balanceOf(
           pairagainstuserresult.pair,
           pairagainstuserresult.id.toLowerCase()
         );
