@@ -64,7 +64,7 @@ router.route("/startListener").post(async function (req, res, next) {
 
     await axios
       .post(
-        "http://casperswapeventlistener-env.eba-hryscbuc.us-east-1.elasticbeanstalk.com/listener/initiateListener",
+        "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener",
         {
           contractPackageHashes: req.body.contractPackageHashes,
         }
