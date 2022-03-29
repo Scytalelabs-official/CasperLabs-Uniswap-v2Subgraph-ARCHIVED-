@@ -14,6 +14,7 @@
     "test:routerinstalled": "ts-node JsClients/ROUTER/test/installed.ts"
   },
   "dependencies": {
+    "@datastructures-js/heap": "^4.0.2",
     "axios": "^0.24.0",
     "blakejs": "^1.1.1",
     "casper-js-sdk": "^2.7.5",

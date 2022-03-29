@@ -528,7 +528,7 @@ const test = async () => {
   
 };
 
-//test();
+test();
 
 export const swapforinterface = async (
 	signerkey:string,
