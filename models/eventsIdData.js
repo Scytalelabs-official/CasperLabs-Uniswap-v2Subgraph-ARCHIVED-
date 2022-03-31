@@ -2,14 +2,17 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 const eventIdDataSchema = new Schema({
+	eventId: {
+		type: String,
+	},
 	deployHash: {
 		type: String,
 	},
 	eventName: {
 		type: String,
 	},
-	eventId: {
-		type: String,
+	status:{
+		type:String,
 	},
 	timestamp: {
 		type: Number,

@@ -18,6 +18,7 @@ var pairRouter = require("./routes/pairroutes");
 var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
+var event_Id_Data_Model = require("./models/eventsIdData");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -72,7 +73,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.json({ msg: "Uniswap V2 GraphQL Server" });
 });
-app.use("/", listenerRouter);
+app.use("/", listenerRouter.router);
 app.use("/", tokensListRouter);
 app.use("/", deploypairRouter);
 app.use("/", pairsListRouter);
@@ -89,7 +90,27 @@ app.use(
     graphiql: true,
   })
 );
+setInterval(async()=>{ 
+    //code goes here that will be run every 2 seconds. 
+    console.log("Heap Length : ", listenerRouter.isNewEvent());
+    if(listenerRouter.isNewEvent()>0){
+    //heap.extractroot
+    const currentEvent = listenerRouter.depopulateHeap();
+    console.log("Current Event : ", currentEvent);
+    //call mutation
+    let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+    //wait result
+    console.log("Result : ", result);
+    //status update 
+    console.log("Current Event Name : ", currentEvent.eventName);
+    console.log("Current Event deploy hash : ", currentEvent.deployHash);
 
+    // let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
+    // console.log("Event in Model : ", _updateEvent);
+    // await _updateEvent.updateOne({"status":"Completed"});
+    //next mutataion call
+    }
+}, 2000);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
