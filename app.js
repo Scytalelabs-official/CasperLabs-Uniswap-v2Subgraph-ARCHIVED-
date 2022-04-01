@@ -19,6 +19,7 @@ var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
 var event_Id_Data_Model = require("./models/eventsIdData");
+var eventId = require("./models/eventId");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -90,26 +91,42 @@ app.use(
     graphiql: true,
   })
 );
+
+let _eventId;
+let count;
+async function Count(){
+  _eventId= await eventId.findOne({id: '0'});
+  console.log('Integer Event Id : ', BigInt(_eventId.eventId));
+  count = BigInt(_eventId.eventId);
+  count++;
+  console.log("Count : ", count);
+}
+Count();
+console.log("Count : ", count);
 setInterval(async()=>{ 
     //code goes here that will be run every 2 seconds. 
     console.log("Heap Length : ", listenerRouter.isNewEvent());
     if(listenerRouter.isNewEvent()>0){
-    //heap.extractroot
-    const currentEvent = listenerRouter.depopulateHeap();
-    console.log("Current Event : ", currentEvent);
-    //call mutation
-    let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
-    //wait result
-    console.log("Result : ", result);
-    //status update 
-    console.log("Current Event Name : ", currentEvent.eventName);
-    console.log("Current Event deploy hash : ", currentEvent.deployHash);
-
-    // let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
-    // console.log("Event in Model : ", _updateEvent);
-    // await _updateEvent.updateOne({"status":"Completed"});
-    //next mutataion call
+      console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));
+      console.log("Current Count : ", count);
+      if(BigInt(listenerRouter.heapRoot().eventId)+ BigInt(1) === count ){
+        //heap.extractroot
+        const currentEvent = listenerRouter.depopulateHeap();
+        console.log("Current Event : ", currentEvent);
+        //call mutation
+        let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+        //wait result
+        console.log("Result : ", result);
+        //status update 
+        console.log("Current Event Name : ", currentEvent.eventName);
+        console.log("Current Event deploy hash : ", currentEvent.deployHash);
+        count++;
+        // let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
+        // console.log("Event in Model : ", _updateEvent);
+        // await _updateEvent.updateOne({"status":"Completed"});
+        //next mutataion call
     }
+  }
 }, 2000);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -120,7 +137,7 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+  res.locals.error = req.app.get("env") == "development" ? err : {};
 
   // render the error page
   res.status(err.status || 500);

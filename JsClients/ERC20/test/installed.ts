@@ -70,7 +70,7 @@ const erc20 = new ERC20Client(
 
 const test = async () => {
 
-  await erc20.setContractHash(TOKEN1_CONTRACT!);
+  await erc20.setContractHash(TOKEN0_CONTRACT!);
   //getTotalSupply(TOKEN1_CONTRACT!);
   // // //name
   // // const name = await erc20.name();
@@ -136,7 +136,7 @@ const test = async () => {
   const approveDeployHash = await erc20.approve(
     ROUTERKEYS,
     PACKAGE_HASH!,
-    AMOUNT_B_DESIRED!,
+    AMOUNT_A_DESIRED!,
     APPROVE_PAYMENT_AMOUNT!
   );
   console.log("... Approve deploy hash: ", approveDeployHash);
@@ -172,7 +172,7 @@ const test = async () => {
 };
 
 
-// test();
+test();
 
 export const getName = async (contractHash:string) => {
   

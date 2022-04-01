@@ -9,7 +9,7 @@ var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
 var paircontract = require("../JsClients/PAIR/test/installed.ts");
 var event_Id_Data_Model = require("../models/eventsIdData");
-const { /*MinHeap*/MaxHeap } = require('@datastructures-js/heap');
+const { MinHeap/*MaxHeap*/ } = require('@datastructures-js/heap');
 
 function splitdata(data) {
 	var temp = data.split("(");
@@ -93,7 +93,7 @@ router.route("/startListener").post(async function (req, res, next) {
 });
 
 var eventArray =  [];
-var eventHeap = new MaxHeap((instance)=> BigInt(instance.eventId));
+var eventHeap = new MinHeap((instance)=> BigInt(instance.eventId));
 router.route("/geteventIdData").post(async function (req, res, next) {
 	try {
 		if (!req.body.eventId) {
@@ -170,18 +170,26 @@ router.route("/geteventIdData").post(async function (req, res, next) {
 });
 function populateHeap(eventArray, instance){
 	console.log("Event Array : ",eventArray);
-	eventHeap = new MaxHeap((instance)=> BigInt(instance.eventId));
+	eventHeap = new MinHeap((instance)=> BigInt(instance.eventId));
 	eventArray.forEach(event => {
 		eventHeap.insert(event);
 	});
 	console.log("Event Heap : ", JSON.stringify(eventHeap.sort(),null,2));
+	console.log("Is valid Before Clone: ", eventHeap.isValid());
 	console.log("Event Heap unsorted : ",JSON.stringify(eventHeap,null,2));
-	// console.log("Extract root : ", JSON.stringify(eventHeap.extractRoot(),null,2))
+	eventHeap.clone().sort();
+	console.log("Is valid After Clone : ", eventHeap.isValid());
+	if(!eventHeap.isValid()){
+		eventHeap.fix();
+	}
+
+	console.log("Event Heap Root : ", JSON.stringify(eventHeap.root(),null,2))
 
 	return eventHeap;
 }
 
-function depopulateHeap(){
+async function depopulateHeap(){
+	await eventArray.shift();
 	return eventHeap.extractRoot();
 }
 
@@ -190,6 +198,9 @@ function isNewEvent(){
 	return eventHeap.size();
 }
 
+function heapRoot(){
+	return eventHeap.root();
+}
 
 // router.route("/geteventsdata").post(async function (req, res, next) {
 async function geteventsdata(_deployHash, _timestamp, _block_hash, _eventname, _eventdata, res){
@@ -1560,4 +1571,4 @@ router.route("/geteventsdata").post(async function (req, res, next) {
 	}
 });
 
-module.exports = {router, isNewEvent, depopulateHeap, geteventsdata};
+module.exports = {router, isNewEvent, depopulateHeap, heapRoot, geteventsdata};
