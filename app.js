@@ -20,6 +20,7 @@ var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
 var event_Id_Data_Model = require("./models/eventsIdData");
 var eventId = require("./models/eventId");
+const axios = require('axios').default;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -97,33 +98,55 @@ let count;
 async function Count(){
   _eventId= await eventId.findOne({id: '0'});
   console.log('Integer Event Id : ', BigInt(_eventId.eventId));
-  count = BigInt(_eventId.eventId);
-  count++;
+  count = BigInt(_eventId.completedEventId);
   console.log("Count : ", count);
 }
 Count();
 console.log("Count : ", count);
+
 setInterval(async()=>{ 
     //code goes here that will be run every 2 seconds. 
     console.log("Heap Length : ", listenerRouter.isNewEvent());
     if(listenerRouter.isNewEvent()>0){
       console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));
       console.log("Current Count : ", count);
-      if(BigInt(listenerRouter.heapRoot().eventId)+ BigInt(1) === count ){
+      if(BigInt(listenerRouter.heapRoot().eventId) - count === BigInt(1) ){
         //heap.extractroot
         const currentEvent = listenerRouter.depopulateHeap();
         console.log("Current Event : ", currentEvent);
         //call mutation
-        let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+        // let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+        let result;
+        await axios.post('http://localhost:3000/geteventsdata',{
+          deployHash: currentEvent.deployHash,
+          timestamp: currentEvent.timestamp, 
+          block_hash: currentEvent.block_hash, 
+          eventname: currentEvent.eventName, 
+          eventdata: currentEvent.eventsdata
+        })
+        .then(async function(response){
+          // result = response;
+          let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
+          console.log("Event in Model : ", _updateEvent);
+          await _updateEvent.updateOne({"status":"Completed"});
+          console.log("Current Event Name : ", currentEvent.eventName);
+          console.log("Current Event deploy hash : ", currentEvent.deployHash);
+          count++;
+          console.log("Completed Event Count : ", count);
+          if(_eventId.eventId < currentEvent.eventId){
+          await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
+          }
+          await eventId.updateOne({"completedEventId":count.toString()});
+          // console.log("Response : ",response);
+        })
+        .catch(function(error){
+          console.log("Axios Error : ", error);
+        });
         //wait result
-        console.log("Result : ", result);
+        // console.log("Result : ", result);
         //status update 
-        console.log("Current Event Name : ", currentEvent.eventName);
-        console.log("Current Event deploy hash : ", currentEvent.deployHash);
-        count++;
-        // let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
-        // console.log("Event in Model : ", _updateEvent);
-        // await _updateEvent.updateOne({"status":"Completed"});
+        
+        
         //next mutataion call
     }
   }
