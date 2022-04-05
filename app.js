@@ -126,7 +126,8 @@ setInterval(async()=>{
         })
         .then(async function(response){
           // result = response;
-          let _updateEvent = await event_Id_Data_Model.findOne({eventName:currentEvent.eventName,deployHash:currentEvent.deployHash});
+          console.log("Response : ", response);
+          let _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
           console.log("Event in Model : ", _updateEvent);
           await _updateEvent.updateOne({"status":"Completed"});
           console.log("Current Event Name : ", currentEvent.eventName);

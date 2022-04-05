@@ -169,12 +169,12 @@ router.route("/geteventIdData").post(async function (req, res, next) {
 
 });
 function populateHeap(eventArray, _instance){
-	console.log("Event Array : ",eventArray);
+	// console.log("Event Array : ",eventArray);
 	// eventHeap = new MinHeap((instance)=> BigInt(instance.eventId));
 	// eventArray.forEach(event => {
 		eventHeap.insert(_instance);
 	// });
-	console.log("Event Heap : ", JSON.stringify(eventHeap.sort(),null,2));
+	console.log("Event Heap : ", JSON.stringify(eventHeap.sort(),["eventId","deployHash","eventName","status","timestamp","block_hash"],2));
 	// console.log("Is valid Before Clone: ", eventHeap.isValid());
 	// console.log("Event Heap unsorted : ",JSON.stringify(eventHeap,null,2));
 	eventHeap.clone().sort();
@@ -183,7 +183,7 @@ function populateHeap(eventArray, _instance){
 		eventHeap.fix();
 	}
 
-	console.log("Event Heap Root : ", JSON.stringify(eventHeap.root(),null,2))
+	console.log("Event Heap Root : ", JSON.stringify(eventHeap.root(),["eventId","deployHash","eventName","status","timestamp","block_hash"],2))
 
 	return eventHeap;
 }

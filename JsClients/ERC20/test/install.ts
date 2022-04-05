@@ -70,4 +70,4 @@ const test = async () => {
   console.log(`... Package Hash: ${packageHash}`);
 };
 
-// test();
+test();
