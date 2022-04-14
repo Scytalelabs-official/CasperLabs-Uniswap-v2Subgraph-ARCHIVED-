@@ -790,8 +790,13 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           message: "There is no pair against this user to remove reserves.",
         });
       } else {
+        
+        let data = await allcontractsDataModel.findOne({
+          packageHash: pairagainstuserresult.pair,
+        });
+
         let liquidity = await paircontract.balanceOf(
-          pairagainstuserresult.pair,
+          data.contractHash,
           pairagainstuserresult.id.toLowerCase()
         );
         if (liquidity == "0") {

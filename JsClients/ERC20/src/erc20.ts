@@ -328,44 +328,15 @@ class ERC20Client {
       throw Error("Invalid Deploy");
     }
   }
-  public async mint(
-    keys: Keys.AsymmetricKey,
-    to: RecipientType,
-    amount: string,
-    paymentAmount: string
-  ) {
-    
-    const runtimeArgs = RuntimeArgs.fromMap({
-      to:utils.createRecipientAddress(to),
-      amount: CLValueBuilder.u256(amount)
-    });
-
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "mint",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
-
-    if (deployHash !== null) {
-      
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
   // public async mint(
   //   keys: Keys.AsymmetricKey,
-  //   to: string,
+  //   to: RecipientType,
   //   amount: string,
   //   paymentAmount: string
   // ) {
-  //   const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
+    
   //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     to: CLValueBuilder.key(tobytearray),
+  //     to:utils.createRecipientAddress(to),
   //     amount: CLValueBuilder.u256(amount)
   //   });
 
@@ -380,12 +351,41 @@ class ERC20Client {
   //   });
 
   //   if (deployHash !== null) {
- 
+      
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
   //   }
   // }
+  public async mint(
+    keys: Keys.AsymmetricKey,
+    to: string,
+    amount: string,
+    paymentAmount: string
+  ) {
+    const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
+    const runtimeArgs = RuntimeArgs.fromMap({
+      to: CLValueBuilder.key(tobytearray),
+      amount: CLValueBuilder.u256(amount)
+    });
+
+    const deployHash = await contractCall({
+      chainName: this.chainName,
+      contractHash: this.contractHash,
+      entryPoint: "mint",
+      keys,
+      nodeAddress: this.nodeAddress,
+      paymentAmount,
+      runtimeArgs,
+    });
+
+    if (deployHash !== null) {
+ 
+      return deployHash;
+    } else {
+      throw Error("Invalid Deploy");
+    }
+  }
   public async burn(
     keys: Keys.AsymmetricKey,
     from: RecipientType,

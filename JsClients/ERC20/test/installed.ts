@@ -70,7 +70,8 @@ const erc20 = new ERC20Client(
 
 const test = async () => {
 
-  await erc20.setContractHash(TOKEN0_CONTRACT!);
+  await erc20.setContractHash(TOKEN1_CONTRACT!);
+  console.log("contract:"+ TOKEN1_CONTRACT!);
   //getTotalSupply(TOKEN1_CONTRACT!);
   // // //name
   // // const name = await erc20.name();
@@ -89,7 +90,8 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   // // // //balanceof
-  // let balance = await erc20.balanceOf("7b217a09296d5ce360847a7d20f623476157c5f022333c4e988a464035cadd80");
+  // console.log("user: 0d72ccd15e717fde4afc91fab70cb20e9986da52c670976386efc91b375f52a8");
+  // let balance = await erc20.balanceOf("0d72ccd15e717fde4afc91fab70cb20e9986da52c670976386efc91b375f52a8");
   // console.log(`... Balance: ${balance}`);
 
   // // //nonce
@@ -100,17 +102,29 @@ const test = async () => {
   //let allowance = await erc20.allowance(KEYS.publicKey,KEYS.publicKey);
  // console.log(`... Allowance: ${allowance}`);
  
-  //mint
-  const mintDeployHash = await erc20.mint(
-    ROUTERKEYS,
-    ROUTERKEYS.publicKey,
-    MINT_AMOUNT!,
-    MINT_PAYMENT_AMOUNT!
-  );
-  console.log("... Mint deploy hash: ", mintDeployHash);
+  // //mint
+  // const mintDeployHash = await erc20.mint(
+  //   ROUTERKEYS,
+  //   ROUTERKEYS.publicKey,
+  //   MINT_AMOUNT!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, mintDeployHash);
-  console.log("... Token minted successfully.");
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // console.log("... Token minted successfully.");
+
+  //mint
+  // const mintDeployHash = await erc20.mint(
+  //   ROUTERKEYS,
+  //   "0d72ccd15e717fde4afc91fab70cb20e9986da52c670976386efc91b375f52a8",
+  //   MINT_AMOUNT!,
+  //   MINT_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Mint deploy hash: ", mintDeployHash);
+
+  // await getDeploy(NODE_ADDRESS!, mintDeployHash);
+  // console.log("... Token minted successfully.");
 
   //  balanceof
   // let balance = await erc20.balanceOfcontract(PAIR_CONTRACT!);
