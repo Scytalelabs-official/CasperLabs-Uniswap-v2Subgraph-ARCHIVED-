@@ -18,8 +18,8 @@ const {
   PAIR_TOKEN_SYMBOL,
   PAIR_DECIMALS,
   PAIR_TOTAL_SUPPLY,
-  FACTORY_CONTRACT,
-  CALLEE_CONTRACT,
+  FACTORY_CONTRACT_PACKAGE,
+  CALLEE_PACKAGE,
   PAIR_CONTRACT_NAME,
 } = process.env;
 
@@ -43,8 +43,8 @@ const test = async () => {
     PAIR_TOKEN_SYMBOL!,
     PAIR_DECIMALS!,
     PAIR_TOTAL_SUPPLY!,
-    FACTORY_CONTRACT!,
-    CALLEE_CONTRACT!,
+    FACTORY_CONTRACT_PACKAGE!,
+    CALLEE_PACKAGE!,
     // KEYS.publicKey,
     // KEYS.publicKey,
     PAIR_INSTALL_PAYMENT_AMOUNT!,
@@ -78,8 +78,8 @@ const test = async () => {
 };
 
 export const makedeploypaircontract = async (
-	FACTORY_CONTRACT: string,
-	CALLEE_CONTRACT: string,
+	FACTORY_CONTRACT_PACKAGE: string,
+	CALLEE_PACKAGE: string,
 	signerkey:string,
 ) => {
 	
@@ -90,8 +90,8 @@ export const makedeploypaircontract = async (
     PAIR_TOKEN_SYMBOL!,
     PAIR_DECIMALS!,
     PAIR_TOTAL_SUPPLY!,
-    FACTORY_CONTRACT,
-    CALLEE_CONTRACT,
+    FACTORY_CONTRACT_PACKAGE!,
+    CALLEE_PACKAGE!,
     PAIR_INSTALL_PAYMENT_AMOUNT!,
     PAIR_WASM_PATH!
 	);

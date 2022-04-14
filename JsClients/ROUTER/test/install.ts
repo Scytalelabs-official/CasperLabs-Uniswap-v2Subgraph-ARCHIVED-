@@ -18,9 +18,9 @@ const {
   MASTER_KEY_PAIR_PATH,
   TOKEN_NAME,
   TOKEN_SYMBOL,
-  FACTORY_CONTRACT,
-  WCSPR,
-  LIBRARY,
+  FACTORY_CONTRACT_PACKAGE,
+  WCSPR_PACKAGE,
+  LIBRARY_PACKAGE,
   CONTRACT_NAME,
   CONTRACT_HASH,
   INSTALL_PAYMENT_AMOUNT,
@@ -59,17 +59,17 @@ const test = async () => {
 
   const installDeployHash = await uniswapRouter.install(
     KEYS,
-    FACTORY_CONTRACT!,
-    WCSPR!,
-    LIBRARY!,
-    'UniSwapRouter',
+    FACTORY_CONTRACT_PACKAGE!,
+    WCSPR_PACKAGE!,
+    LIBRARY_PACKAGE!,
+    'UniSwapRouter1',
     INSTALL_PAYMENT_AMOUNT!,
     WASM_PATH!
   );
 
-  console.log("Passed Parameters: \nfactory: \t", FACTORY_CONTRACT,
-  "\nwcspr: \t", WCSPR,
-  "\nlibrary: \t", LIBRARY,
+  console.log("Passed Parameters: \nfactory: \t", FACTORY_CONTRACT_PACKAGE,
+  "\nwcspr: \t", WCSPR_PACKAGE,
+  "\nlibrary: \t", LIBRARY_PACKAGE,
   "\ncontract_name: \t", CONTRACT_NAME, "\n");
 
   console.log(`... Contract installation deployHash: ${installDeployHash}\n`);

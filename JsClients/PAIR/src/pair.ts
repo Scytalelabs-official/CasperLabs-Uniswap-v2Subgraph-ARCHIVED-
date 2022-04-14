@@ -85,7 +85,7 @@ class PAIRClient {
       decimals: CLValueBuilder.u8(decimals),
       initial_supply: CLValueBuilder.u256(totalSupply),
       factory_hash: CLValueBuilder.key(_factoryContractHash),
-      callee_contract_hash: CLValueBuilder.key(_calleeContractHash),
+      callee_package_hash: CLValueBuilder.key(_calleeContractHash),
     });
 
     const deployHash = await installWasmFile({

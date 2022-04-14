@@ -30,6 +30,7 @@ const {
 	CONTRACT_HASH,
 	INSTALL_PAYMENT_AMOUNT,
 	PAIR_CONTRACT,
+	PAIR_CONTRACT_PACKAGE,
 	TO,
 	DEADLINE,
 
@@ -275,7 +276,7 @@ const add_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
 		AMOUNT_B_MIN!,
 		TO!,
 		DEADLINE!,
-		PAIR_CONTRACT!,
+		PAIR_CONTRACT_PACKAGE!,
 		ADD_LIQUIDITY_PAYMENT_AMOUNT!
 	);
 };

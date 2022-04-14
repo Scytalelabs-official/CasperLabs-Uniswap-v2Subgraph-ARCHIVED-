@@ -8,6 +8,7 @@ var hashesofpairsModel = require("../models/hashesofpairs");
 var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
 var paircontract = require("../JsClients/PAIR/test/installed.ts");
+var allcontractsDataModel = require("../models/allcontractsData");
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -52,6 +53,71 @@ router
       });
     }
   });
+router
+  .route("/addcontractandpackageHash")
+  .post(async function (req, res, next) {
+    try {
+      if (!req.body.contractHash) {
+        return res.status(400).json({
+          success: false,
+          message: "There is no contractHash specified in the req body.",
+        });
+      }
+      if (!req.body.packageHash) {
+        return res.status(400).json({
+          success: false,
+          message: "There is no packageHash specified in the req body.",
+        });
+      }
+
+      let contractHash = req.body.contractHash.toLowerCase();
+      let packageHash = req.body.packageHash.toLowerCase();
+      var newpair = new allcontractsDataModel({
+        contractHash: contractHash,
+        packageHash: packageHash,
+      });
+      await allcontractsDataModel.create(newpair);
+
+      return res.status(200).json({
+        success: true,
+        message: "Contract and Package Hash are Succefully stored.",
+      });
+    } catch (error) {
+      console.log("error (try-catch) : " + error);
+      return res.status(500).json({
+        success: false,
+        err: error,
+      });
+    }
+  });
+
+router
+  .route("/getContractHashAgainstPackageHash")
+  .post(async function (req, res, next) {
+    try {
+      if (!req.body.packageHash) {
+        return res.status(400).json({
+          success: false,
+          message: "There is no packageHash specified in the req body.",
+        });
+      }
+
+      let packageHash = req.body.packageHash.toLowerCase();
+      let contractHash= await allcontractsDataModel.findOne({packageHash:packageHash});
+
+      return res.status(200).json({
+        success: true,
+        message: "Contract Hash has been Succefully found.",
+        Data:contractHash
+      });
+    } catch (error) {
+      console.log("error (try-catch) : " + error);
+      return res.status(500).json({
+        success: false,
+        err: error,
+      });
+    }
+  });
 
 router.route("/startListener").post(async function (req, res, next) {
   try {
@@ -63,12 +129,9 @@ router.route("/startListener").post(async function (req, res, next) {
     }
 
     await axios
-      .post(
-        "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener",
-        {
-          contractPackageHashes: req.body.contractPackageHashes,
-        }
-      )
+      .post( "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener", {
+        contractPackageHashes: req.body.contractPackageHashes,
+      })
       .then(function (response) {
         console.log(response);
         return res.status(200).json({
@@ -225,29 +288,29 @@ router.route("/geteventsdata").post(async function (req, res, next) {
               "there are no contract and package hash found in the database.",
           });
         }
-        var to_contractHash = null;
+        var packageHash=null;
         for (var i = 0; i < pairsresult.length; i++) {
           if (pairsresult[i].packageHash.toLowerCase() == to.toLowerCase()) {
-            to_contractHash = pairsresult[i].contractHash;
-            console.log("contractHash: ", to_contractHash);
+            packageHash=pairsresult[i].packageHash.toLowerCase();
+            console.log("packageHash: ", packageHash);
           }
         }
 
-        if (to_contractHash == null) {
-          console.log("contract hash did not find at this package hash.");
+        if (packageHash == null) {
+          console.log("packagehash did not find at this package hash.");
           return res.status(400).json({
             success: false,
-            message: "contract hash did not find at this package hash.",
+            message: "packageHash did not find at this package hash.",
           });
         } else {
-          var pairData = await pairModel.findOne({ id: to_contractHash });
+          var pairData = await pairModel.findOne({ id: packageHash });
 
           if (pairData == null) {
             var newevent = new eventsModel({
               deployHash: deployHash,
               timestamp: timestamp,
               block_hash: block_hash,
-              pairContractHash: to_contractHash.toLowerCase(),
+              pairContractHash: packageHash,
               eventName: eventName,
               eventsdata: newData,
             });
@@ -274,7 +337,7 @@ router.route("/geteventsdata").post(async function (req, res, next) {
                 from: from,
                 to: to,
                 value: value,
-                pairAddress: to_contractHash,
+                pairAddress: packageHash,
                 deployHash: deployHash,
                 timeStamp: timestamp.toString(),
                 blockHash: block_hash,

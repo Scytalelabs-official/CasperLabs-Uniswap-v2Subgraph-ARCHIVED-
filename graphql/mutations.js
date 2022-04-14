@@ -25,6 +25,7 @@ let uniswapDayData = require("../models/uniswapDayData");
 let token0DayData = require("../models/tokenDayData");
 let token1DayData = require("../models/tokenDayData");
 let eventsModel = require("../models/events");
+let AllContractsData = require("../models/allcontractsData");
 
 const { responseType } = require("./types/response");
 
@@ -116,7 +117,8 @@ const handleNewPair = {
 
       // fetch info if null
       if (token0 === null) {
-        let Decimals =await fetchTokenDecimals(args.token0);
+        let token0Data=await AllContractsData.findOne({packageHash:args.token0});
+        let Decimals =await fetchTokenDecimals(token0Data.contractHash);
 
         // bail if we couldn't figure out the decimals
         if (Decimals === null) {
@@ -124,9 +126,9 @@ const handleNewPair = {
           return;
         }
 
-        let TokenName=await fetchTokenName(args.token0);
-        let TokenSymbol=await fetchTokenSymbol(args.token0);
-        let TokenTotalSupply=BigInt(await fetchTokenTotalSupply(args.token0));
+        let TokenName=await fetchTokenName(token0Data.contractHash);
+        let TokenSymbol=await fetchTokenSymbol(token0Data.contractHash);
+        let TokenTotalSupply=BigInt(await fetchTokenTotalSupply(token0Data.contractHash));
         //let TokenTotalSupply = BigInt(1000000000000);
 
         token0 = new Token({
@@ -149,17 +151,18 @@ const handleNewPair = {
 
       // fetch info if null
       if (token1 === null) {
-        let Decimals =await fetchTokenDecimals(args.token1);
+        let token1Data=await AllContractsData.findOne({packageHash:args.token1});
+        let Decimals =await fetchTokenDecimals(token1Data.contractHash);
 
         // bail if we couldn't figure out the decimals
          if (Decimals === null) {
            return;
          }
 
-        let TokenName=await fetchTokenName(args.token1);
-        let TokenSymbol=await fetchTokenSymbol(args.token1);
-        //let TokenTotalSupply=await fetchTokenTotalSupply(args.token1);
-        let TokenTotalSupply = BigInt(500000000000);
+        let TokenName=await fetchTokenName(token1Data.contractHash);
+        let TokenSymbol=await fetchTokenSymbol(token1Data.contractHash);
+        let TokenTotalSupply=await fetchTokenTotalSupply(token1Data.contractHash);
+        //let TokenTotalSupply = BigInt(500000000000);
 
         token1 = new Token({
           id: args.token1,
@@ -278,7 +281,7 @@ const handleNewPair = {
                 from: from,
                 to: to,
                 value: value,
-                pairAddress: eventsData[i].pairContractHash,
+                pairAddress: to,
                 deployHash: deployHash,
                 timeStamp: timestamp.toString(),
                 blockHash: block_hash,
@@ -767,10 +770,11 @@ const handleTransfer = {
 
       if (from != ADDRESS_ZERO && from != pair.id) {
         console.log("burn2");
-        //let Balance =await PairContract.balanceOf(args.pairAddress,from.toLowerCase());
-        //console.log("Balance at  "+from+" is = "+ Balance);
+        let pairData1=await AllContractsData.findOne({packageHash:args.pairAddress});
+        let Balance =await PairContract.balanceOf(pairData1.contractHash,from.toLowerCase());
+        console.log("Balance at  "+from+" is = "+ Balance);
 
-        let Balance = BigInt(2000000000000);
+        //let Balance = BigInt(2000000000000);
         await createLiquidityPosition(args.pairAddress, from, Balance);
 
         let fromUserLiquidityPosition = null;
@@ -789,10 +793,11 @@ const handleTransfer = {
 
       if (to != ADDRESS_ZERO && to != pair.id) {
         console.log("burn3");
-        //let Balance =await PairContract.balanceOf(args.pairAddress,to.toLowerCase());
-        //console.log("Balance at  "+to+" is = "+ Balance);
+        let pairData2=await AllContractsData.findOne({packageHash:args.pairAddress});
+        let Balance =await PairContract.balanceOf(pairData2.contractHash,to.toLowerCase());
+        console.log("Balance at  "+to+" is = "+ Balance);
 
-        let Balance = BigInt(2000000000000);
+        //let Balance = BigInt(2000000000000);
         await createLiquidityPosition(args.pairAddress, to, Balance);
 
         let toUserLiquidityPosition = null;
