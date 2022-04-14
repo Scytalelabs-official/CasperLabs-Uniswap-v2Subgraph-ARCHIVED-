@@ -70,9 +70,17 @@ router
           message: "spender not found in request body",
         });
       }
-
+      let data = await AllcontractsData.findOne({
+        packageHash: req.body.contractHash,
+      });
+      if (data == null) {
+        return res.status(400).json({
+          success: false,
+          message: "pair not found against this package hash ",
+        });
+      }
       let allowance = await pair.allowance(
-        req.body.contractHash,
+        data.contractHash,
         req.body.owner,
         req.body.spender
       );

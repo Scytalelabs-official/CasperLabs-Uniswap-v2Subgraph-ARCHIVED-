@@ -70,7 +70,7 @@ const erc20 = new ERC20Client(
 
 const test = async () => {
 
-  await erc20.setContractHash(TOKEN1_CONTRACT!);
+  await erc20.setContractHash(TOKEN0_CONTRACT!);
   //getTotalSupply(TOKEN1_CONTRACT!);
   // // //name
   // // const name = await erc20.name();
@@ -133,16 +133,16 @@ const test = async () => {
   // // console.log(`... Total supply: ${totalSupply}`);
 
   //approve
-  const approveDeployHash = await erc20.approve(
-    ROUTERKEYS,
-    PACKAGE_HASH!,
-    AMOUNT_B_DESIRED!,
-    APPROVE_PAYMENT_AMOUNT!
-  );
-  console.log("... Approve deploy hash: ", approveDeployHash);
+  // const approveDeployHash = await erc20.approve(
+  //   ROUTERKEYS,
+  //   PACKAGE_HASH!,
+  //   AMOUNT_B_DESIRED!,
+  //   APPROVE_PAYMENT_AMOUNT!
+  // );
+  // console.log("... Approve deploy hash: ", approveDeployHash);
 
-  await getDeploy(NODE_ADDRESS!, approveDeployHash);
-  console.log("... Token approved successfully");
+  // await getDeploy(NODE_ADDRESS!, approveDeployHash);
+  // console.log("... Token approved successfully");
 
   // // //transfer
   // // const transferDeployHash = await erc20.transfer(

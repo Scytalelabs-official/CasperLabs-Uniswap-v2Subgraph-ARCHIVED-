@@ -369,7 +369,6 @@ class ERC20Client {
   //     amount: CLValueBuilder.u256(amount)
   //   });
 
-
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
   //     contractHash: this.contractHash,
