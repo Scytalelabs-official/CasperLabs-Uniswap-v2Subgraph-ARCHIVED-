@@ -3,6 +3,7 @@ var express = require("express");
 const { createFalse } = require("typescript");
 var router = express.Router();
 var pair = require("../JsClients/PAIR/test/installed.ts");
+var AllcontractsData = require("../models/allcontractsData");
 
 router
   .route("/liquidityagainstuserandpair")
@@ -21,8 +22,16 @@ router
           message: "pairid not found in request body",
         });
       }
-
-      let liquidity = await pair.balanceOf(req.body.pairid, req.body.to);
+      let data = await AllcontractsData.findOne({
+        packageHash: req.body.pairid,
+      });
+      if (data == null) {
+        return res.status(400).json({
+          success: false,
+          message: "pair not found against this package hash ",
+        });
+      }
+      let liquidity = await pair.balanceOf(data.contractHash, req.body.to);
       return res.status(200).json({
         success: true,
         message:
