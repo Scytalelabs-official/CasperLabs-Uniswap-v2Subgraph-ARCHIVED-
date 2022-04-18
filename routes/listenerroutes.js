@@ -103,12 +103,14 @@ router
       }
 
       let packageHash = req.body.packageHash.toLowerCase();
-      let contractHash= await allcontractsDataModel.findOne({packageHash:packageHash});
+      let contractHash = await allcontractsDataModel.findOne({
+        packageHash: packageHash,
+      });
 
       return res.status(200).json({
         success: true,
         message: "Contract Hash has been Succefully found.",
-        Data:contractHash
+        Data: contractHash,
       });
     } catch (error) {
       console.log("error (try-catch) : " + error);
@@ -129,9 +131,12 @@ router.route("/startListener").post(async function (req, res, next) {
     }
 
     await axios
-      .post( "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener", {
-        contractPackageHashes: req.body.contractPackageHashes,
-      })
+      .post(
+        "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener",
+        {
+          contractPackageHashes: req.body.contractPackageHashes,
+        }
+      )
       .then(function (response) {
         console.log(response);
         return res.status(200).json({
@@ -288,10 +293,10 @@ router.route("/geteventsdata").post(async function (req, res, next) {
               "there are no contract and package hash found in the database.",
           });
         }
-        var packageHash=null;
+        var packageHash = null;
         for (var i = 0; i < pairsresult.length; i++) {
           if (pairsresult[i].packageHash.toLowerCase() == to.toLowerCase()) {
-            packageHash=pairsresult[i].packageHash.toLowerCase();
+            packageHash = pairsresult[i].packageHash.toLowerCase();
             console.log("packageHash: ", packageHash);
           }
         }
@@ -749,13 +754,47 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           message: "Pair against User with reserves created Successfully.",
         });
       } else {
-        pairagainstuserresult.reserve0 = (
-          BigInt(pairagainstuserresult.reserve0) + BigInt(reserve0)
-        ).toString();
-        pairagainstuserresult.reserve1 = (
-          BigInt(pairagainstuserresult.reserve1) + BigInt(reserve1)
-        ).toString();
-        await pairagainstuserresult.save();
+        if (
+          BigInt(pairagainstuserresult.reserve0) >
+          BigInt(pairagainstuserresult.reserve1)
+        ) {
+          if (BigInt(reserve0) > BigInt(reserve1)) {
+            pairagainstuserresult.reserve0 = (
+              BigInt(pairagainstuserresult.reserve0) + BigInt(reserve0)
+            ).toString();
+            pairagainstuserresult.reserve1 = (
+              BigInt(pairagainstuserresult.reserve1) + BigInt(reserve1)
+            ).toString();
+            await pairagainstuserresult.save();
+          } else {
+            pairagainstuserresult.reserve0 = (
+              BigInt(pairagainstuserresult.reserve0) + BigInt(reserve1)
+            ).toString();
+            pairagainstuserresult.reserve1 = (
+              BigInt(pairagainstuserresult.reserve1) + BigInt(reserve0)
+            ).toString();
+            await pairagainstuserresult.save();
+          }
+        } else {
+          if (BigInt(reserve1) > BigInt(reserve0)) {
+            pairagainstuserresult.reserve0 = (
+              BigInt(pairagainstuserresult.reserve0) + BigInt(reserve0)
+            ).toString();
+            pairagainstuserresult.reserve1 = (
+              BigInt(pairagainstuserresult.reserve1) + BigInt(reserve1)
+            ).toString();
+            await pairagainstuserresult.save();
+          } else {
+            pairagainstuserresult.reserve0 = (
+              BigInt(pairagainstuserresult.reserve0) + BigInt(reserve1)
+            ).toString();
+            pairagainstuserresult.reserve1 = (
+              BigInt(pairagainstuserresult.reserve1) + BigInt(reserve0)
+            ).toString();
+            await pairagainstuserresult.save();
+          }
+        }
+
         return res.status(200).json({
           success: true,
           message: "User Reserves against pair Added Successfully.",
@@ -790,7 +829,6 @@ router.route("/geteventsdata").post(async function (req, res, next) {
           message: "There is no pair against this user to remove reserves.",
         });
       } else {
-        
         let data = await allcontractsDataModel.findOne({
           packageHash: pairagainstuserresult.pair,
         });
@@ -807,13 +845,46 @@ router.route("/geteventsdata").post(async function (req, res, next) {
               "Record deleted because this pair against user has zero liquidity.",
           });
         } else {
-          pairagainstuserresult.reserve0 = (
-            BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
-          ).toString();
-          pairagainstuserresult.reserve1 = (
-            BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
-          ).toString();
-          await pairagainstuserresult.save();
+          if (
+            BigInt(pairagainstuserresult.reserve0) >
+            BigInt(pairagainstuserresult.reserve1)
+          ) {
+            if (BigInt(reserve0) > BigInt(reserve1)) {
+              pairagainstuserresult.reserve0 = (
+                BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+              ).toString();
+              pairagainstuserresult.reserve1 = (
+                BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+              ).toString();
+              await pairagainstuserresult.save();
+            } else {
+              pairagainstuserresult.reserve0 = (
+                BigInt(pairagainstuserresult.reserve0) - BigInt(reserve1)
+              ).toString();
+              pairagainstuserresult.reserve1 = (
+                BigInt(pairagainstuserresult.reserve1) - BigInt(reserve0)
+              ).toString();
+              await pairagainstuserresult.save();
+            }
+          } else {
+            if (BigInt(reserve1) > BigInt(reserve0)) {
+              pairagainstuserresult.reserve0 = (
+                BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+              ).toString();
+              pairagainstuserresult.reserve1 = (
+                BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+              ).toString();
+              await pairagainstuserresult.save();
+            } else {
+              pairagainstuserresult.reserve0 = (
+                BigInt(pairagainstuserresult.reserve0) - BigInt(reserve1)
+              ).toString();
+              pairagainstuserresult.reserve1 = (
+                BigInt(pairagainstuserresult.reserve1) - BigInt(reserve0)
+              ).toString();
+              await pairagainstuserresult.save();
+            }
+          }
           return res.status(200).json({
             success: true,
             message: "User Reserves against pair removed Successfully.",
