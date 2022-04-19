@@ -18,6 +18,7 @@ var pairRouter = require("./routes/pairroutes");
 var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
+var readWasmRouter = require("./routes/readWasm");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -81,6 +82,7 @@ app.use("/", pairRouter);
 app.use("/", erc20Router);
 app.use("/", coinsmarketcapapiRouter);
 app.use("/", pathRouter);
+app.use("/", readWasmRouter);
 
 app.use(
   "/graphql",
