@@ -13,6 +13,10 @@
     "test:routerinstall": "ts-node JsClients/ROUTER/test/install.ts",
     "test:routerinstalled": "ts-node JsClients/ROUTER/test/installed.ts"
   },
+  "engine": {
+    "node": "16.14.0",
+    "npm": "8.5.3"
+  },
   "dependencies": {
     "axios": "^0.24.0",
     "blakejs": "^1.1.1",
@@ -33,7 +37,6 @@
     "prettier": "^2.3.2",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
-    "serialize-javascript": "^6.0.0",
     "ts-node": "^10.1.0",
     "ts-results": "^3.3.0",
     "tslint": "^5.12.1",

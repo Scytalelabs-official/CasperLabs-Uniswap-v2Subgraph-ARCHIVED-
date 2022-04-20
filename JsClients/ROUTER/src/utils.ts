@@ -41,11 +41,11 @@ export const getBinary = (pathToBinary: string) => {
 };
 
 /**
- * Returns a binary as u8 array.
+ * Returns a binary as a buffer.
  * @param pathToBinary - Path to binary file to be loaded into memory.
- * @return ArrayBufferLike .
+ * @return buffer .
  */
- export const getBinary2 = (pathToBinary: string) => {
+ export const getWasmDataInBuffer = (pathToBinary: string) => {
   return fs.readFileSync(pathToBinary, null);
 };
 
