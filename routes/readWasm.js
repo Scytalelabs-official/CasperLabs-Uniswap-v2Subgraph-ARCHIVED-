@@ -8,13 +8,15 @@ var serialize = require('serialize-javascript');
 router.route("/getWasmData").get(async function (req, res, next) {
   try {
 
-    let wasmData= routerJsClient.getBinary('JsClients/ROUTER/wasm/purse-proxy.wasm');
+    //let wasmData= routerJsClient.getBinary('JsClients/ROUTER/wasm/purse-proxy.wasm');
+    let wasmData= routerJsClient.getBinary2('JsClients/ROUTER/wasm/purse-proxy.wasm');
     console.log(wasmData);
-
+    
     return res.status(200).json({
         success: true,
         message: "Wasm data successfully read and converted. ",
-        wasmData: serialize({ arr  : wasmData}),
+        //wasmData: serialize({ arr  : wasmData}),
+        wasmData: wasmData,
     });
     
   } catch (error) {
