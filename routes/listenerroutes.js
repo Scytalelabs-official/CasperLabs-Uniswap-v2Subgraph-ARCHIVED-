@@ -9,6 +9,8 @@ var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
 var paircontract = require("../JsClients/PAIR/test/installed.ts");
 var allcontractsDataModel = require("../models/allcontractsData");
+var ApproveDataModel = require("../models/approveData");
+var RemoveReservesDataModel = require("../models/removeReservesData");
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -254,10 +256,101 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       console.log(newData[2][0].data + " = " + newData[2][1].data);
       console.log(newData[3][0].data + " = " + newData[3][1].data);
       console.log(newData[4][0].data + " = " + newData[4][1].data);
-      return res.status(200).json({
-        success: true,
-        message: "Approved Event emitted.",
+
+      let user = splitdata(newData[2][1].data);
+      let newData = new ApproveDataModel({
+        user: user,
+        deployHash: deployHash,
       });
+      await ApproveDataModel.create(newData);
+
+      let removeReserveData = await RemoveReservesDataModel.findOne({
+        deployHash: deployHash,
+      });
+      if (removeReserveData == null) {
+        return res.status(200).json({
+          success: true,
+          message:
+            "Approved Event emitted, there were no removereserve Event against this deployHash.",
+        });
+      } else {
+        let pair = removeReserveData.pair;
+        let reserve0 = removeReserveData.reserve0;
+        let reserve1 = removeReserveData.reserve1;
+       // await RemoveReservesDataModel.deleteOne({ _id: removeReserveData._id });
+        let pairagainstuserresult = await pairagainstuser.findOne({
+          id: user,
+          pair: pair,
+        });
+        if (pairagainstuserresult == null) {
+          return res.status(400).json({
+            success: false,
+            message: "There is no pair against this user to remove reserves.",
+          });
+        } else {
+          let data = await allcontractsDataModel.findOne({
+            packageHash: pairagainstuserresult.pair,
+          });
+
+          let liquidity = await paircontract.balanceOf(
+            data.contractHash,
+            pairagainstuserresult.id.toLowerCase()
+          );
+          if (liquidity == "0") {
+            await pairagainstuser.deleteOne({ _id: pairagainstuserresult._id });
+            return res.status(200).json({
+              success: true,
+              message:
+                "Record deleted because this pair against user has zero liquidity.",
+            });
+          } else {
+            if (
+              BigInt(pairagainstuserresult.reserve0) >
+              BigInt(pairagainstuserresult.reserve1)
+            ) {
+              if (BigInt(reserve0) > BigInt(reserve1)) {
+                pairagainstuserresult.reserve0 = (
+                  BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+                ).toString();
+                pairagainstuserresult.reserve1 = (
+                  BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+                ).toString();
+                await pairagainstuserresult.save();
+              } else {
+                pairagainstuserresult.reserve0 = (
+                  BigInt(pairagainstuserresult.reserve0) - BigInt(reserve1)
+                ).toString();
+                pairagainstuserresult.reserve1 = (
+                  BigInt(pairagainstuserresult.reserve1) - BigInt(reserve0)
+                ).toString();
+                await pairagainstuserresult.save();
+              }
+            } else {
+              if (BigInt(reserve1) > BigInt(reserve0)) {
+                pairagainstuserresult.reserve0 = (
+                  BigInt(pairagainstuserresult.reserve0) - BigInt(reserve0)
+                ).toString();
+                pairagainstuserresult.reserve1 = (
+                  BigInt(pairagainstuserresult.reserve1) - BigInt(reserve1)
+                ).toString();
+                await pairagainstuserresult.save();
+              } else {
+                pairagainstuserresult.reserve0 = (
+                  BigInt(pairagainstuserresult.reserve0) - BigInt(reserve1)
+                ).toString();
+                pairagainstuserresult.reserve1 = (
+                  BigInt(pairagainstuserresult.reserve1) - BigInt(reserve0)
+                ).toString();
+                await pairagainstuserresult.save();
+              }
+            }
+            return res.status(200).json({
+              success: true,
+              message: "User Reserves against pair removed Successfully.",
+            });
+          }
+        }
+      }
     } else if (eventName == "erc20_transfer") {
       console.log(eventName + " Event result: ");
       console.log(newData[0][0].data + " = " + newData[0][1].data);
@@ -813,11 +906,41 @@ router.route("/geteventsdata").post(async function (req, res, next) {
       var pair = newData[2][1].data;
       var reserve0 = newData[3][1].data;
       var reserve1 = newData[4][1].data;
+      var routerPackageHash = newData[0][1].data;
 
       console.log("user: ", user);
       console.log("pair: ", pair);
       console.log("reserve0: ", reserve0);
       console.log("reserve1: ", reserve1);
+      console.log("routerPackageHash: ", routerPackageHash);
+
+      if (routerPackageHash == user) {
+        let approveResult = await ApproveDataModel.findOne({
+          deployHash: deployHash,
+        });
+        if (approveResult == null) {
+          let newData = new RemoveReservesDataModel({
+            user: user,
+            deployHash: deployHash,
+            pair: pair,
+            reserve0: reserve0,
+            reserve1: reserve1,
+          });
+          await RemoveReservesDataModel.create(newData);
+          return res.status(200).json({
+            success: true,
+            message:
+              "There is no Approve Event against this deployHash, saving removereserves Event data .",
+          });
+        } else {
+          user = approveResult.user;
+          console.log(
+            "User from approve Event saved to removereserves user:",
+            user
+          );
+          //await ApproveDataModel.deleteOne({ _id: approveResult._id });
+        }
+      }
 
       let pairagainstuserresult = await pairagainstuser.findOne({
         id: user,
