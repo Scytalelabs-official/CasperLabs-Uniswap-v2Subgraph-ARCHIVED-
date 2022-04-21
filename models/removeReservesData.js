@@ -7,16 +7,8 @@ const removeReservesDataSchema = new Schema({
   },
   deployHash: {
     type: String,
-  },
-  pair: {
-    type: String,
-  },
-  reserve0: {
-    type: String,
-  },
-  reserve1: {
-    type: String,
-  },
+  }
+  
 });
 
 var removeReservesData = mongoose.model(
