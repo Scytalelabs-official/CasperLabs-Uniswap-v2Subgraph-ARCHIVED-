@@ -19,6 +19,10 @@ var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
 var readWasmRouter = require("./routes/readWasm");
+var event_Id_Data_Model = require("./models/eventsIdData");
+var eventId = require("./models/eventId");
+const axios = require('axios').default;
+const consumer = require('./consumer');
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -73,7 +77,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.json({ msg: "Uniswap V2 GraphQL Server" });
 });
-app.use("/", listenerRouter);
+app.use("/", listenerRouter.router);
 app.use("/", tokensListRouter);
 app.use("/", deploypairRouter);
 app.use("/", pairsListRouter);
@@ -91,6 +95,71 @@ app.use(
     graphiql: true,
   })
 );
+
+let _eventId;
+let count;
+async function Count(){
+  _eventId= await eventId.findOne({id: '0'});
+  count = BigInt(_eventId.completedEventId);
+  console.log("Count : ", count);
+}
+Count();
+console.log("Count : ", count);
+let missingCount=0;
+consumer.consumeEvent();
+
+setInterval(async()=>{ 
+    //code goes here that will be run every 2 seconds. 
+    console.log("Heap Length : ", listenerRouter.isNewEvent());
+
+    if(listenerRouter.isNewEvent()>0){
+      console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));
+      console.log("Current Count : ", count);
+      if(missingCount>=5){
+        let temp = count + BigInt(1);
+        await axios.post('http://localhost:3001/listener/getMissingEvent',{
+          eventId : temp.toString()
+        })
+        .then(async function(response){
+          missingCount=0;
+          // console.log("Response : ",response);
+        })
+        .catch(function(error){
+          console.log("Missing Event Error : ", error);
+        });
+      }
+      if(BigInt(listenerRouter.heapRoot().eventId) - count === BigInt(1)){
+        //heap.extractroot
+        missingCount=0;
+        const currentEvent = listenerRouter.depopulateHeap();
+        console.log("Current Event : ", currentEvent);
+
+        //call mutation
+        let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+        console.log("Result : ",result) 
+        let _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
+        await _updateEvent.updateOne({"status":"Completed"});
+        count++;
+        console.log("Completed Event Count : ", count);
+
+        if(_eventId.eventId < currentEvent.eventId){
+         await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
+        }
+        await eventId.updateOne({"completedEventId":count.toString()});        
+      }
+    else{
+      missingCount++;
+    }
+  }
+}, 2000);
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
