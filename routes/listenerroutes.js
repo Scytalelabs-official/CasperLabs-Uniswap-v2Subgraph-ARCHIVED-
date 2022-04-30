@@ -12,7 +12,7 @@ var allcontractsDataModel = require("../models/allcontractsData");
 var ApproveDataModel = require("../models/approveData");
 var RemoveReservesDataModel = require("../models/removeReservesData");
 var event_Id_Data_Model = require("../models/eventsIdData");
-const { MinHeap} = require('@datastructures-js/heap');
+const {MinHeap} = require('@datastructures-js/heap');
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -343,7 +343,7 @@ try {
       console.log("token0 splited: ", token0);
       console.log("token1 splited: ", token1);
 
-      request(
+      await request(
         process.env.GRAPHQL,
         `mutation handleNewPair( $token0: String!, $token1: String!, $pair: String!, $all_pairs_length: Int!,$deployHash: String!,$timeStamp: String!, $blockHash: String!){
       		handleNewPair( token0: $token0, token1: $token1, pair: $pair, all_pairs_length: $all_pairs_length, deployHash:$deployHash,timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -361,19 +361,22 @@ try {
           blockHash: block_hash,
         }
       )
-        .then(function (response) {
-          console.log(response);
-          console.log("HandleNewPair Mutation called.");
-					return true;
-          // return res.status(200).json({
-          //   success: true,
-          //   message: "HandleNewPair Mutation called.",
-          // });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    // } else if (eventName == "approve") {
+       console.log("HandleNewPair Mutation called.");
+				return true;
+        // .then(function (response) {
+        //   console.log(response);
+        //   console.log("HandleNewPair Mutation called.");
+				// 	return true;
+        //   // return res.status(200).json({
+        //   //   success: true,
+        //   //   message: "HandleNewPair Mutation called.",
+        //   // });
+        // })
+        // .catch(function (error) {
+        //   console.log(error);
+        // });
+    } else if (eventName == "approve") {
+      return true;
     //   console.log(eventName + " Event result: ");
     //   console.log(newData[0][0].data + " = " + newData[0][1].data);
     //   console.log(newData[1][0].data + " = " + newData[1][1].data);
@@ -558,7 +561,7 @@ try {
             //     "pair did not created against this pair package hash, event has been saved to database.",
             // });
           } else {
-            request(
+            await request(
               process.env.GRAPHQL,
               `mutation handleTransfer( $from: String!, $to: String!, $value: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
 						handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -576,18 +579,20 @@ try {
                 blockHash: block_hash,
               }
             )
-              .then(function (response) {
-                console.log(response);
-                console.log("handleTransfer Mutation called.");
-                return true;
-                // return res.status(200).json({
-                //   success: true,
-                //   message: "handleTransfer Mutation called.",
-                // });
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
+            console.log("handleTransfer Mutation called.");
+            return true;
+              // .then(function (response) {
+              //   console.log(response);
+              //   console.log("handleTransfer Mutation called.");
+              //   return true;
+              //   // return res.status(200).json({
+              //   //   success: true,
+              //   //   message: "handleTransfer Mutation called.",
+              //   // });
+              // })
+              // .catch(function (error) {
+              //   console.log(error);
+              // });
           }
         }
       } else {
@@ -639,7 +644,7 @@ try {
         //     "pair did not created against this pair package hash, event has been saved to database.",
         // });
       } else {
-        request(
+        await request(
           process.env.GRAPHQL,
           `mutation handleTransfer( $from: String!, $to: String!, $value: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
 				handleTransfer( from: $from, to: $to, value: $value, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -657,18 +662,20 @@ try {
             blockHash: block_hash,
           }
         )
-          .then(function (response) {
-            console.log(response);
-            console.log("handleTransfer Mutation called.");
-            return true;
-            // return res.status(200).json({
-            //   success: true,
-            //   message: "handleTransfer Mutation called.",
-            // });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        console.log("handleTransfer Mutation called.");
+        return true;
+          // .then(function (response) {
+          //   console.log(response);
+          //   console.log("handleTransfer Mutation called.");
+          //   return true;
+          //   // return res.status(200).json({
+          //   //   success: true,
+          //   //   message: "handleTransfer Mutation called.",
+          //   // });
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          // });
       }
     } else if (eventName == "mint") {
       console.log(eventName + " Event result: ");
@@ -710,7 +717,7 @@ try {
         //     "pair did not created against this pair package hash, event has been saved to database.",
         // });
       } else {
-        request(
+        await request(
           process.env.GRAPHQL,
           `mutation handleMint( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
 				handleMint( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -729,18 +736,21 @@ try {
             blockHash: block_hash,
           }
         )
-          .then(function (response) {
-            console.log(response);
-            console.log("handleMint Mutation called.");
-            return true;
-            // return res.status(200).json({
-            //   success: true,
-            //   message: "handleMint Mutation called.",
-            // });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+          console.log("handleMint Mutation called.");
+          return true;
+         
+          // .then(function (response) {
+          //   console.log(response);
+          //   console.log("handleMint Mutation called.");
+          //   return true;
+          //   // return res.status(200).json({
+          //   //   success: true,
+          //   //   message: "handleMint Mutation called.",
+          //   // });
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          // });
       }
     } else if (eventName == "burn") {
       console.log(eventName + " Event result: ");
@@ -785,7 +795,7 @@ try {
         //     "pair did not created against this pair package hash, event has been saved to database.",
         // });
       } else {
-        request(
+        await request(
           process.env.GRAPHQL,
           `mutation handleBurn( $amount0: String!, $amount1: String!, $sender: String!,$logIndex: Int!,$to: String!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
       				handleBurn( amount0: $amount0, amount1: $amount1, sender: $sender, logIndex: $logIndex, to:$to, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -805,18 +815,20 @@ try {
             blockHash: block_hash,
           }
         )
-          .then(function (response) {
-            console.log(response);
-            console.log("handleBurn Mutation called.");
-            return true;
-            // return res.status(200).json({
-            //   success: true,
-            //   message: "handleBurn Mutation called.",
-            // });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        console.log("handleBurn Mutation called.");
+        return true;
+          // .then(function (response) {
+          //   console.log(response);
+          //   console.log("handleBurn Mutation called.");
+          //   return true;
+          //   // return res.status(200).json({
+          //   //   success: true,
+          //   //   message: "handleBurn Mutation called.",
+          //   // });
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          // });
       }
     } else if (eventName == "sync") {
       console.log(eventName + " Event result: ");
@@ -855,7 +867,7 @@ try {
         //     "pair did not created against this pair package hash, event has been saved to database.",
         // });
       } else {
-        request(
+        await request(
           process.env.GRAPHQL,
           `mutation handleSync( $reserve0: String!, $reserve1: String!, $pairAddress: String!){
       				handleSync( reserve0: $reserve0, reserve1: $reserve1, pairAddress: $pairAddress) {
@@ -865,18 +877,20 @@ try {
       				}`,
           { reserve0: reserve0, reserve1: reserve1, pairAddress: pair }
         )
-          .then(function (response) {
-            console.log(response);
-            console.log("handleSync Mutation called.");
-            return true;
-            // return res.status(200).json({
-            //   success: true,
-            //   message: "handleSync Mutation called.",
-            // });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        console.log("handleSync Mutation called.");
+        return true;
+          // .then(function (response) {
+          //   console.log(response);
+          //   console.log("handleSync Mutation called.");
+          //   return true;
+          //   // return res.status(200).json({
+          //   //   success: true,
+          //   //   message: "handleSync Mutation called.",
+          //   // });
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          // });
       }
     } else if (eventName == "swap") {
       console.log(eventName + " Event result: ");
@@ -929,7 +943,7 @@ try {
         //     "pair did not created against this pair package hash, event has been saved to database.",
         // });
       } else {
-        request(
+        await request(
           process.env.GRAPHQL,
           `mutation handleSwap( $amount0In: String!, $amount1In: String!, $amount0Out: String!, $amount1Out: String!, $to: String!,$from: String!,$sender: String!,$logIndex: Int!, $pairAddress: String!, $deployHash: String!, $timeStamp: String!, $blockHash: String!){
       				handleSwap( amount0In: $amount0In, amount1In: $amount1In, amount0Out: $amount0Out, amount1Out: $amount1Out, to:$to, from:$from,sender: $sender,logIndex: $logIndex, pairAddress: $pairAddress, deployHash: $deployHash, timeStamp: $timeStamp, blockHash: $blockHash) {
@@ -952,18 +966,20 @@ try {
             blockHash: block_hash,
           }
         )
-          .then(function (response) {
-            console.log(response);
-            console.log("handleSwap Mutation called.");
-            return true;
-            // return res.status(200).json({
-            //   success: true,
-            //   message: "handleSwap Mutation called.",
-            // });
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        console.log("handleSwap Mutation called.");
+        return true;
+          // .then(function (response) {
+          //   console.log(response);
+          //   console.log("handleSwap Mutation called.");
+          //   return true;
+          //   // return res.status(200).json({
+          //   //   success: true,
+          //   //   message: "handleSwap Mutation called.",
+          //   // });
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          // });
       }
     } else if (eventName == "addreserves") {
       console.log(eventName + " Event result: ");

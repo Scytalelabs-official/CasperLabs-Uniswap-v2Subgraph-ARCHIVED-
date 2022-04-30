@@ -104,10 +104,13 @@ async function Count(){
   console.log("Count : ", count);
 }
 Count();
-console.log("Count : ", count);
-let missingCount=0;
+// console.log("Count : ", count);
+// let missingCount=0;
 consumer.consumeEvent();
 
+let currentEvent = null;
+let _updateEvent = null;
+let result = null;
 setInterval(async()=>{ 
     //code goes here that will be run every 2 seconds. 
     console.log("Heap Length : ", listenerRouter.isNewEvent());
@@ -115,42 +118,62 @@ setInterval(async()=>{
     if(listenerRouter.isNewEvent()>0){
       console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));
       console.log("Current Count : ", count);
-      if(missingCount>=5){
-        let temp = count + BigInt(1);
-        await axios.post('http://localhost:3001/listener/getMissingEvent',{
-          eventId : temp.toString()
-        })
-        .then(async function(response){
-          missingCount=0;
-          // console.log("Response : ",response);
-        })
-        .catch(function(error){
-          console.log("Missing Event Error : ", error);
-        });
-      }
+      // if(missingCount>=5){
+      //   let temp = count + BigInt(1);
+      //   await axios.post('http://localhost:3001/listener/getMissingEvent',{
+      //     eventId : temp.toString()
+      //   })
+      //   .then(async function(response){
+      //     missingCount=0;
+      //     // console.log("Response : ",response);
+      //   })
+      //   .catch(function(error){
+      //     console.log("Missing Event Error : ", error);
+      //   });
+      // }
+
+
+
       if(BigInt(listenerRouter.heapRoot().eventId) - count === BigInt(1)){
         //heap.extractroot
-        missingCount=0;
-        const currentEvent = listenerRouter.depopulateHeap();
-        console.log("Current Event : ", currentEvent);
+        // missingCount=0;
+          console.log("Before IF : ", currentEvent);
+        if((currentEvent === null) || (currentEvent.status === "Completed")){
+          currentEvent = listenerRouter.depopulateHeap();
+          console.log("Current Event : ", currentEvent);
 
-        //call mutation
-        let result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
-        console.log("Result : ",result) 
-        let _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
-        await _updateEvent.updateOne({"status":"Completed"});
-        count++;
-        console.log("Completed Event Count : ", count);
-
-        if(_eventId.eventId < currentEvent.eventId){
-         await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
+          //call mutation
+          result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+          // console.log("Result : ",result); 
+          // if(result === true || result ===false){
+          console.log("Result : ",result); 
+          _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
+          await _updateEvent.updateOne({"status":"Completed"});
+          count++;
+          console.log("Completed Event Count : ", count);
+          // console.log("Status of the event : ", _updateEvent.status);
+          if(_eventId.eventId < currentEvent.eventId){
+            await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
+          }
+          await eventId.updateOne({"completedEventId":count.toString()});  
+          currentEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId}); 
+          // result = null;
+        // }    
         }
-        await eventId.updateOne({"completedEventId":count.toString()});        
       }
-    else{
-      missingCount++;
-    }
+        
+    // else{
+    //   missingCount++;
+    // }
   }
+          
+  // if(currentEvent !== null){
+    
+  //   let temp = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
+  //   console.log("Updated Status : ", temp.status);
+  //   console.log("Current Status : ", currentEvent.status);
+  //   currentEvent.status = temp.status;
+  // }
 }, 2000);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
