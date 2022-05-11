@@ -19,6 +19,7 @@ var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
 var readWasmRouter = require("./routes/readWasm");
+var setUserForRemoveLiquidityCSPRRouter = require("./routes/setUserForRemoveLiquidityCSPR");
 var event_Id_Data_Model = require("./models/eventsIdData");
 var eventId = require("./models/eventId");
 const axios = require('axios').default;
@@ -87,6 +88,7 @@ app.use("/", erc20Router);
 app.use("/", coinsmarketcapapiRouter);
 app.use("/", pathRouter);
 app.use("/", readWasmRouter);
+app.use("/", setUserForRemoveLiquidityCSPRRouter);
 
 app.use(
   "/graphql",
@@ -113,7 +115,7 @@ let _updateEvent = null;
 let result = null;
 setInterval(async()=>{ 
     //code goes here that will be run every 2 seconds. 
-    console.log("Heap Length : ", listenerRouter.isNewEvent());
+    //console.log("Heap Length : ", listenerRouter.isNewEvent());
 
     if(listenerRouter.isNewEvent()>0){
       console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));

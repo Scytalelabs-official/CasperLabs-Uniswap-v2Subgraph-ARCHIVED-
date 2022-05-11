@@ -6,6 +6,7 @@ const TokenDayData = require("../models/tokenDayData");
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
+var bigdecimal = require("bigdecimal");
 
 const { ZERO_BD, ZERO_BI, ONE_BI } = require("./helpers");
 
@@ -86,7 +87,7 @@ async function updatePairDayData(timeStamp, pairAddress) {
     pairDayData.reserve1 = pair.reserve1;
     pairDayData.reserveUSD = pair.reserveUSD;
     pairDayData.dailyTxns = (
-      BigInt(pairDayData.dailyTxns) + BigInt(ONE_BI)
+      new bigdecimal.BigDecimal(pairDayData.dailyTxns).add(new bigdecimal.BigDecimal(ONE_BI))
     ).toString();
     await pairDayData.save();
 
@@ -132,7 +133,7 @@ async function updatePairHourData(timeStamp, pairAddress) {
     pairHourData.reserve1 = pair.reserve1;
     pairHourData.reserveUSD = pair.reserveUSD;
     pairHourData.hourlyTxns = (
-      BigInt(pairHourData.hourlyTxns) + BigInt(ONE_BI)
+      new bigdecimal.BigDecimal(pairHourData.hourlyTxns).add(new bigdecimal.BigDecimal(ONE_BI))
     ).toString();
     await pairHourData.save();
 
@@ -161,7 +162,7 @@ async function updateTokenDayData(token, timeStamp) {
         date: parseInt(dayStartTimestamp),
         token: token.id,
         priceUSD: (
-          BigInt(tokendata.derivedETH) * BigInt(bundle.ethPrice)
+          new bigdecimal.BigDecimal(tokendata.derivedETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
         ).toString(),
         dailyVolumeToken: ZERO_BD,
         dailyVolumeETH: ZERO_BD,
@@ -170,12 +171,12 @@ async function updateTokenDayData(token, timeStamp) {
         totalLiquidityUSD: ZERO_BD,
         totalLiquidityToken: tokendata.totalLiquidity,
         totalLiquidityETH: (
-          BigInt(tokendata.totalLiquidity) * BigInt(tokendata.derivedETH)
+          new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(new bigdecimal.BigDecimal(tokendata.derivedETH))
         ).toString(),
         totalLiquidityUSD: (
-          BigInt(tokendata.totalLiquidity) *
-          BigInt(tokendata.derivedETH) *
-          BigInt(bundle.ethPrice)
+          new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(
+          new bigdecimal.BigDecimal(tokendata.derivedETH)).multiply(
+          new bigdecimal.BigDecimal(bundle.ethPrice))
         ).toString(),
         dailyTxns: ONE_BI,
       });
@@ -185,17 +186,17 @@ async function updateTokenDayData(token, timeStamp) {
     }
 
     tokenDayData.priceUSD = (
-      BigInt(tokendata.derivedETH) * BigInt(bundle.ethPrice)
+      new bigdecimal.BigDecimal(tokendata.derivedETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
     ).toString();
     tokenDayData.totalLiquidityToken = tokendata.totalLiquidity;
     tokenDayData.totalLiquidityETH = (
-      BigInt(tokendata.totalLiquidity) * BigInt(tokendata.derivedETH)
+      new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(new bigdecimal.BigDecimal(tokendata.derivedETH))
     ).toString();
     tokenDayData.totalLiquidityUSD = (
-      BigInt(tokenDayData.totalLiquidityETH) * BigInt(bundle.ethPrice)
+      new bigdecimal.BigDecimal(tokenDayData.totalLiquidityETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
     ).toString();
     tokenDayData.dailyTxns = (
-      BigInt(tokenDayData.dailyTxns) + BigInt(ONE_BI)
+      new bigdecimal.BigDecimal(tokenDayData.dailyTxns).add(new bigdecimal.BigDecimal(ONE_BI))
     ).toString();
     await tokenDayData.save();
 

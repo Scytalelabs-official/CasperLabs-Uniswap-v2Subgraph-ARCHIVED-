@@ -62,7 +62,7 @@ const test = async () => {
     FACTORY_CONTRACT_PACKAGE!,
     WCSPR_PACKAGE!,
     LIBRARY_PACKAGE!,
-    'SumairUniSwapRouter1',
+    'UniSwapRouter-info',
     INSTALL_PAYMENT_AMOUNT!,
     WASM_PATH!
   );
@@ -98,4 +98,4 @@ const test = async () => {
   console.log(`... Package Hash: ${packageHash}`);
 };
 
-// test();
+//test();

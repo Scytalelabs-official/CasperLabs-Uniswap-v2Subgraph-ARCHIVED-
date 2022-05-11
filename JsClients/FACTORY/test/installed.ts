@@ -143,7 +143,7 @@ const test = async () => {
 
 };
 
-// test();
+ //test();
 
 // export const createPair = async (paircontractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   

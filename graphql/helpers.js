@@ -1,5 +1,4 @@
 var ERC20 = require("../JsClients/ERC20/test/installed.ts");
-//var TokenDefinition = require('./tokenDefinition');
 
 const User = require("../models/user");
 const LiquidityPosition = require("../models/liquidityPosition");
@@ -7,6 +6,7 @@ const LiquidityPositionSnapshot = require("../models/liquidityPositionSnapshot")
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
+var bigdecimal = require("bigdecimal");
 require("dotenv").config();
 
 const ADDRESS_ZERO =
@@ -164,7 +164,7 @@ async function createLiquidityPosition(exchange, user, value) {
     });
     if (liquidityTokenBalance === null) {
       let pair = await Pair.findOne({ id: exchange });
-      pair.liquidityProviderCount = (BigInt(pair.liquidityProviderCount) + BigInt(ONE_BI)).toString();
+      pair.liquidityProviderCount = (new bigdecimal.BigDecimal(pair.liquidityProviderCount).add(new bigdecimal.BigDecimal(ONE_BI))).toString();
       liquidityTokenBalance = new LiquidityPosition({
         id: exchange + "-" + user,
         liquidityTokenBalance: value.toString(),
@@ -238,10 +238,10 @@ async function createLiquiditySnapshot(position, timeStamp, blockHash) {
         token1: { id: pair.token1.id },
       },
       token0PriceUSD: (
-        BigInt(token0.derivedETH) * BigInt(bundle.ethPrice)
+        new bigdecimal.BigDecimal(token0.derivedETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
       ).toString(),
       token1PriceUSD: (
-        BigInt(token1.derivedETH) * BigInt(bundle.ethPrice)
+        new bigdecimal.BigDecimal(token1.derivedETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
       ).toString(),
       reserve0: pair.reserve0,
       reserve1: pair.reserve1,
