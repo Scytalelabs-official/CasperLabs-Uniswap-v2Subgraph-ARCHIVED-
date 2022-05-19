@@ -90,7 +90,7 @@ router.post("/adminlogin", async function (req, res, next) {
     console.log("admin : ", admin);
 
     if (!admin) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: true,
         message: "Admin don't exist against this username",
       });
@@ -98,7 +98,7 @@ router.post("/adminlogin", async function (req, res, next) {
 
     const validPassword = bcrypt.compareSync(req.body.password, admin.password); // user password is stored as hashed
     if (!validPassword) {
-      return res.status(400).json("Incorrect password entered");
+      return res.status(403).json("Incorrect password entered");
     }
 
     let payload;

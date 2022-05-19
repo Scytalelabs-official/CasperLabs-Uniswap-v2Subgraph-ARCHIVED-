@@ -29,16 +29,27 @@ router
 
       let contractHash = req.body.contractHash.toLowerCase();
       let packageHash = req.body.packageHash.toLowerCase();
-      var newpair = new hashesofpairsModel({
+      let pairData = await hashesofpairsModel.findOne({
         contractHash: contractHash,
         packageHash: packageHash,
       });
-      await hashesofpairsModel.create(newpair);
+      if (pairData == null) {
+        var newpair = new hashesofpairsModel({
+          contractHash: contractHash,
+          packageHash: packageHash,
+        });
+        await hashesofpairsModel.create(newpair);
 
-      return res.status(200).json({
-        success: true,
-        message: "Pair's Contract and Package Hash are Succefully stored.",
-      });
+        return res.status(200).json({
+          success: true,
+          message: "Pair's Contract and Package Hash are Succefully stored.",
+        });
+      } else {
+        return res.status(406).json({
+          success: false,
+          message: "These Pair's Contract and Package Hash are already added.",
+        });
+      }
     } catch (error) {
       console.log("error (try-catch) : " + error);
       return res.status(500).json({
@@ -67,16 +78,27 @@ router
 
       let contractHash = req.body.contractHash.toLowerCase();
       let packageHash = req.body.packageHash.toLowerCase();
-      var newpair = new allcontractsDataModel({
+      let contractsData = await allcontractsDataModel.findOne({
         contractHash: contractHash,
         packageHash: packageHash,
       });
-      await allcontractsDataModel.create(newpair);
+      if (contractsData == null) {
+        var newpair = new allcontractsDataModel({
+          contractHash: contractHash,
+          packageHash: packageHash,
+        });
+        await allcontractsDataModel.create(newpair);
 
-      return res.status(200).json({
-        success: true,
-        message: "Contract and Package Hash are Succefully stored.",
-      });
+        return res.status(200).json({
+          success: true,
+          message: "Contract and Package Hash are Succefully stored.",
+        });
+      } else {
+        return res.status(406).json({
+          success: false,
+          message: "These Contract and Package Hash are already stored.",
+        });
+      }
     } catch (error) {
       console.log("error (try-catch) : " + error);
       return res.status(500).json({
@@ -96,15 +118,23 @@ router
           message: "tokensList not found in the request Body.",
         });
       }
-      let newData = new tokensListModel({
-        data: req.body.tokensList,
-      });
-      await tokensListModel.create(newData);
+      let result = await tokensListModel.find({});
+      if (result.length == 0) {
+        let newData = new tokensListModel({
+          data: req.body.tokensList,
+        });
+        await tokensListModel.create(newData);
 
-      return res.status(200).json({
-        success: true,
-        message: "Token List Data SuccessFully Saved.",
-      });
+        return res.status(200).json({
+          success: true,
+          message: "Token List Data SuccessFully added.",
+        });
+      } else {
+        return res.status(406).json({
+          success: false,
+          message: "Tokens List Data already added.",
+        });
+      }
     } catch (error) {
       console.log("error (try-catch) : " + error);
       return res.status(500).json({
