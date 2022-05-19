@@ -1,7 +1,6 @@
 require("dotenv").config();
 var express = require("express");
 var router = express.Router();
-const axios = require("axios").default;
 var { request } = require("graphql-request");
 var pairModel = require("../models/pair");
 var hashesofpairsModel = require("../models/hashesofpairs");
@@ -16,81 +15,6 @@ function splitdata(data) {
   var result = temp[1].split(")");
   return result[0];
 }
-
-router
-  .route("/addpaircontractandpackageHash")
-  .post(async function (req, res, next) {
-    try {
-      if (!req.body.contractHash) {
-        return res.status(400).json({
-          success: false,
-          message: "There is no contractHash specified in the req body.",
-        });
-      }
-      if (!req.body.packageHash) {
-        return res.status(400).json({
-          success: false,
-          message: "There is no packageHash specified in the req body.",
-        });
-      }
-
-      let contractHash = req.body.contractHash.toLowerCase();
-      let packageHash = req.body.packageHash.toLowerCase();
-      var newpair = new hashesofpairsModel({
-        contractHash: contractHash,
-        packageHash: packageHash,
-      });
-      await hashesofpairsModel.create(newpair);
-
-      return res.status(200).json({
-        success: true,
-        message: "Pair's Contract and Package Hash are Succefully stored.",
-      });
-    } catch (error) {
-      console.log("error (try-catch) : " + error);
-      return res.status(500).json({
-        success: false,
-        err: error,
-      });
-    }
-  });
-router
-  .route("/addcontractandpackageHash")
-  .post(async function (req, res, next) {
-    try {
-      if (!req.body.contractHash) {
-        return res.status(400).json({
-          success: false,
-          message: "There is no contractHash specified in the req body.",
-        });
-      }
-      if (!req.body.packageHash) {
-        return res.status(400).json({
-          success: false,
-          message: "There is no packageHash specified in the req body.",
-        });
-      }
-
-      let contractHash = req.body.contractHash.toLowerCase();
-      let packageHash = req.body.packageHash.toLowerCase();
-      var newpair = new allcontractsDataModel({
-        contractHash: contractHash,
-        packageHash: packageHash,
-      });
-      await allcontractsDataModel.create(newpair);
-
-      return res.status(200).json({
-        success: true,
-        message: "Contract and Package Hash are Succefully stored.",
-      });
-    } catch (error) {
-      console.log("error (try-catch) : " + error);
-      return res.status(500).json({
-        success: false,
-        err: error,
-      });
-    }
-  });
 
 router
   .route("/getContractHashAgainstPackageHash")
@@ -120,43 +44,8 @@ router
         err: error,
       });
     }
-  });
-
-router.route("/startListener").post(async function (req, res, next) {
-  try {
-    if (!req.body.contractPackageHashes) {
-      return res.status(400).json({
-        success: false,
-        message: "There is no contractPackageHash specified in the req body.",
-      });
-    }
-
-    await axios
-      .post(
-        "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener",
-        {
-          contractPackageHashes: req.body.contractPackageHashes,
-        }
-      )
-      .then(function (response) {
-        console.log(response);
-        return res.status(200).json({
-          success: true,
-          message: response.data.message,
-          status: response.data.status,
-        });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  } catch (error) {
-    console.log("error (try-catch) : " + error);
-    return res.status(500).json({
-      success: false,
-      err: error,
-    });
-  }
 });
+
 
 router.route("/geteventsdata").post(async function (req, res, next) {
   try {
