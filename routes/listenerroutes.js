@@ -13,6 +13,9 @@ var RemoveReservesDataModel = require("../models/removeReservesData");
 var event_Id_Data_Model = require("../models/eventsIdData");
 const {MinHeap} = require('@datastructures-js/heap');
 var bigdecimal = require("bigdecimal");
+var serialize = require('serialize-javascript');
+var redis = require('../connectRedis');
+
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -257,6 +260,11 @@ async function populateDatabase(_eventId, _deployHash, _eventName, _timestamp, _
 		await event_Id_Data_Model.create(newInstance);
 }
 
+async function populateRedis(_value){
+	let result = await redis.client.HSET("redisEventsData",_value.eventId,serialize({obj: _value}));
+  return result;
+}
+
 function populateHeap(_instance){
 	
 	eventHeap.insert(_instance);
@@ -281,12 +289,6 @@ function isNewEvent(){
 function heapRoot(){
 	return eventHeap.root();
 }
-
-
-
-
-
-
 
 
 // router.route("/geteventsdata").post(async function (req, res, next) {
@@ -1087,5 +1089,5 @@ try {
   }
 };
 
-module.exports = {router, isNewEvent, depopulateHeap, heapRoot, populateHeap, populateDatabase, geteventsdata};
+module.exports = {router, isNewEvent, depopulateHeap, heapRoot, populateHeap, populateDatabase,populateRedis, geteventsdata};
 // module.exports = router;
