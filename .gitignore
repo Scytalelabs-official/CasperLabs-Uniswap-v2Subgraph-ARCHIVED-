@@ -1,5 +1,5 @@
 /node_modules
-/JsClients/ERC20/keys
-/JsClients/FACTORY/keys
-/JsClients/PAIR/keys
-/JsClients/ROUTER/keys
+# /JsClients/ERC20/keys
+# /JsClients/FACTORY/keys
+# /JsClients/PAIR/keys
+# /JsClients/ROUTER/keys
