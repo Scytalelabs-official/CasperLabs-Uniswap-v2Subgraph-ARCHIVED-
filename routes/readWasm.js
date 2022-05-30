@@ -24,4 +24,25 @@ router.route("/getWasmData").get(async function (req, res, next) {
   }
 });
 
+router.route("/getWCSPRWasmData").get(async function (req, res, next) {
+  try {
+
+    let wasmData= routerJsClient.getWasmDataInBuffer('JsClients/ERC20/wasm/purse-proxy.wasm');
+    console.log(wasmData);
+    
+    return res.status(200).json({
+        success: true,
+        message: "WCSPR Wasm data successfully read and converted. ",
+        wasmData: wasmData,
+    });
+    
+  } catch (error) {
+    console.log("error (try-catch) : " + error);
+    return res.status(500).json({
+      success: false,
+      err: error,
+    });
+  }
+});
+
 module.exports = router;

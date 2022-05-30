@@ -6,7 +6,7 @@ var pairModel = require("../models/pair");
 var hashesofpairsModel = require("../models/hashesofpairs");
 var eventsModel = require("../models/events");
 var pairagainstuser = require("../models/pairagainstuser");
-var paircontract = require("../JsClients/PAIR/test/installed.ts");
+var paircontract = require("../JsClients/PAIR/scripts/installed.ts");
 var allcontractsDataModel = require("../models/allcontractsData");
 var RemoveReservesDataModel = require("../models/removeReservesData");
 

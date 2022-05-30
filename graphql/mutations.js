@@ -52,7 +52,7 @@ const {
   updateTokenDayData,
 } = require("./dayUpdates");
 
-var PairContract = require("../JsClients/PAIR/test/installed.ts");
+var PairContract = require("../JsClients/PAIR/scripts/installed.ts");
 
 const {
   getEthPriceInUSD,

@@ -2,7 +2,7 @@ require("dotenv").config();
 var express = require("express");
 const { createFalse } = require("typescript");
 var router = express.Router();
-var pair = require("../JsClients/PAIR/test/installed.ts");
+var pair = require("../JsClients/PAIR/scripts/installed.ts");
 var AllcontractsData = require("../models/allcontractsData");
 
 router

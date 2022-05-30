@@ -1,7 +1,7 @@
 require("dotenv").config();
 var express = require("express");
 var router = express.Router();
-var routercontract = require("../JsClients/ROUTER/test/installed.ts");
+var routercontract = require("../JsClients/ROUTER/scripts/installed.ts");
 
 router.route("/swapmakedeployJSON").post(async function (req, res, next) {
   try {

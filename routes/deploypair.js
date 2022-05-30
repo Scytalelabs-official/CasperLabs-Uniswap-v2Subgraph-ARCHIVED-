@@ -1,7 +1,7 @@
 require("dotenv").config();
 var express = require("express");
 var router = express.Router();
-var pair = require("../JsClients/PAIR/test/install.ts");
+var pair = require("../JsClients/PAIR/scripts/install.ts");
 var pairsagainstuser = require("../models/pairsagainstuser");
 var pairagainstuser = require("../models/pairagainstuser");
 var pairsModel = require("../models/pair");

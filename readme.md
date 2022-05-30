@@ -58,3 +58,19 @@ This query fetches aggredated data from all Casper uniswap pairs and tokens, to 
   }
 }
 ```
+
+## Deployment of Contracts
+
+#### Generate key
+
+```
+casper-client keygen key
+
+```
+#### Paste the key
+
+Paste the key created by the above command to JsClients/ERC20, JsClients/FACTORY, JsClients/PAIR and JsClients/ROUTER.
+
+#### Fund the key
+
+We can fund the key from casper live website faucet page on testnet.

@@ -1,7 +1,7 @@
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
-var factory = require("../JsClients/FACTORY/test/installed.ts");
+var factory = require("../JsClients/FACTORY/scripts/installed.ts");
 require("dotenv").config();
 
 const {
