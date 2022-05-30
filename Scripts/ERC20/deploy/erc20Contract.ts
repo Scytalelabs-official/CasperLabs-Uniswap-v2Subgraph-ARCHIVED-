@@ -1,10 +1,10 @@
 import { config } from "dotenv";
 config();
-import { ERC20Client, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { ERC20Client, utils } from "../../../JsClients/ERC20/src";
+import { getDeploy } from "./utils";
 
 import {
-  Keys,
+  Keys
 } from "casper-js-sdk";
 
 const {
@@ -26,7 +26,7 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${ERC20_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
-const test = async () => {
+const deploy = async () => {
   const erc20 = new ERC20Client(
     NODE_ADDRESS!,
     CHAIN_NAME!,
@@ -70,4 +70,4 @@ const test = async () => {
   console.log(`... Package Hash: ${packageHash}`);
 };
 
-//test();
+//deploy();

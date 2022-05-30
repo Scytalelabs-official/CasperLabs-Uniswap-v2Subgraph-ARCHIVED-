@@ -6,7 +6,7 @@ var routerJsClient=require('../JsClients/ROUTER/src/utils')
 router.route("/getWasmData").get(async function (req, res, next) {
   try {
 
-    let wasmData= routerJsClient.getWasmDataInBuffer('JsClients/ROUTER/wasm/purse-proxy.wasm');
+    let wasmData= routerJsClient.getWasmDataInBuffer('Scripts/ROUTER/wasm/purse-proxy.wasm');
     console.log(wasmData);
     
     return res.status(200).json({
@@ -27,7 +27,7 @@ router.route("/getWasmData").get(async function (req, res, next) {
 router.route("/getWCSPRWasmData").get(async function (req, res, next) {
   try {
 
-    let wasmData= routerJsClient.getWasmDataInBuffer('JsClients/ERC20/wasm/purse-proxy.wasm');
+    let wasmData= routerJsClient.getWasmDataInBuffer('Scripts/ERC20/wasm/purse-proxy.wasm');
     console.log(wasmData);
     
     return res.status(200).json({

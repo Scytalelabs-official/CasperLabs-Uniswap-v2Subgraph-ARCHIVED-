@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "start": "ts-node ./bin/www",
-    "test:erc20install": "ts-node JsClients/ERC20/scripts/install.ts",
-    "test:erc20installed": "ts-node JsClients/ERC20/scripts/installed.ts",
-    "test:pairinstall": "ts-node JsClients/PAIR/scripts/install.ts",
-    "test:pairinstalled": "ts-node JsClients/PAIR/scripts/installed.ts",
-    "test:factoryinstall": "ts-node JsClients/FACTORY/scripts/install.ts",
-    "test:factoryinstalled": "ts-node JsClients/FACTORY/scripts/installed.ts",
-    "test:routerinstall": "ts-node JsClients/ROUTER/scripts/install.ts",
-    "test:routerinstalled": "ts-node JsClients/ROUTER/scripts/installed.ts"
+    "deploy:erc20": "ts-node Scripts/ERC20/deploy/erc20Contract.ts",
+    "deploy:erc20Functions": "ts-node Scripts/ERC20/deploy/erc20ContractFunctions.ts",
+    "deploy:factory": "ts-node Scripts/FACTORY/deploy/factoryContract.ts",
+    "deploy:factoryFunctions": "ts-node Scripts/FACTORY/deploy/factoryContractFunctions.ts",
+    "deploy:pair": "ts-node Scripts/PAIR/deploy/pairContract.ts",
+    "deploy:pairFunctions": "ts-node Scripts/PAIR/deploy/pairContractFunctions.ts",
+    "deploy:router": "ts-node Scripts/ROUTER/deploy/routerContract.ts",
+    "deploy:routerFunctions": "ts-node Scripts/ROUTER/deploy/routerContractFunctions.ts"
   },
   "engine": {
     "node": "16.14.0",

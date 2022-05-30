@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config();
-import { UniswapRouterClient, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { UniswapRouterClient, utils} from "../../../JsClients/ROUTER/src";
+import { getDeploy } from "./utils";
 
 import {
   CLValueBuilder,
@@ -22,7 +22,7 @@ const {
   WCSPR_PACKAGE,
   LIBRARY_PACKAGE,
   CONTRACT_NAME,
-  CONTRACT_HASH,
+  ROUTER_CONTRACT_HASH,
   INSTALL_PAYMENT_AMOUNT,
   MINT_ONE_PAYMENT_AMOUNT,
   MINT_COPIES_PAYMENT_AMOUNT,
@@ -49,7 +49,7 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${MASTER_KEY_PAIR_PATH}secret_key.pem`
 );
 
-const test = async () => {
+const deploy = async () => {
 
   const uniswapRouter = new UniswapRouterClient(
     NODE_ADDRESS!,
@@ -62,7 +62,7 @@ const test = async () => {
     FACTORY_CONTRACT_PACKAGE!,
     WCSPR_PACKAGE!,
     LIBRARY_PACKAGE!,
-    'UniSwapRouter1',
+    CONTRACT_NAME!,
     INSTALL_PAYMENT_AMOUNT!,
     WASM_PATH!
   );
@@ -78,7 +78,6 @@ const test = async () => {
 
   console.log(`... Contract installed successfully.`);
   
-
   let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
   console.log(`... Account Info: `);
   console.log(JSON.stringify(accountInfo, null, 2));
@@ -98,4 +97,4 @@ const test = async () => {
   console.log(`... Package Hash: ${packageHash}`);
 };
 
-//test();
+//deploy();

@@ -15,8 +15,6 @@ This graphql dynamically tracks any pair created by the casper uniswap factory. 
 npm install to install the require packages
 npm start to start the server
 
-Heroku App Link: https://casper-uniswap-v2-graphql.herokuapp.com/
-
 ## Queries
 
 Below are a few ways to show how to query the casper-uniswap-graphql for data. The queries show most of the information that is queryable, but there are many other filtering options that can be used, just check out the [querying api](https://thegraph.com/docs/graphql-api). These queries can be used locally or in The Graph Explorer playground.
@@ -61,16 +59,51 @@ This query fetches aggredated data from all Casper uniswap pairs and tokens, to 
 
 ## Deployment of Contracts
 
-#### Generate key
+#### Generate the keys
+
+Paste this command on the ubuntu terminal, that will create a keys folder for you containing public key , public key hex and secret key.
 
 ```
-casper-client keygen key
+casper-client keygen keys
 
 ```
-#### Paste the key
+#### Paste the keys
 
-Paste the key created by the above command to JsClients/ERC20, JsClients/FACTORY, JsClients/PAIR and JsClients/ROUTER.
+Paste the keys folder created by the above command to Scripts/ERC20, Scripts/FACTORY, Scripts/PAIR and Scripts/ROUTER folders.
 
 #### Fund the key
 
-We can fund the key from casper live website faucet page on testnet.
+We can fund the keys from casper live website faucet page on testnet.
+
+
+Use the script file in package.json to perform the deployments
+```
+"scripts": {
+    "deploy:erc20": "ts-node Scripts/ERC20/deploy/erc20Contract.ts",
+    "deploy:erc20Functions": "ts-node Scripts/ERC20/deploy/erc20ContractFunctions.ts",
+    "deploy:factory": "ts-node Scripts/FACTORY/deploy/factoryContract.ts",
+    "deploy:factoryFunctions": "ts-node Scripts/FACTORY/deploy/factoryContractFunctions.ts",
+    "deploy:pair": "ts-node Scripts/PAIR/deploy/pairContract.ts",
+    "deploy:pairFunctions": "ts-node Scripts/PAIR/deploy/pairContractFunctions.ts",
+    "deploy:router": "ts-node Scripts/ROUTER/deploy/routerContract.ts",
+    "deploy:routerFunctions": "ts-node Scripts/ROUTER/deploy/routerContractFunctions.ts"
+  },
+```
+
+Use the following commands to perform deployments
+```
+npm run deploy:erc20
+npm run deploy:erc20Functions
+
+npm run deploy:factory
+npm run deploy:factoryFunctions
+
+npm run deploy:pair
+npm run deploy:pairFunctions
+
+npm run deploy:router
+npm run deploy:routerFunctions
+
+```
+
+* CONFIGURE .env BEFORE and during DEPLOYMENT

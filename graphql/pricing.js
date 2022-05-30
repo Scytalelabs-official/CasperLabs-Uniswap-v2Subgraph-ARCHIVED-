@@ -1,7 +1,7 @@
 const Pair = require("../models/pair");
 const Token = require("../models/token");
 const Bundle = require("../models/bundle");
-var factory = require("../JsClients/FACTORY/scripts/installed.ts");
+var factory = require("../JsClients/FACTORY/factoryFunctionsForBackend/functions");
 require("dotenv").config();
 
 const {
@@ -36,9 +36,9 @@ async function getEthPriceInUSD() {
     let usdcWeight = BigInt(usdcPair.reserve1) / totalLiquidityETH;
     let usdtWeight = BigInt(usdtPair.reserve0) / totalLiquidityETH;
     return (
-      BigInt(daiPair.token0Price) * daiWeight +
-      BigInt(usdcPair.token0Price) * usdcWeight +
-      BigInt(usdtPair.token1Price) * usdtWeight
+      (BigInt(daiPair.token0Price) * daiWeight) +
+      (BigInt(usdcPair.token0Price) * usdcWeight) +
+      (BigInt(usdtPair.token1Price) * usdtWeight)
     ).toString();
     // dai and USDC have been created
   } else if (daiPair !== null && usdcPair !== null) {
@@ -47,8 +47,8 @@ async function getEthPriceInUSD() {
     let daiWeight = BigInt(daiPair.reserve1) / totalLiquidityETH;
     let usdcWeight = BigInt(usdcPair.reserve1) / totalLiquidityETH;
     return (
-      BigInt(daiPair.token0Price) * daiWeight +
-      BigInt(usdcPair.token0Price) * usdcWeight
+      (BigInt(daiPair.token0Price) * daiWeight) +
+      (BigInt(usdcPair.token0Price) * usdcWeight)
     ).toString();
     // USDC is the only pair so far
   } else if (usdcPair !== null) {
@@ -157,7 +157,7 @@ async function getTrackedVolumeUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return (tokenAmount0 * price0 + tokenAmount1 * price1) / BigInt(2);
+    return ((tokenAmount0 * price0) + (tokenAmount1 * price1)) / BigInt(2);
   }
 
   // take full value of the whitelisted token amount
@@ -192,7 +192,7 @@ async function getTrackedLiquidityUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return BigInt(tokenAmount0) * price0 + BigInt(tokenAmount1) * price1;
+    return (BigInt(tokenAmount0) * price0) + (BigInt(tokenAmount1) * price1);
   }
 
   // take double value of the whitelisted token amount

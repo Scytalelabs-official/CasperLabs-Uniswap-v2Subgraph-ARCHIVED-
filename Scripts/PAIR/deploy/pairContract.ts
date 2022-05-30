@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config();
-import { PAIRClient, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { PAIRClient, utils} from "../../../JsClients/PAIR/src";
+import { getDeploy } from "./utils";
 
 import {
   Keys,
@@ -27,15 +27,15 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${PAIR_MASTER_KEY_PAIR_PATH}/public_key.pem`,
   `${PAIR_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
+
 const pair = new PAIRClient(
   NODE_ADDRESS!,
   CHAIN_NAME!,
   EVENT_STREAM_ADDRESS!
 );
 
-const test = async () => {
+const deploy = async () => {
   
-
   const installDeployHash = await pair.install(
     KEYS,
     PAIR_CONTRACT_NAME!,
@@ -45,8 +45,6 @@ const test = async () => {
     PAIR_TOTAL_SUPPLY!,
     FACTORY_CONTRACT_PACKAGE!,
     CALLEE_PACKAGE!,
-    // KEYS.publicKey,
-    // KEYS.publicKey,
     PAIR_INSTALL_PAYMENT_AMOUNT!,
     PAIR_WASM_PATH!
   );
@@ -77,28 +75,4 @@ const test = async () => {
  
 };
 
-export const makedeploypaircontract = async (
-	FACTORY_CONTRACT_PACKAGE: string,
-	CALLEE_PACKAGE: string,
-	signerkey:string,
-) => {
-	
-	const deployJSON = await pair.makedeployJSON(
-		signerkey,
-    PAIR_CONTRACT_NAME!,
-    PAIR_TOKEN_NAME!,
-    PAIR_TOKEN_SYMBOL!,
-    PAIR_DECIMALS!,
-    PAIR_TOTAL_SUPPLY!,
-    FACTORY_CONTRACT_PACKAGE!,
-    CALLEE_PACKAGE!,
-    PAIR_INSTALL_PAYMENT_AMOUNT!,
-    PAIR_WASM_PATH!
-	);
-
-	console.log(`... Contract make deploy SuccessFull: ${deployJSON}`);
-	return deployJSON;
-  
-};
-
-//test();
+//deploy();

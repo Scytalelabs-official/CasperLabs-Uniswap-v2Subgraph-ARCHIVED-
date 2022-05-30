@@ -52,7 +52,7 @@ const {
   updateTokenDayData,
 } = require("./dayUpdates");
 
-var PairContract = require("../JsClients/PAIR/scripts/installed.ts");
+var PairContract = require("../JsClients/PAIR/pairFunctionsForBackend/functions");
 
 const {
   getEthPriceInUSD,
@@ -129,17 +129,13 @@ const handleNewPair = {
         let TokenName=await fetchTokenName(token0Data.contractHash);
         let TokenSymbol=await fetchTokenSymbol(token0Data.contractHash);
         let TokenTotalSupply=BigInt(await fetchTokenTotalSupply(token0Data.contractHash));
-        //let TokenTotalSupply = BigInt(1000000000000);
 
         token0 = new Token({
           id: args.token0,
           symbol: TokenSymbol,
           name: TokenName,
-          //symbol: "WISE",
-          //name: "WISE",
           totalSupply: TokenTotalSupply.toString(),
           decimals: Decimals,
-          //decimals: 9,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,
           tradeVolumeUSD: ZERO_BD,
@@ -162,17 +158,13 @@ const handleNewPair = {
         let TokenName=await fetchTokenName(token1Data.contractHash);
         let TokenSymbol=await fetchTokenSymbol(token1Data.contractHash);
         let TokenTotalSupply=await fetchTokenTotalSupply(token1Data.contractHash);
-        //let TokenTotalSupply = BigInt(500000000000);
 
         token1 = new Token({
           id: args.token1,
           symbol: TokenSymbol,
           name: TokenName,
-          //symbol: "WCSPR",
-          //name: "WCSPR",
           totalSupply: TokenTotalSupply.toString(),
           decimals: Decimals,
-          //decimals: 9,
           derivedETH: ZERO_BD,
           tradeVolume: ZERO_BD,
           tradeVolumeUSD: ZERO_BD,
@@ -904,8 +896,8 @@ const handleSync = {
       // use derived amounts within pair
       pair.trackedReserveETH = trackedLiquidityETH.toString();
       pair.reserveETH = (
-        BigInt(pair.reserve0) * BigInt(token0.derivedETH) +
-        BigInt(pair.reserve1) * BigInt(token1.derivedETH)
+        (BigInt(pair.reserve0) * BigInt(token0.derivedETH)) +
+        (BigInt(pair.reserve1) * BigInt(token1.derivedETH))
       ).toString();
       pair.reserveUSD = (
         BigInt(pair.reserveETH) * BigInt(bundle.ethPrice)
@@ -995,14 +987,14 @@ const handleMint = {
       // get new amounts of USD and ETH for tracking
       let bundle = await Bundle.findOne({ id: "1" });
       let amountTotalUSD = (
-        (BigInt(token1.derivedETH) * BigInt(token1Amount) +
-          BigInt(token0.derivedETH) * BigInt(token0Amount)) *
+        ((BigInt(token1.derivedETH) * BigInt(token1Amount)) +
+          (BigInt(token0.derivedETH) * BigInt(token0Amount))) *
         BigInt(bundle.ethPrice)
       ).toString();
 
       // update txn counts
-      pair.txCount = (BigInt(pair.txCount) - BigInt(ONE_BI)).toString();
-      uniswap.txCount = (BigInt(uniswap.txCount) - BigInt(ONE_BI)).toString();
+      pair.txCount = (BigInt(pair.txCount) + BigInt(ONE_BI)).toString();
+      uniswap.txCount = (BigInt(uniswap.txCount) + BigInt(ONE_BI)).toString();
 
       // save entities
       await token0.save();
@@ -1130,8 +1122,8 @@ const handleBurn = {
       // get new amounts of USD and ETH for tracking
       let bundle = await Bundle.findOne({ id: "1" });
       let amountTotalUSD = (
-        (BigInt(token1.derivedETH) * BigInt(token1Amount) +
-          BigInt(token0.derivedETH) * BigInt(token0Amount)) *
+        ((BigInt(token1.derivedETH) * BigInt(token1Amount)) +
+          (BigInt(token0.derivedETH) * BigInt(token0Amount))) *
         BigInt(bundle.ethPrice)
       ).toString();
 
@@ -1252,8 +1244,8 @@ const handleSwap = {
 
       // get total amounts of derived USD and ETH for tracking
       let derivedAmountETH =
-        (BigInt(token1.derivedETH) * amount1Total +
-          BigInt(token0.derivedETH) * amount0Total) /
+        ((BigInt(token1.derivedETH) * amount1Total) +
+          (BigInt(token0.derivedETH) * amount0Total)) /
         BigInt(2);
       let derivedAmountUSD = derivedAmountETH * BigInt(bundle.ethPrice);
 
@@ -1276,8 +1268,8 @@ const handleSwap = {
       // update token0 global volume and token liquidity stats
       token0.tradeVolume = (
         BigInt(token0.tradeVolume) +
-        BigInt(amount0In) +
-        BigInt(amount0Out)
+        (BigInt(amount0In) +
+        BigInt(amount0Out))
       ).toString();
       token0.tradeVolumeUSD = (
         BigInt(token0.tradeVolumeUSD) + trackedAmountUSD
@@ -1289,8 +1281,8 @@ const handleSwap = {
       // update token1 global volume and token liquidity stats
       token1.tradeVolume = (
         BigInt(token1.tradeVolume) +
-        BigInt(amount1In) +
-        BigInt(amount1Out)
+        (BigInt(amount1In) +
+        BigInt(amount1Out))
       ).toString();
       token1.tradeVolumeUSD = (
         BigInt(token1.tradeVolumeUSD) + trackedAmountUSD
@@ -1459,11 +1451,11 @@ const handleSwap = {
       ).toString();
       token0DayData.dailyVolumeETH = (
         BigInt(token0DayData.dailyVolumeETH) +
-        amount0Total * BigInt(token0.derivedETH)
+        (amount0Total * BigInt(token0.derivedETH))
       ).toString();
       token0DayData.dailyVolumeUSD = (
         BigInt(token0DayData.dailyVolumeUSD) +
-        amount0Total * BigInt(token0.derivedETH) * BigInt(bundle.ethPrice)
+        ((amount0Total * BigInt(token0.derivedETH)) * BigInt(bundle.ethPrice))
       ).toString();
       await token0DayData.save();
 
@@ -1473,11 +1465,11 @@ const handleSwap = {
       ).toString();
       token1DayData.dailyVolumeETH = (
         BigInt(token1DayData.dailyVolumeETH) +
-        amount1Total * BigInt(token1.derivedETH)
+        (amount1Total * BigInt(token1.derivedETH))
       ).toString();
       token1DayData.dailyVolumeUSD = (
         BigInt(token1DayData.dailyVolumeUSD) +
-        amount1Total * BigInt(token1.derivedETH) * BigInt(bundle.ethPrice)
+        ((amount1Total * BigInt(token1.derivedETH)) * BigInt(bundle.ethPrice))
       ).toString();
       await token1DayData.save();
 

@@ -11,17 +11,14 @@ import {
   CLValueParsers,
   CLMap,
   DeployUtil,
-  EventName,
-  EventStream,
   Keys,
   RuntimeArgs,
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
 import * as blake from "blakejs";
 import { concat } from "@ethersproject/bytes";
-import { ERC20Events } from "./constants";
 import * as utils from "./utils";
-import { RecipientType, IPendingDeploy } from "./types";
+import { RecipientType} from "./types";
 import {createRecipientAddress } from "./utils";
 
 class ERC20Client {
@@ -38,9 +35,6 @@ class ERC20Client {
     paused: string;
     
   };
-
-  private isListening = false;
-  private pendingDeploys: IPendingDeploy[] = [];
 
   constructor(
 
@@ -154,6 +148,14 @@ class ERC20Client {
     );
     return result.value();
   }
+  public async totalSupply() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["total_supply"]
+    );
+    return result.value();
+  }
   public async balanceOf(account: string) {
     try {
       
@@ -169,22 +171,6 @@ class ERC20Client {
       return "0";
     }
     
-  }
-  public async balanceOfcontract(accountHash: string) {
-
-    try {
-      
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        accountHash,
-        this.namedKeys.balances
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-
-    } catch (error) {
-      return "0";
-    }
   }
 
   public async nonce(account: CLPublicKey) {
@@ -224,15 +210,6 @@ class ERC20Client {
 
   }
   
-  public async totalSupply() {
-    const result = await contractSimpleGetter(
-      this.nodeAddress,
-      this.contractHash,
-      ["total_supply"]
-    );
-    return result.value();
-  }
-
   public async approve(
     keys: Keys.AsymmetricKey,
     spender: string,
@@ -357,35 +334,7 @@ class ERC20Client {
       throw Error("Invalid Deploy");
     }
   }
-  // public async mint(
-  //   keys: Keys.AsymmetricKey,
-  //   to: string,
-  //   amount: string,
-  //   paymentAmount: string
-  // ) {
-  //   const tobytearray = new CLByteArray(Uint8Array.from(Buffer.from(to, 'hex')));
-  //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     to: CLValueBuilder.key(tobytearray),
-  //     amount: CLValueBuilder.u256(amount)
-  //   });
 
-  //   const deployHash = await contractCall({
-  //     chainName: this.chainName,
-  //     contractHash: this.contractHash,
-  //     entryPoint: "mint",
-  //     keys,
-  //     nodeAddress: this.nodeAddress,
-  //     paymentAmount,
-  //     runtimeArgs,
-  //   });
-
-  //   if (deployHash !== null) {
- 
-  //     return deployHash;
-  //   } else {
-  //     throw Error("Invalid Deploy");
-  //   }
-  // }
   public async burn(
     keys: Keys.AsymmetricKey,
     from: RecipientType,
@@ -455,116 +404,6 @@ class ERC20Client {
     }
   }
 
-  public onEvent(
-    eventNames: ERC20Events[],
-    callback: (
-      eventName: ERC20Events,
-      deployStatus: {
-        deployHash: string;
-        success: boolean;
-        error: string | null;
-      },
-      result: any | null
-    ) => void
-  ): any {
-    if (!this.eventStreamAddress) {
-      throw Error("Please set eventStreamAddress before!");
-    }
-    if (this.isListening) {
-      throw Error(
-        "Only one event listener can be create at a time. Remove the previous one and start new."
-      );
-    }
-    const es = new EventStream(this.eventStreamAddress);
-    this.isListening = true;
-
-    es.subscribe(EventName.DeployProcessed, (value: any) => {
-      const deployHash = value.body.DeployProcessed.deploy_hash;
-
-      const pendingDeploy = this.pendingDeploys.find(
-        (pending) => pending.deployHash === deployHash
-      );
-
-      if (!pendingDeploy) {
-        return;
-      }
-
-      if (
-        !value.body.DeployProcessed.execution_result.Success &&
-        value.body.DeployProcessed.execution_result.Failure
-      ) {
-        callback(
-          pendingDeploy.deployType,
-          {
-            deployHash,
-            error:
-              value.body.DeployProcessed.execution_result.Failure.error_message,
-            success: false,
-          },
-          null
-        );
-      } else {
-        const { transforms } =
-          value.body.DeployProcessed.execution_result.Success.effect;
-
-        const ERC20Events = transforms.reduce((acc: any, val: any) => {
-          if (
-            val.transform.hasOwnProperty("WriteCLValue") &&
-            typeof val.transform.WriteCLValue.parsed === "object" &&
-            val.transform.WriteCLValue.parsed !== null
-          ) {
-            const maybeCLValue = CLValueParsers.fromJSON(
-              val.transform.WriteCLValue
-            );
-            const clValue = maybeCLValue.unwrap();
-            if (clValue && clValue instanceof CLMap) {
-              const hash = clValue.get(
-                CLValueBuilder.string("contract_package_hash")
-              );
-              const event = clValue.get(CLValueBuilder.string("event_type"));
-              if (
-                hash &&
-                // NOTE: Calling toLowerCase() because current JS-SDK doesn't support checksumed hashes and returns all lower case value
-                // Remove it after updating SDK
-                hash.value() === this.contractPackageHash.toLowerCase() &&
-                event &&
-                eventNames.includes(event.value())
-              ) {
-                acc = [...acc, { name: event.value(), clValue }];
-              }
-            }
-          }
-          return acc;
-        }, []);
-
-        ERC20Events.forEach((d: any) =>
-          callback(
-            d.name,
-            { deployHash, error: null, success: true },
-            d.clValue
-          )
-        );
-      }
-
-      this.pendingDeploys = this.pendingDeploys.filter(
-        (pending) => pending.deployHash !== deployHash
-      );
-    });
-    es.start();
-
-    return {
-      stopListening: () => {
-        es.unsubscribe(EventName.DeployProcessed);
-        es.stop();
-        this.isListening = false;
-        this.pendingDeploys = [];
-      },
-    };
-  }
-
-  public addPendingDeploy(deployType: ERC20Events, deployHash: string) {
-    this.pendingDeploys = [...this.pendingDeploys, { deployHash, deployType }];
-  }
 }
 
 interface IInstallParams {

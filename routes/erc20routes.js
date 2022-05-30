@@ -1,7 +1,7 @@
 require("dotenv").config();
 var express = require("express");
 var router = express.Router();
-var erc20 = require("../JsClients/ERC20/scripts/installed.ts");
+var erc20 = require("../JsClients/ERC20/erc20FunctionsForBackend/functions");
 
 router.route("/balanceagainstuser").post(async function (req, res, next) {
   try {

@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config();
-import { FACTORYClient, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
+import { FACTORYClient, utils } from "../../../JsClients/FACTORY/src";
+import { getDeploy } from "./utils";
 
 import {
   Keys,
@@ -22,7 +22,7 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${FACTORY_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
-const test = async () => {
+const deploy = async () => {
   const factory = new FACTORYClient(
     NODE_ADDRESS!,
     CHAIN_NAME!,
@@ -66,4 +66,4 @@ const test = async () => {
 
 };
 
-//test();
+//deploy();

@@ -1,8 +1,7 @@
 import { config } from "dotenv";
 config();
-import { UniswapRouterClient, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
-import { request } from 'graphql-request';
+import { UniswapRouterClient } from "../../../JsClients/ROUTER/src";
+import { sleep, getDeploy } from "./utils";
 
 import {
 	CLValueBuilder,
@@ -11,9 +10,6 @@ import {
 	CLAccountHash,
 	CLPublicKeyType,
 } from "casper-js-sdk";
-import { isCombinedNodeFlagSet } from "tslint";
-
-const { RouterEvents } = constants;
 
 const {
 	NODE_ADDRESS,
@@ -27,7 +23,7 @@ const {
 	WCSPR,
 	LIBRARY,
 	CONTRACT_NAME,
-	CONTRACT_HASH,
+	ROUTER_CONTRACT_HASH,
 	INSTALL_PAYMENT_AMOUNT,
 	PAIR_CONTRACT,
 	PAIR_CONTRACT_PACKAGE,
@@ -131,7 +127,7 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
 	`${MASTER_KEY_PAIR_PATH}secret_key.pem`
 );
 
-const swap_cspr_for_exact_tokens_test = async (
+const swap_cspr_for_exact_tokens_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = SCFET_PATH!.split(",");
@@ -147,7 +143,7 @@ const swap_cspr_for_exact_tokens_test = async (
 	);
 };
 
-const swap_exact_tokens_for_cspr_test = async (
+const swap_exact_tokens_for_cspr_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = SETFC_PATH!.split(",");
@@ -162,7 +158,7 @@ const swap_exact_tokens_for_cspr_test = async (
 	);
 };
 
-const swap_tokens_for_exact_cspr_test = async (
+const swap_tokens_for_exact_cspr_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = STFEC_PATH!.split(",");
@@ -177,7 +173,7 @@ const swap_tokens_for_exact_cspr_test = async (
 	);
 };
 
-const swap_exact_cspr_for_tokens_test = async (
+const swap_exact_cspr_for_tokens_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = SECFT_PATH!.split(",");
@@ -192,7 +188,7 @@ const swap_exact_cspr_for_tokens_test = async (
 	);
 };
 
-const swap_tokens_for_exact_tokens_test = async (
+const swap_tokens_for_exact_tokens_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = STFET_PATH!.split(",");
@@ -207,7 +203,7 @@ const swap_tokens_for_exact_tokens_test = async (
 	);
 };
 
-const swap_exact_tokens_for_tokens_test = async (
+const swap_exact_tokens_for_tokens_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let paths: string[] = SETFT_PATH!.split(",");
@@ -223,7 +219,7 @@ const swap_exact_tokens_for_tokens_test = async (
 	);
 };
 
-const remove_liquidity_cspr_with_permit_test = async (
+const remove_liquidity_cspr_with_permit_deploy = async (
 	UniswapRouter: UniswapRouterClient
 ) => {
 	let approve_max: boolean = RLWP_APPROVE_MAX! == "true";
@@ -243,7 +239,7 @@ const remove_liquidity_cspr_with_permit_test = async (
 		INSTALL_PAYMENT_AMOUNT!
 	);
 };
-const remove_liquidity_with_permit_test = async (
+const remove_liquidity_with_permit_deploy = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
 	let approve_max: boolean = RLWP_APPROVE_MAX! == "true";
@@ -265,7 +261,7 @@ const remove_liquidity_with_permit_test = async (
 	);
 };
 
-const add_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
+const add_liquidity_deploy = async (uniswapRouter: UniswapRouterClient) => {
 	return await uniswapRouter.add_liquidity(
 		KEYS,
 		TOKEN_A!,
@@ -281,7 +277,7 @@ const add_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
 	);
 };
 
-const add_liquidity_cspr_test = async (uniswapRouter: UniswapRouterClient) => {
+const add_liquidity_cspr_deploy = async (uniswapRouter: UniswapRouterClient) => {
 	return await uniswapRouter.add_liquidity_cspr(
 		KEYS,
 		TOKEN!,
@@ -295,7 +291,7 @@ const add_liquidity_cspr_test = async (uniswapRouter: UniswapRouterClient) => {
 	);
 };
 
-const remove_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
+const remove_liquidity_deploy = async (uniswapRouter: UniswapRouterClient) => {
 	return await uniswapRouter.remove_liquidity(
 		KEYS,
 		RL_TOKEN_A!,
@@ -308,7 +304,7 @@ const remove_liquidity_test = async (uniswapRouter: UniswapRouterClient) => {
 		INSTALL_PAYMENT_AMOUNT!
 	);
 };
-const remove_liquidity_cspr_test = async (
+const remove_liquidity_cspr_deploy = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
 	return await uniswapRouter.remove_liquidity_cspr(
@@ -324,7 +320,7 @@ const remove_liquidity_cspr_test = async (
 };
 
 const add_liquidity = async (uniswapRouter: UniswapRouterClient) => {
-	const installDeployHash = await add_liquidity_test(uniswapRouter);
+	const installDeployHash = await add_liquidity_deploy(uniswapRouter);
 	console.log(`... add_liquidity deployHash: ${installDeployHash}\n`);
 
 	await getDeploy(NODE_ADDRESS!, installDeployHash);
@@ -332,7 +328,7 @@ const add_liquidity = async (uniswapRouter: UniswapRouterClient) => {
 };
 
 const add_liquidity_cspr = async (uniswapRouter: UniswapRouterClient) => {
-	const installDeployHash = await add_liquidity_cspr_test(uniswapRouter);
+	const installDeployHash = await add_liquidity_cspr_deploy(uniswapRouter);
 	console.log(`... add_liquidity_cspr deployHash: ${installDeployHash}\n`);
 
 	await getDeploy(NODE_ADDRESS!, installDeployHash);
@@ -340,7 +336,7 @@ const add_liquidity_cspr = async (uniswapRouter: UniswapRouterClient) => {
 };
 
 const remove_liquidity = async (uniswapRouter: UniswapRouterClient) => {
-	const installDeployHash = await remove_liquidity_test(uniswapRouter);
+	const installDeployHash = await remove_liquidity_deploy(uniswapRouter);
 	console.log(`... remove_liquidity deployHash: ${installDeployHash}\n`);
 
 	await getDeploy(NODE_ADDRESS!, installDeployHash);
@@ -348,7 +344,7 @@ const remove_liquidity = async (uniswapRouter: UniswapRouterClient) => {
 };
 
 const remove_liquidity_cspr = async (uniswapRouter: UniswapRouterClient) => {
-	const installDeployHash = await remove_liquidity_cspr_test(uniswapRouter);
+	const installDeployHash = await remove_liquidity_cspr_deploy(uniswapRouter);
 	console.log(`... remove_liquidity_cspr deployHash: ${installDeployHash}\n`);
 
 	await getDeploy(NODE_ADDRESS!, installDeployHash);
@@ -358,7 +354,7 @@ const remove_liquidity_cspr = async (uniswapRouter: UniswapRouterClient) => {
 const remove_liquidity_with_permit = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await remove_liquidity_with_permit_test(
+	const installDeployHash = await remove_liquidity_with_permit_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -372,7 +368,7 @@ const remove_liquidity_with_permit = async (
 const remove_liquidity_cspr_with_permit = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await remove_liquidity_cspr_with_permit_test(
+	const installDeployHash = await remove_liquidity_cspr_with_permit_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -386,7 +382,7 @@ const remove_liquidity_cspr_with_permit = async (
 const swap_exact_tokens_for_tokens = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_exact_tokens_for_tokens_test(
+	const installDeployHash = await swap_exact_tokens_for_tokens_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -401,7 +397,7 @@ const swap_exact_tokens_for_tokens = async (
 const swap_tokens_for_exact_tokens = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_tokens_for_exact_tokens_test(
+	const installDeployHash = await swap_tokens_for_exact_tokens_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -415,7 +411,7 @@ const swap_tokens_for_exact_tokens = async (
 const swap_exact_cspr_for_tokens = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_exact_cspr_for_tokens_test(
+	const installDeployHash = await swap_exact_cspr_for_tokens_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -429,7 +425,7 @@ const swap_exact_cspr_for_tokens = async (
 const swap_tokens_for_exact_cspr = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_tokens_for_exact_cspr_test(
+	const installDeployHash = await swap_tokens_for_exact_cspr_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -443,7 +439,7 @@ const swap_tokens_for_exact_cspr = async (
 const swap_exact_tokens_for_cspr = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_exact_tokens_for_cspr_test(
+	const installDeployHash = await swap_exact_tokens_for_cspr_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -457,7 +453,7 @@ const swap_exact_tokens_for_cspr = async (
 const swap_cspr_for_exact_tokens = async (
 	uniswapRouter: UniswapRouterClient
 ) => {
-	const installDeployHash = await swap_cspr_for_exact_tokens_test(
+	const installDeployHash = await swap_cspr_for_exact_tokens_deploy(
 		uniswapRouter
 	);
 	console.log(
@@ -475,44 +471,44 @@ const uniswapRouter = new UniswapRouterClient(
 	EVENT_STREAM_ADDRESS!
 );
 
-const test = async () => {
+const deploy = async () => {
  
-	await uniswapRouter.setContractHash(CONTRACT_HASH!);
+	await uniswapRouter.setContractHash(ROUTER_CONTRACT_HASH!);
 	
-	// Test add_liquidity
+	// Deploy add_liquidity
 	await add_liquidity(uniswapRouter);
 
-	// Test add_liquidity_cspr
+	// Deploy add_liquidity_cspr
 	//add_liquidity_cspr(uniswapRouter);
 
-	// Test remove_liquidity
+	// Deploy remove_liquidity
 	// remove_liquidity(uniswapRouter);
 
-	// Test remove_liquidity_cspr
+	// Deploy remove_liquidity_cspr
 	//remove_liquidity_cspr(uniswapRouter);
 
-	// Test remove_liquidity_with_permit
+	// Deploy remove_liquidity_with_permit
 	//remove_liquidity_with_permit(uniswapRouter);
 
-	// Test remove_liquidity_cspr_with_permit
+	// Deploy remove_liquidity_cspr_with_permit
 	//remove_liquidity_cspr_with_permit(uniswapRouter);
 
-	// Test swap_exact_tokens_for_tokens
+	// Deploy swap_exact_tokens_for_tokens
 	//swap_exact_tokens_for_tokens(uniswapRouter);
 
-	// Test swap_tokens_for_exact_tokens
+	// Deploy swap_tokens_for_exact_tokens
 	//swap_tokens_for_exact_tokens(uniswapRouter);
 
-	// Test swap_exact_cspr_for_tokens
+	// Deploy swap_exact_cspr_for_tokens
 	//swap_exact_cspr_for_tokens(uniswapRouter);
 
-	// Test swap_tokens_for_exact_cspr
+	// Deploy swap_tokens_for_exact_cspr
 	//swap_tokens_for_exact_cspr(uniswapRouter);
 
-	// Test swap_exact_tokens_for_cspr
+	// Deploy swap_exact_tokens_for_cspr
 	//swap_exact_tokens_for_cspr(uniswapRouter);
 
-	//Test swap_cspr_for_exact_tokens
+	// Deploy swap_cspr_for_exact_tokens
 	// swap_cspr_for_exact_tokens(uniswapRouter);
 
 	// let register = await uniswapRouter.registerWebHook(
@@ -529,31 +525,4 @@ const test = async () => {
   
 };
 
-//test();
-
-export const swapforinterface = async (
-	signerkey:string,
-	amountin: string,
-	amountout: string,
-	paths:string[],
-	to:string,
-	deadline:string,
-	installpaymentamount:string
-) => {
-
-	await uniswapRouter.setContractHash(CONTRACT_HASH!);
-	console.log("key:",signerkey);
-	const deploy = await uniswapRouter.swap_exact_tokens_for_tokensinterface(
-		signerkey,
-		amountin,
-		amountout,
-		paths,
-		to,
-		deadline,
-		installpaymentamount
-	);
-
-	console.log(`... Swap make deploy SuccessFull: ${deploy}`);
-	return deploy;
-  
-};
+//deploy();

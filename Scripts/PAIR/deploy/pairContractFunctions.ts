@@ -1,8 +1,7 @@
 import { config } from "dotenv";
 config();
-import { PAIRClient, utils, constants } from "../src";
-import { parseTokenMeta, sleep, getDeploy } from "./utils";
-import { request } from 'graphql-request';
+import { PAIRClient, utils} from "../../../JsClients/PAIR/src";
+import { getDeploy } from "./utils";
 
 import {
   CLValueBuilder,
@@ -11,8 +10,6 @@ import {
   CLAccountHash,
   CLPublicKeyType,
 } from "casper-js-sdk";
-
-const { PAIREvents } = constants;
 
 const {
   NODE_ADDRESS,
@@ -42,58 +39,32 @@ const {
   MASTER_KEY_PAIR_PATH
 } = process.env;
 
-// const TOKEN_META = new Map(parseTokenMeta(process.env.TOKEN_META!));
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
   `${PAIR_MASTER_KEY_PAIR_PATH}/public_key.pem`,
   `${PAIR_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
-const ROUTERKEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
-);
+
 const pair = new PAIRClient(
   NODE_ADDRESS!,
   CHAIN_NAME!,
   EVENT_STREAM_ADDRESS!
 );
 
-function splitdata(data:string)
-{
-    var temp=data.split('(');
-    var result=temp[1].split(')');
-    return result[0];
-}
 
-const test = async () => {
-  
-  // await sleep(5 * 1000);
+const deploy = async () => {
 
-  // let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
+  await pair.setContractHash(PAIR_CONTRACT!);
 
-  // console.log(`... Account Info: `);
-  // console.log(JSON.stringify(accountInfo, null, 2));
-
-  // const contractHash = await utils.getAccountNamedKeyValue(
-  //   accountInfo,
-  //   `${PAIR_CONTRACT_NAME!}_contract_hash`
-  // );
-
-  // console.log(`... Contract Hash: ${contractHash}`);
-
-  // We don't need hash- prefix so i'm removing it
-  //await pair.setContractHash(contractHash.slice(5));
-  await pair.setContractHash("53a8121f219ad2c6420f007a2016ed320c519579112b81d505cb15715404b264");
-  console.log("... Contract Hash:", PAIR_CONTRACT!);
-  //name
-  const liquidity = await pair.liquidity();
-  console.log(`... Liquidity: ${liquidity}`);
+  // //name
+  // const liquidity = await pair.liquidity();
+  // console.log(`... Liquidity: ${liquidity}`);
 
   // //symbol
   // const symbol = await pair.symbol();
   // console.log(`... Contract symbol: ${symbol}`);
 
-  //initialize
+  // //initialize
   // const initializeDeployHash = await pair.initialize(
   //   KEYS,
   //   TOKEN0_CONTRACT!,
@@ -106,8 +77,7 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, initializeDeployHash);
   // console.log("... Token Initialized successfully");
 
-
-  //erc20mint
+  // //erc20mint
   // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
   //   KEYS,
   //   TOKEN0_CONTRACT!,
@@ -125,7 +95,7 @@ const test = async () => {
   // console.log(`... Balance of account ${KEYS.publicKey.toAccountHashStr()}`);
   // console.log(`... Balance: ${balance}`);
 
-  //erc20mint
+  // //erc20mint
   // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
   //   KEYS,
   //   TOKEN1_CONTRACT!,
@@ -162,11 +132,11 @@ const test = async () => {
   // let nonce = await pair.nonce(KEYS.publicKey);
   // console.log(`... Nonce: ${nonce}`);
 
-  //allowance
+  // //allowance
   // let allowance = await pair.allowance(KEYS.publicKey, KEYS.publicKey);
   // console.log(`... Allowance: ${allowance}`);
 
-  //erc20_mint
+  // //erc20_mint
   // const erc20mint0DeployHash = await pair.erc20Mint(
   //   KEYS,
   //   TOKEN0_CONTRACT!,
@@ -178,10 +148,10 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, erc20mint0DeployHash);
   // console.log("... Token minted successfully");
 
-  //erc20mint
+  // //erc20mint
   // const erc20mint1DeployHash = await pair.erc20Mint_router(
   //   KEYS,
-  //   ROUTERKEYS.publicKey,
+  //   KEYS.publicKey,
   //   "2000",
   //   MINT_PAYMENT_AMOUNT!
   // );
@@ -203,12 +173,13 @@ const test = async () => {
   // console.log("... Token minted successfully");
 
   // //balanceof
-  let balance_router = await pair.balanceOf_router(ROUTERKEYS.publicKey);
-  console.log(`... Balance: ${balance_router}`);
-  //balanceof
-  //await pair.balanceOf(("C83Fc787656Cf682e8C77A542C636bcA1d46d5f8C011B64ADB2c6596eD7E9280").toLowerCase());
-  //await pair.balanceOf((PAIR_CONTRACT_PACKAGE!).toLowerCase());
-  //console.log(`... Balance: ${balance}`);
+  // let balance_router = await pair.balanceOf_router(KEYS.publicKey);
+  // console.log(`... Balance: ${balance_router}`);
+
+  // //balanceof
+  // await pair.balanceOf(("C83Fc787656Cf682e8C77A542C636bcA1d46d5f8C011B64ADB2c6596eD7E9280").toLowerCase());
+  // await pair.balanceOf((PAIR_CONTRACT_PACKAGE!).toLowerCase());
+  // console.log(`... Balance: ${balance}`);
 
   // //sync
   // const syncDeployHash = await pair.sync(
@@ -221,8 +192,7 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, syncDeployHash);
   // console.log("... Sync functionality successfull");
 
-
-  //mint
+  // //mint
   // const mintDeployHash = await pair.mint(
   //   KEYS,
   //   PAIR_CONTRACT_PACKAGE!,
@@ -285,7 +255,7 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, skimDeployHash);
   // console.log("... Skim functionality successfull");
 
-  //erc20mint
+  // //erc20mint
   // const erc20MintToken0DeployHash = await pair.erc20MintMethod(
   //   KEYS,
   //   PAIR_CONTRACT_PACKAGE!,
@@ -298,19 +268,19 @@ const test = async () => {
   // await getDeploy(NODE_ADDRESS!, erc20MintToken0DeployHash);
   // console.log("...ERC20 Token minted successfully");
 
-  //erc20mint
-  // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
-  //   KEYS,
-  //   TOKEN1_CONTRACT!,
-  //   "1000"!,
-  //   MINT_PAYMENT_AMOUNT!
-  // );
-  // console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
+  // // //erc20mint
+  // // const erc20MintToken1DeployHash = await pair.erc20MintMethod(
+  // //   KEYS,
+  // //   TOKEN1_CONTRACT!,
+  // //   "1000"!,
+  // //   MINT_PAYMENT_AMOUNT!
+  // // );
+  // // console.log("...ERC20 Mint deploy hash: ", erc20MintToken1DeployHash);
 
-  // await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
-  // console.log("...ERC20 Token minted successfully");
+  // // await getDeploy(NODE_ADDRESS!, erc20MintToken1DeployHash);
+  // // console.log("...ERC20 Token minted successfully");
 
-  //swap
+  // //swap
   // const swapDeployHash = await pair.swap(
   //   KEYS,
   //   "10",
@@ -352,34 +322,4 @@ const test = async () => {
 
 };
 
-//test();
-
-export const balanceOf = async (contractHash:string, key:string) => {
-  
-  console.log(`... Contract Hash: ${contractHash}`);
-
-  // We don't need hash- prefix so i'm removing it
-  await pair.setContractHash(contractHash);
-
- //balanceof
-  let balance = await pair.balanceOf(key);
-
-  console.log(`... Balance: ${balance}`);
-
-  return balance;
-
-};
-export const allowance = async (contractHash:string, ownerkey:string, spenderkey:string) => {
-  
-  console.log(`... Contract Hash: ${contractHash}`);
-
-  // We don't need hash- prefix so i'm removing it
-  await pair.setContractHash(contractHash);
-
-  let allowance = await pair.allowance(ownerkey,spenderkey);
-
-  console.log(`... Allowance: ${allowance}`);
-
-  return allowance;
-
-};
+//deploy();

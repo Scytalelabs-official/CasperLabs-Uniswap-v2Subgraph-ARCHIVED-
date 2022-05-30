@@ -1,4 +1,4 @@
-var ERC20 = require("../JsClients/ERC20/scripts/installed.ts");
+var ERC20 = require("../JsClients/ERC20/erc20FunctionsForBackend/functions");
 //var TokenDefinition = require('./tokenDefinition');
 
 const User = require("../models/user");

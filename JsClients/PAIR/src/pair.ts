@@ -11,16 +11,13 @@ import {
   CLValueParsers,
   CLMap,
   DeployUtil,
-  EventName,
-  EventStream,
   Keys,
   RuntimeArgs,
 } from "casper-js-sdk";
 import * as blake from "blakejs";
 import { concat } from "@ethersproject/bytes";
-import { PAIREvents } from "./constants";
 import * as utils from "./utils";
-import { RecipientType, IPendingDeploy } from "./types";
+import { RecipientType} from "./types";
 import {createRecipientAddress } from "./utils";
 
 class PAIRClient {
@@ -36,8 +33,6 @@ class PAIRClient {
     owners: string;
     paused: string;
   };
-  private isListening = false;
-  private pendingDeploys: IPendingDeploy[] = [];
 
   constructor(
     private nodeAddress: string,
@@ -71,12 +66,6 @@ class PAIRClient {
     // convert string addresses to 8 bits hex arrays
     const _factoryContractHash = new CLByteArray(Uint8Array.from(Buffer.from(factoryContractHash, 'hex')));
     const _calleeContractHash = new CLByteArray(Uint8Array.from(Buffer.from(calleeContractHash, 'hex')));
-
-    // const runtimeArgs = RuntimeArgs.fromMap({
-    //   contract_name: CLValueBuilder.string(contractName),
-    //   factory_hash: CLValueBuilder.key(_factoryContractHash),
-    //   callee_contract_hash:  CLValueBuilder.key(_calleeContractHash),
-    // });
 
     const runtimeArgs = RuntimeArgs.fromMap({
       contract_name: CLValueBuilder.string(contractName),
@@ -744,118 +733,6 @@ class PAIRClient {
     }
   }
 
-
-
-  public onEvent(
-    eventNames: PAIREvents[],
-    callback: (
-      eventName: PAIREvents,
-      deployStatus: {
-        deployHash: string;
-        success: boolean;
-        error: string | null;
-      },
-      result: any | null
-    ) => void
-  ): any {
-    if (!this.eventStreamAddress) {
-      throw Error("Please set eventStreamAddress before!");
-    }
-    if (this.isListening) {
-      throw Error(
-        "Only one event listener can be create at a time. Remove the previous one and start new."
-      );
-    }
-    const es = new EventStream(this.eventStreamAddress);
-    this.isListening = true;
-
-    es.subscribe(EventName.DeployProcessed, (value: any) => {
-      const deployHash = value.body.DeployProcessed.deploy_hash;
-
-      const pendingDeploy = this.pendingDeploys.find(
-        (pending) => pending.deployHash === deployHash
-      );
-
-      if (!pendingDeploy) {
-        return;
-      }
-
-      if (
-        !value.body.DeployProcessed.execution_result.Success &&
-        value.body.DeployProcessed.execution_result.Failure
-      ) {
-        callback(
-          pendingDeploy.deployType,
-          {
-            deployHash,
-            error:
-              value.body.DeployProcessed.execution_result.Failure.error_message,
-            success: false,
-          },
-          null
-        );
-      } else {
-        const { transforms } =
-          value.body.DeployProcessed.execution_result.Success.effect;
-
-        const PAIREvents = transforms.reduce((acc: any, val: any) => {
-          if (
-            val.transform.hasOwnProperty("WriteCLValue") &&
-            typeof val.transform.WriteCLValue.parsed === "object" &&
-            val.transform.WriteCLValue.parsed !== null
-          ) {
-            const maybeCLValue = CLValueParsers.fromJSON(
-              val.transform.WriteCLValue
-            );
-            const clValue = maybeCLValue.unwrap();
-            if (clValue && clValue instanceof CLMap) {
-              const hash = clValue.get(
-                CLValueBuilder.string("contract_package_hash")
-              );
-              const event = clValue.get(CLValueBuilder.string("event_type"));
-              if (
-                hash &&
-                // NOTE: Calling toLowerCase() because current JS-SDK doesn't support checksumed hashes and returns all lower case value
-                // Remove it after updating SDK
-                hash.value() === this.contractPackageHash.toLowerCase() &&
-                event &&
-                eventNames.includes(event.value())
-              ){
-                acc = [...acc, { name: event.value(), clValue }];
-              }
-            }
-          }
-          return acc;
-        }, []);
-
-        PAIREvents.forEach((d: any) =>
-          callback(
-            d.name,
-            { deployHash, error: null, success: true },
-            d.clValue
-          )
-        );
-      }
-
-      this.pendingDeploys = this.pendingDeploys.filter(
-        (pending) => pending.deployHash !== deployHash
-      );
-    });
-    es.start();
-
-    return {
-      stopListening: () => {
-        es.unsubscribe(EventName.DeployProcessed);
-        es.stop();
-        this.isListening = false;
-        this.pendingDeploys = [];
-      },
-    };
-  }
-
-  private addPendingDeploy(deployType: PAIREvents, deployHash: string) {
-    this.pendingDeploys = [...this.pendingDeploys, { deployHash, deployType }];
-  }
 }
 
 interface IInstallParams {
