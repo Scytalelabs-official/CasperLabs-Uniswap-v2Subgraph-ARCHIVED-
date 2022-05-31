@@ -62,7 +62,7 @@ const test = async () => {
     FACTORY_CONTRACT_PACKAGE!,
     WCSPR_PACKAGE!,
     LIBRARY_PACKAGE!,
-    'UniSwapRouter-info',
+    CONTRACT_NAME!,
     INSTALL_PAYMENT_AMOUNT!,
     WASM_PATH!
   );

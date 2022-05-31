@@ -130,7 +130,7 @@ const handleNewPair = {
 
         let TokenName=await fetchTokenName(token0Data.contractHash);
         let TokenSymbol=await fetchTokenSymbol(token0Data.contractHash);
-        let TokenTotalSupply=new bigdecimal.BigDecimal(await fetchTokenTotalSupply(token0Data.contractHash));
+        let TokenTotalSupply=await fetchTokenTotalSupply(token0Data.contractHash);
 
         token0 = new Token({
           id: args.token0,
@@ -159,7 +159,7 @@ const handleNewPair = {
 
         let TokenName=await fetchTokenName(token1Data.contractHash);
         let TokenSymbol=await fetchTokenSymbol(token1Data.contractHash);
-        let TokenTotalSupply=new bigdecimal.BigDecimal(await fetchTokenTotalSupply(token1Data.contractHash));
+        let TokenTotalSupply=await fetchTokenTotalSupply(token1Data.contractHash);
 
         token1 = new Token({
           id: args.token1,
@@ -833,107 +833,108 @@ const handleSync = {
   },
   async resolve(parent, args, context) {
     try {
-      let pair = await Pair.findOne({ id: args.pairAddress });
-      let token0 = await Token.findOne({ id: pair.token0.id });
-      let token1 = await Token.findOne({ id: pair.token1.id });
-      let uniswap = await UniswapFactory.findOne({
-        id: process.env.FACTORY_CONTRACT,
-      });
-
-      // reset factory liquidity by subtracting only tarcked liquidity
-      uniswap.totalLiquidityETH = (
-        new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).subtract(new bigdecimal.BigDecimal(pair.trackedReserveETH))
-      ).toString();
-
-      // reset token total liquidity amounts
-      token0.totalLiquidity = (
-        new bigdecimal.BigDecimal(token0.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve0))
-      ).toString();
-      token1.totalLiquidity = (
-        new bigdecimal.BigDecimal(token1.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve1))
-      ).toString();
-
-      pair.reserve0 = args.reserve0;
-      pair.reserve1 = args.reserve1;
-
-      if (pair.reserve1 != ZERO_BD)
-        pair.token0Price = (
-          new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1))
-        ).toString();
-      else pair.token0Price = ZERO_BD;
-      if (pair.reserve0 != ZERO_BD)
-        pair.token1Price = (
-          new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0))
-        ).toString();
-      else pair.token1Price = ZERO_BD;
-
-      await pair.save();
-
-      // update ETH price now that reserves could have changed
-      let bundle = await Bundle.findOne({ id: "1" });
-      bundle.ethPrice = await getCSPRPriceInUSD();
-      await bundle.save();
-
-      token0.derivedETH = await findCSPRPerToken(token0);
-      token1.derivedETH = await findCSPRPerToken(token1);
-      await token0.save();
-      await token1.save();
-
-      // get tracked liquidity - will be 0 if neither is in whitelist
-      let trackedLiquidityETH;
-      if (bundle.ethPrice != ZERO_BD) {
-        trackedLiquidityETH =
-          (await getTrackedLiquidityUSD(
-            pair.reserve0,
-            token0,
-            pair.reserve1,
-            token1
-          )).divide(new bigdecimal.BigDecimal(bundle.ethPrice));
-      } else {
-        trackedLiquidityETH = ZERO_BD;
-      }
-
-      // use derived amounts within pair
-      pair.trackedReserveETH = trackedLiquidityETH.toString();
-      pair.reserveETH = (
-        (new bigdecimal.BigDecimal(pair.reserve0).multiply(new bigdecimal.BigDecimal(token0.derivedETH))).add(
-        (new bigdecimal.BigDecimal(pair.reserve1).multiply(new bigdecimal.BigDecimal(token1.derivedETH))))
-      ).toString();
-      pair.reserveUSD = (
-        new bigdecimal.BigDecimal(pair.reserveETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
-      ).toString();
-
-      // use tracked amounts globally
-      uniswap.totalLiquidityETH = (
-        new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).add(new bigdecimal.BigDecimal(trackedLiquidityETH))
-      ).toString();
-      uniswap.totalLiquidityUSD = (
-        new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
-      ).toString();
-
-      // now correctly set liquidity amounts for each token
-      token0.totalLiquidity = (
-        new bigdecimal.BigDecimal(token0.totalLiquidity).add(new bigdecimal.BigDecimal(pair.reserve0))
-      ).toString();
-      token1.totalLiquidity = (
-        new bigdecimal.BigDecimal(token1.totalLiquidity).add(new bigdecimal.BigDecimal(pair.reserve1))
-      ).toString();
-
-      // save entities
-      await pair.save();
-      await uniswap.save();
-      await token0.save();
-      await token1.save();
-      let response = await Response.findOne({ id: "1" });
-      if (response === null) {
-        // create new response
-        response = new Response({
-          id: "1",
-          result: true,
+        let pair = await Pair.findOne({ id: args.pairAddress });
+        let token0 = await Token.findOne({ id: pair.token0.id });
+        let token1 = await Token.findOne({ id: pair.token1.id });
+        let uniswap = await UniswapFactory.findOne({
+          id: process.env.FACTORY_CONTRACT,
         });
-        await response.save();
-      }
-      return response;
+
+        // reset factory liquidity by subtracting only tarcked liquidity
+        uniswap.totalLiquidityETH = (
+          new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).subtract(new bigdecimal.BigDecimal(pair.trackedReserveETH))
+        ).toString();
+
+        // reset token total liquidity amounts
+        token0.totalLiquidity = (
+          new bigdecimal.BigDecimal(token0.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve0))
+        ).toString();
+        token1.totalLiquidity = (
+          new bigdecimal.BigDecimal(token1.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve1))
+        ).toString();
+
+        pair.reserve0 = args.reserve0;
+        pair.reserve1 = args.reserve1;
+
+        if (pair.reserve1 != ZERO_BD)
+          pair.token0Price = (
+            new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1))
+          ).toString();
+        else pair.token0Price = ZERO_BD;
+        if (pair.reserve0 != ZERO_BD)
+          pair.token1Price = (
+            new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0))
+          ).toString();
+        else pair.token1Price = ZERO_BD;
+
+        await pair.save();
+        
+        // update ETH price now that reserves could have changed
+        let bundle = await Bundle.findOne({ id: "1" });
+        bundle.ethPrice= (await getCSPRPriceInUSD()).toString();
+        await bundle.save();
+        
+        token0.derivedETH = await findCSPRPerToken(token0);
+        token1.derivedETH = await findCSPRPerToken(token1);
+        await token0.save();
+        await token1.save();
+       
+        // get tracked liquidity - will be 0 if neither is in whitelist
+        let trackedLiquidityETH;
+        if (bundle.ethPrice != ZERO_BD) {
+          trackedLiquidityETH = (await getTrackedLiquidityUSD(
+              pair.reserve0,
+              token0,
+              pair.reserve1,
+              token1
+            )).divide(new bigdecimal.BigDecimal(bundle.ethPrice));
+        } else {
+          trackedLiquidityETH = ZERO_BD;
+        }
+  
+        // use derived amounts within pair
+        pair.trackedReserveETH = trackedLiquidityETH.toString();
+        pair.reserveETH = (
+          (new bigdecimal.BigDecimal(pair.reserve0).multiply(new bigdecimal.BigDecimal(token0.derivedETH))).add(
+          (new bigdecimal.BigDecimal(pair.reserve1).multiply(new bigdecimal.BigDecimal(token1.derivedETH))))
+        ).toString();
+        pair.reserveUSD = (
+          new bigdecimal.BigDecimal(pair.reserveETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
+        ).toString();
+       
+        // use tracked amounts globally
+        uniswap.totalLiquidityETH = (
+          new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).add(trackedLiquidityETH)
+        ).toString();
+        uniswap.totalLiquidityUSD = (
+          new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
+        ).toString();
+       
+        // now correctly set liquidity amounts for each token
+        token0.totalLiquidity = (
+          new bigdecimal.BigDecimal(token0.totalLiquidity).add(new bigdecimal.BigDecimal(pair.reserve0))
+        ).toString();
+        token1.totalLiquidity = (
+          new bigdecimal.BigDecimal(token1.totalLiquidity).add(new bigdecimal.BigDecimal(pair.reserve1))
+        ).toString();
+  
+      
+        // save entities
+        await pair.save();
+        await uniswap.save();
+        await token0.save();
+        await token1.save();
+        let response = await Response.findOne({ id: "1" });
+        if (response === null) {
+          // create new response
+          response = new Response({
+            id: "1",
+            result: true,
+          });
+          await response.save();
+        }
+        return response;
+     
     } catch (error) {
       throw new Error(error);
     }

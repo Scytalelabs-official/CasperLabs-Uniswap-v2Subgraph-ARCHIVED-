@@ -23,24 +23,16 @@ async function getCSPRPriceInUSD() {
     },
     json: true,
     gzip: true,
+    family: 4
   };
 
-  rp(requestOptions)
-    .then((response) => {
-      console.log("CSPR price in USD = ", response.data.quote.USD.price);
-      return (response.data.quote.USD.price).toString();
-    })
-    .catch((err) => {
-      console.log("API call error:", err.message);
-      return res.status(400).json({
-        success: false,
-        message: err.message,
-      });
-    });
+  let response =await rp(requestOptions);
+  console.log("CSPR price in USD = ", response.data.quote.USD.price);
+  return response.data.quote.USD.price;
 }
 
-async function findCSPRPerToken(token) {
 
+async function findCSPRPerToken(token) {
   if (token.id == process.env.WCSPR_PACKAGE) {
         return ONE_BD;
   }
@@ -76,8 +68,8 @@ async function findCSPRPerToken(token) {
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST = [
  
-  "ecf3cc9c1cd2ad830c7e57d89c35d6e96b3f480ee26b4e084d583e06875018cd".toLowerCase(),// WCSPR
-  "3e57a3cea8dcdfb642fd54203a45bee862c049594c6966551be2cfc0416dfd89".toLowerCase(),//WISE
+  "861312332a373618c94ce01022ed02370e792c4a7fac356f8c2df05514ee2cd7".toLowerCase(),// WCSPR
+  "747ea619a0a02d595ca53be60d495dda466e721d914483a375fe61c1daab6772".toLowerCase(),//WISE
 
 ];
 

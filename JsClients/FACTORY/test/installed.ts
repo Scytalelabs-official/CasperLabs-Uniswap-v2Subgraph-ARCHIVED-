@@ -51,20 +51,6 @@ function splitdata(data:string)
 
 const test = async () => {
   
-  await sleep(5 * 1000);
-
-  let accountInfo = await utils.getAccountInfo(NODE_ADDRESS!, KEYS.publicKey);
-
-  console.log(`... Account Info: `);
-  console.log(JSON.stringify(accountInfo, null, 2));
-
-  const contractHash = await utils.getAccountNamedKeyValue(
-    accountInfo,
-    `${CONTRACT_NAME!}_contract_hash`
-  );
-
-  console.log(`... Contract Hash: ${contractHash}`);
-
   // We don't need hash- prefix so i'm removing it
   // await factory.setContractHash(contractHash.slice(5));
   await factory.setContractHash( FACTORY_CONTRACT!);
@@ -143,7 +129,7 @@ const test = async () => {
 
 };
 
- //test();
+//test();
 
 // export const createPair = async (paircontractHash:string,TOKEN0_CONTRACT:string,TOKEN1_CONTRACT:string) => {
   

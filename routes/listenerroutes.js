@@ -165,7 +165,7 @@ router.route("/startListener").post(async function (req, res, next) {
 });
 
 
-var eventHeap = new MinHeap((instance)=> new bigdecimal.BigDecimal(instance.eventId));
+var eventHeap = new MinHeap((instance)=> BigInt(instance.eventId));
 router.route("/geteventIdData").post(async function (req, res, next) {
 	try {
 		if (!req.body.eventId) {

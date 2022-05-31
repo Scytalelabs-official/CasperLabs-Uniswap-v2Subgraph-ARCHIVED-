@@ -50,11 +50,6 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${ERC20_MASTER_KEY_PAIR_PATH}/secret_key.pem`
 );
 
-const ROUTERKEYS = Keys.Ed25519.parseKeyFiles(
-  `${MASTER_KEY_PAIR_PATH}/public_key.pem`,
-  `${MASTER_KEY_PAIR_PATH}/secret_key.pem`
-);
-
 function splitdata(data:string)
 {
     var temp=data.split('(');
@@ -104,8 +99,8 @@ const test = async () => {
  
   // //mint
   const mintDeployHash = await erc20.mint(
-    ROUTERKEYS,
-    ROUTERKEYS.publicKey,
+    KEYS,
+    KEYS.publicKey,
     MINT_AMOUNT!,
     MINT_PAYMENT_AMOUNT!
   );
@@ -116,7 +111,7 @@ const test = async () => {
 
   //mint
   // const mintDeployHash = await erc20.mint(
-  //   ROUTERKEYS,
+  //   KEYS,
   //   "70629f295bebdff4f09073a35946e56720f7aeb0214a9b7f59222b19a9297295",
   //   MINT_AMOUNT!,
   //   MINT_PAYMENT_AMOUNT!
@@ -148,7 +143,7 @@ const test = async () => {
 
   //approve
   const approveDeployHash = await erc20.approve(
-    ROUTERKEYS,
+    KEYS,
     PACKAGE_HASH!,
     AMOUNT_B_DESIRED!,
     APPROVE_PAYMENT_AMOUNT!
