@@ -896,8 +896,8 @@ const handleSync = {
       // use derived amounts within pair
       pair.trackedReserveETH = trackedLiquidityETH.toString();
       pair.reserveETH = (
-        new bigdecimal.BigDecimal(pair.reserve0).multiply(new bigdecimal.BigDecimal(token0.derivedETH)).add(
-        new bigdecimal.BigDecimal(pair.reserve1).multiply(new bigdecimal.BigDecimal(token1.derivedETH)))
+        (new bigdecimal.BigDecimal(pair.reserve0).multiply(new bigdecimal.BigDecimal(token0.derivedETH))).add(
+        (new bigdecimal.BigDecimal(pair.reserve1).multiply(new bigdecimal.BigDecimal(token1.derivedETH))))
       ).toString();
       pair.reserveUSD = (
         new bigdecimal.BigDecimal(pair.reserveETH).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))
@@ -987,8 +987,8 @@ const handleMint = {
       // get new amounts of USD and ETH for tracking
       let bundle = await Bundle.findOne({ id: "1" });
       let amountTotalUSD = (
-        new bigdecimal.BigDecimal(token1.derivedETH).multiply(new bigdecimal.BigDecimal(token1Amount)).add(
-        new bigdecimal.BigDecimal(token0.derivedETH).multiply(new bigdecimal.BigDecimal(token0Amount))).multiply(
+        ((new bigdecimal.BigDecimal(token1.derivedETH).multiply(new bigdecimal.BigDecimal(token1Amount))).add(
+        (new bigdecimal.BigDecimal(token0.derivedETH).multiply(new bigdecimal.BigDecimal(token0Amount))))).multiply(
         new bigdecimal.BigDecimal(bundle.ethPrice))
       ).toString();
 
@@ -1122,8 +1122,8 @@ const handleBurn = {
       // get new amounts of USD and ETH for tracking
       let bundle = await Bundle.findOne({ id: "1" });
       let amountTotalUSD = (
-        new bigdecimal.BigDecimal(token1.derivedETH).multiply(new bigdecimal.BigDecimal(token1Amount)).add(
-        new bigdecimal.BigDecimal(token0.derivedETH).multiply(new bigdecimal.BigDecimal(token0Amount))).multiply(
+        ((new bigdecimal.BigDecimal(token1.derivedETH).multiply(new bigdecimal.BigDecimal(token1Amount))).add(
+        (new bigdecimal.BigDecimal(token0.derivedETH).multiply(new bigdecimal.BigDecimal(token0Amount))))).multiply(
         new bigdecimal.BigDecimal(bundle.ethPrice))
       ).toString();
 
@@ -1244,8 +1244,8 @@ const handleSwap = {
 
       // get total amounts of derived USD and ETH for tracking
       let derivedAmountETH =
-        new bigdecimal.BigDecimal(token1.derivedETH).multiply(amount1Total).add(
-        new bigdecimal.BigDecimal(token0.derivedETH).multiply(amount0Total)).divide(
+        ((new bigdecimal.BigDecimal(token1.derivedETH).multiply(amount1Total)).add(
+        (new bigdecimal.BigDecimal(token0.derivedETH).multiply(amount0Total)))).divide(
         new bigdecimal.BigDecimal(2));
       let derivedAmountUSD = derivedAmountETH.multiply(new bigdecimal.BigDecimal(bundle.ethPrice));
 
@@ -1268,8 +1268,8 @@ const handleSwap = {
       // update token0 global volume and token liquidity stats
       token0.tradeVolume = (
         new bigdecimal.BigDecimal(token0.tradeVolume).add(
-        new bigdecimal.BigDecimal(amount0In).add(
-        new bigdecimal.BigDecimal(amount0Out)))
+        (new bigdecimal.BigDecimal(amount0In).add(
+        new bigdecimal.BigDecimal(amount0Out))))
       ).toString();
       token0.tradeVolumeUSD = (
         new bigdecimal.BigDecimal(token0.tradeVolumeUSD).add(trackedAmountUSD)
@@ -1281,8 +1281,8 @@ const handleSwap = {
       // update token1 global volume and token liquidity stats
       token1.tradeVolume = (
         new bigdecimal.BigDecimal(token1.tradeVolume).add(
-        new bigdecimal.BigDecimal(amount1In).add(
-        new bigdecimal.BigDecimal(amount1Out)))
+        (new bigdecimal.BigDecimal(amount1In).add(
+        new bigdecimal.BigDecimal(amount1Out))))
       ).toString();
       token1.tradeVolumeUSD = (
         new bigdecimal.BigDecimal(token1.tradeVolumeUSD).add(trackedAmountUSD)
@@ -1451,11 +1451,11 @@ const handleSwap = {
       ).toString();
       token0DayData.dailyVolumeETH = (
         new bigdecimal.BigDecimal(token0DayData.dailyVolumeETH).add(
-        amount0Total.multiply(new bigdecimal.BigDecimal(token0.derivedETH)))
+        (amount0Total.multiply(new bigdecimal.BigDecimal(token0.derivedETH))))
       ).toString();
       token0DayData.dailyVolumeUSD = (
         new bigdecimal.BigDecimal(token0DayData.dailyVolumeUSD).add(
-        amount0Total.multiply(new bigdecimal.BigDecimal(token0.derivedETH)).multiply(new bigdecimal.BigDecimal(bundle.ethPrice)))
+        ((amount0Total.multiply(new bigdecimal.BigDecimal(token0.derivedETH))).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))))
       ).toString();
       await token0DayData.save();
 
@@ -1465,11 +1465,11 @@ const handleSwap = {
       ).toString();
       token1DayData.dailyVolumeETH = (
         new bigdecimal.BigDecimal(token1DayData.dailyVolumeETH).add(
-        amount1Total.multiply(new bigdecimal.BigDecimal(token1.derivedETH)))
+        (amount1Total.multiply(new bigdecimal.BigDecimal(token1.derivedETH))))
       ).toString();
       token1DayData.dailyVolumeUSD = (
         new bigdecimal.BigDecimal(token1DayData.dailyVolumeUSD).add(
-        amount1Total.multiply(new bigdecimal.BigDecimal(token1.derivedETH)).multiply(new bigdecimal.BigDecimal(bundle.ethPrice)))
+        ((amount1Total.multiply(new bigdecimal.BigDecimal(token1.derivedETH))).multiply(new bigdecimal.BigDecimal(bundle.ethPrice))))
       ).toString();
       await token1DayData.save();
 

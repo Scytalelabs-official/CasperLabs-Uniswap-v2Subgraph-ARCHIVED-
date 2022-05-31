@@ -129,7 +129,7 @@ async function getTrackedVolumeUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return tokenAmount0.multiply(price0).add(tokenAmount1.multiply(price1)).divide(new bigdecimal.BigDecimal(2));
+    return ((tokenAmount0.multiply(price0)).add(tokenAmount1.multiply(price1))).divide(new bigdecimal.BigDecimal(2));
   }
 
   // take full value of the whitelisted token amount
@@ -164,17 +164,17 @@ async function getTrackedLiquidityUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return new bigdecimal.BigDecimal(tokenAmount0).multiply(price0).add(new bigdecimal.BigDecimal(tokenAmount1).multiply(price1));
+    return (new bigdecimal.BigDecimal(tokenAmount0).multiply(price0)).add(new bigdecimal.BigDecimal(tokenAmount1).multiply(price1));
   }
 
   // take double value of the whitelisted token amount
   if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
-    return new bigdecimal.BigDecimal(tokenAmount0).multiply(price0).multiply(new bigdecimal.BigDecimal(2));
+    return (new bigdecimal.BigDecimal(tokenAmount0).multiply(price0)).multiply(new bigdecimal.BigDecimal(2));
   }
 
   // take double value of the whitelisted token amount
   if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return new bigdecimal.BigDecimal(tokenAmount1).multiply(price1).multiply(new bigdecimal.BigDecimal(2));
+    return (new bigdecimal.BigDecimal(tokenAmount1).multiply(price1)).multiply(new bigdecimal.BigDecimal(2));
   }
 
   // neither token is on white list, tracked volume is 0
