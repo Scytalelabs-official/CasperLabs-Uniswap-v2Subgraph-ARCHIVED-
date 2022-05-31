@@ -62,18 +62,25 @@ connect.then(
   }
 );
 
-app.use('/', indexRouter);
+
 app.use("/", adminRouter);
 app.use("/", afterDeploymentRouter);
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema: schema,
-    graphiql: true,
-  })
-);
-const headerMiddleware = require("./middlewares/HeaderMiddleware");
-app.use(headerMiddleware);
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+app.use('/', indexRouter);
 app.use("/", listenerRouter);
 app.use("/", tokensListRouter);
 app.use("/", deploypairRouter);
@@ -85,6 +92,14 @@ app.use("/", coinsmarketcapapiRouter);
 app.use("/", pathRouter);
 app.use("/", readWasmRouter);
 app.use("/", setUserForRemoveLiquidityCSPRRouter);
+
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+  })
+);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
