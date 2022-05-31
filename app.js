@@ -19,11 +19,10 @@ var erc20Router = require("./routes/erc20routes");
 var coinsmarketcapapiRouter = require("./routes/coinsmarketcapapi");
 var pathRouter = require("./routes/pathroutes");
 var readWasmRouter = require("./routes/readWasm");
-var setUserForRemoveLiquidityCSPRRouter = require("./routes/setUserForRemoveLiquidityCSPR");
 var event_Id_Data_Model = require("./models/eventsIdData");
 var eventId = require("./models/eventId");
+const axios = require('axios').default;
 const consumer = require('./consumer');
-
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -61,12 +60,6 @@ connect.then(
   }
 );
 
-var redis = require('./connectRedis');
-
-function deserialize(serializedJavascript){
-    return eval('(' + serializedJavascript + ')');
-}
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -94,7 +87,6 @@ app.use("/", erc20Router);
 app.use("/", coinsmarketcapapiRouter);
 app.use("/", pathRouter);
 app.use("/", readWasmRouter);
-app.use("/", setUserForRemoveLiquidityCSPRRouter);
 
 app.use(
   "/graphql",
@@ -109,67 +101,88 @@ let count;
 async function Count(){
   _eventId= await eventId.findOne({id: '0'});
   count = BigInt(_eventId.completedEventId);
-  console.log("Completed Event's Count : ", count);
+  console.log("Count : ", count);
 }
 Count();
-
+// console.log("Count : ", count);
+// let missingCount=0;
 consumer.consumeEvent();
 
 let currentEvent = null;
 let _updateEvent = null;
-let mutationResult = null;
+let result = null;
+setInterval(async()=>{ 
+    //code goes here that will be run every 2 seconds. 
+    console.log("Heap Length : ", listenerRouter.isNewEvent());
+
+    if(listenerRouter.isNewEvent()>0){
+      console.log("Current Event Id : ", BigInt(listenerRouter.heapRoot().eventId));
+      console.log("Current Count : ", count);
+      // if(missingCount>=5){
+      //   let temp = count + BigInt(1);
+      //   await axios.post('http://localhost:3001/listener/getMissingEvent',{
+      //     eventId : temp.toString()
+      //   })
+      //   .then(async function(response){
+      //     missingCount=0;
+      //     // console.log("Response : ",response);
+      //   })
+      //   .catch(function(error){
+      //     console.log("Missing Event Error : ", error);
+      //   });
+      // }
 
 
-async function performConsumedEvent()
-{
-      let length=await redis.client.HLEN("redisEventsData");
 
-      if(length>count)
-      {
-        console.log("Current Count : ", count);
-        const value = await redis.client.HGET("redisEventsData",count+1);
-  
-        if(value!=null)
-        {
-          let result=(deserialize(value)).obj;
-          console.log("eventsData deserialized: ",result);
-    
-          if((currentEvent === null) || (currentEvent.status === "Completed")){
-              currentEvent = result;
-              console.log("Current Event : ", currentEvent);
-    
-              //call mutation
-              mutationResult = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
-              console.log("mutationResult : ",mutationResult); 
-  
-              _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
-              await _updateEvent.updateOne({"status":"Completed"});
-              count++;
-              console.log("Completed Event Count : ", count);
-    
-             
-              if(_eventId.eventId < currentEvent.eventId){
-                await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
-              }
-              await eventId.updateOne({"completedEventId":count.toString()});  
-              currentEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId}); 
-              performConsumedEvent();
-              return;
+      if(BigInt(listenerRouter.heapRoot().eventId) - count === BigInt(1)){
+        //heap.extractroot
+        // missingCount=0;
+          console.log("Before IF : ", currentEvent);
+        if((currentEvent === null) || (currentEvent.status === "Completed")){
+          currentEvent = listenerRouter.depopulateHeap();
+          console.log("Current Event : ", currentEvent);
+
+          //call mutation
+          result = await listenerRouter.geteventsdata(currentEvent.deployHash, currentEvent.timestamp, currentEvent.block_hash, currentEvent.eventName, currentEvent.eventsdata);
+          // console.log("Result : ",result); 
+          // if(result === true || result ===false){
+          console.log("Result : ",result); 
+          _updateEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
+          await _updateEvent.updateOne({"status":"Completed"});
+          count++;
+          console.log("Completed Event Count : ", count);
+          // console.log("Status of the event : ", _updateEvent.status);
+          if(_eventId.eventId < currentEvent.eventId){
+            await eventId.updateOne({"eventId":currentEvent.eventId.toString()});
           }
-        }
-        else{         
-           setTimeout(performConsumedEvent, 2000);
-           return;
+          await eventId.updateOne({"completedEventId":count.toString()});  
+          currentEvent = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId}); 
+          // result = null;
+        // }    
         }
       }
-      else{
-        console.log("redisEventsData hash map: ",length);
-        setTimeout(performConsumedEvent, 2000);
-        return;
-      }
-      
-}
-performConsumedEvent();
+        
+    // else{
+    //   missingCount++;
+    // }
+  }
+          
+  // if(currentEvent !== null){
+    
+  //   let temp = await event_Id_Data_Model.findOne({eventId: currentEvent.eventId});
+  //   console.log("Updated Status : ", temp.status);
+  //   console.log("Current Status : ", currentEvent.status);
+  //   currentEvent.status = temp.status;
+  // }
+}, 2000);
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

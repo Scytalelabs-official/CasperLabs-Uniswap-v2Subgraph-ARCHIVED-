@@ -63,9 +63,7 @@ var consumeEvent = async function consumerExample() {
         _value.block_hash,
         _value.eventsdata);
 
-    console.log("Before reserialization Data: ",_value);
-    listenerRouter.populateRedis(_value);
-
+    listenerRouter.populateHeap(_value);
   });
 
 

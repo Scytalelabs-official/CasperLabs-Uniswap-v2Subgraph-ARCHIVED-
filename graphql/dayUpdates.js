@@ -1,3 +1,4 @@
+require("dotenv").config();
 const UniswapFactory = require("../models/uniswapFactory");
 const PairDayData = require("../models/pairDayData");
 const PairHourData = require("../models/pairHourData");
@@ -174,8 +175,8 @@ async function updateTokenDayData(token, timeStamp) {
           new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(new bigdecimal.BigDecimal(tokendata.derivedETH))
         ).toString(),
         totalLiquidityUSD: (
-          new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(
-          new bigdecimal.BigDecimal(tokendata.derivedETH)).multiply(
+          (new bigdecimal.BigDecimal(tokendata.totalLiquidity).multiply(
+          new bigdecimal.BigDecimal(tokendata.derivedETH))).multiply(
           new bigdecimal.BigDecimal(bundle.ethPrice))
         ).toString(),
         dailyTxns: ONE_BI,
