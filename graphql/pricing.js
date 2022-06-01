@@ -69,7 +69,7 @@ async function findCSPRPerToken(token) {
 let WHITELIST = [
  
   "861312332a373618c94ce01022ed02370e792c4a7fac356f8c2df05514ee2cd7".toLowerCase(),// WCSPR
-  "747ea619a0a02d595ca53be60d495dda466e721d914483a375fe61c1daab6772".toLowerCase(),//WISE
+  "b53f21a22742844d3949a14126f19d1b1e64319a6bbfc7e719423eca265585af".toLowerCase(),//WISE
 
 ];
 
