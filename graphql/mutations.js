@@ -863,7 +863,7 @@ const handleSync = {
         if (pair.reserve1 != ZERO_BD)
         {
           pair.token0Price = (
-            new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1),2,halfUp)
+            new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1),18,halfUp)
           ).toString();
           console.log("pair.token0Price: ",pair.token0Price);
         }
@@ -871,7 +871,7 @@ const handleSync = {
         if (pair.reserve0 != ZERO_BD)
         {
           pair.token1Price = (
-            new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0),2,halfUp)
+            new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0),18,halfUp)
           ).toString();
           console.log("pair.token1Price: ",pair.token1Price);
         }
@@ -898,7 +898,7 @@ const handleSync = {
               token0,
               pair.reserve1,
               token1
-            )).divide(new bigdecimal.BigDecimal(bundle.ethPrice),2,halfUp);
+            )).divide(new bigdecimal.BigDecimal(bundle.ethPrice),18,halfUp);
         } else {
           trackedLiquidityETH = ZERO_BD;
         }
@@ -1258,7 +1258,7 @@ const handleSwap = {
       let derivedAmountETH =
         ((new bigdecimal.BigDecimal(token1.derivedETH).multiply(amount1Total)).add(
         (new bigdecimal.BigDecimal(token0.derivedETH).multiply(amount0Total)))).divide(
-        new bigdecimal.BigDecimal(2),2,halfUp);
+        new bigdecimal.BigDecimal(2),18,halfUp);
       let derivedAmountUSD = derivedAmountETH.multiply(new bigdecimal.BigDecimal(bundle.ethPrice));
 
       // only accounts for volume through white listed tokens
@@ -1274,7 +1274,7 @@ const handleSwap = {
       if (bundle.ethPrice == ZERO_BD) {
         trackedAmountETH = new bigdecimal.BigDecimal(ZERO_BD);
       } else {
-        trackedAmountETH = trackedAmountUSD.divide(new bigdecimal.BigDecimal(bundle.ethPrice),2,halfUp);
+        trackedAmountETH = trackedAmountUSD.divide(new bigdecimal.BigDecimal(bundle.ethPrice),18,halfUp);
       }
 
       // update token0 global volume and token liquidity stats

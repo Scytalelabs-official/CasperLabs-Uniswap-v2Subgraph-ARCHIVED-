@@ -166,10 +166,10 @@ var bigdecimal = require("bigdecimal");
 
 // let reserve0 = "999501749";
 // let reserve1 = "10005000000";
-// // let reserve0 = "1000000000";
-// // let reserve1 = "10000000000";
+// let reserve0 = "1000000000";
+// let reserve1 = "10000000000";
 // // let reserve0 = "1000000000";
 // // let reserve1 = "30000000000";
 // var halfUp = bigdecimal.RoundingMode.HALF_UP();
-// console.log((new bigdecimal.BigDecimal(reserve0).divide(new bigdecimal.BigDecimal(reserve1),2,halfUp)).toString());
+// console.log((new bigdecimal.BigDecimal(reserve1).divide(new bigdecimal.BigDecimal(reserve0),18,halfUp)).toString());
         

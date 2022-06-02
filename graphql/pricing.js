@@ -123,7 +123,7 @@ async function getTrackedVolumeUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return ((tokenAmount0.multiply(price0)).add(tokenAmount1.multiply(price1))).divide(new bigdecimal.BigDecimal(2),2,halfUp);
+    return ((tokenAmount0.multiply(price0)).add(tokenAmount1.multiply(price1))).divide(new bigdecimal.BigDecimal(2),18,halfUp);
   }
 
   // take full value of the whitelisted token amount
