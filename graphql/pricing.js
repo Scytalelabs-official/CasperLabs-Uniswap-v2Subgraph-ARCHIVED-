@@ -2,6 +2,7 @@ const Pair = require("../models/pair");
 const Bundle = require("../models/bundle");
 const rp = require("request-promise");
 var bigdecimal = require("bigdecimal");
+var halfUp = bigdecimal.RoundingMode.HALF_UP();
 require("dotenv").config();
 
 const {
@@ -74,10 +75,11 @@ let WHITELIST = [
 ];
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = new bigdecimal.BigDecimal("400000000000000");
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = new bigdecimal.BigDecimal("400000");
+
 
 // minimum liquidity for price to get tracked
-let MINIMUM_LIQUIDITY_THRESHOLD_ETH = new bigdecimal.BigDecimal("2000000000");
+let MINIMUM_LIQUIDITY_THRESHOLD_ETH = new bigdecimal.BigDecimal("2");
 
 /**
  * Accepts tokens and amounts, return tracked amount based on token whitelist
@@ -121,7 +123,7 @@ async function getTrackedVolumeUSD(
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-    return ((tokenAmount0.multiply(price0)).add(tokenAmount1.multiply(price1))).divide(new bigdecimal.BigDecimal(2));
+    return ((tokenAmount0.multiply(price0)).add(tokenAmount1.multiply(price1))).divide(new bigdecimal.BigDecimal(2),2,halfUp);
   }
 
   // take full value of the whitelisted token amount

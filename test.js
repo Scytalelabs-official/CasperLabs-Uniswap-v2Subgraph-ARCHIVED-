@@ -129,7 +129,7 @@
 
 // // console.log(BigInt("1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"));
 
-// var bigdecimal = require("bigdecimal");
+var bigdecimal = require("bigdecimal");
 
 // var a = new bigdecimal.BigDecimal("78");
 // var b = new bigdecimal.BigDecimal("78.86");
@@ -164,3 +164,12 @@
 // //console.log("hello",x.add(new bigdecimal.BigDecimal("1E-8")).toString());
 // //console.log(new bigdecimal.BigDecimal(1234567890).toString());
 
+// let reserve0 = "999501749";
+// let reserve1 = "10005000000";
+// // let reserve0 = "1000000000";
+// // let reserve1 = "10000000000";
+// // let reserve0 = "1000000000";
+// // let reserve1 = "30000000000";
+// var halfUp = bigdecimal.RoundingMode.HALF_UP();
+// console.log((new bigdecimal.BigDecimal(reserve0).divide(new bigdecimal.BigDecimal(reserve1),2,halfUp)).toString());
+        

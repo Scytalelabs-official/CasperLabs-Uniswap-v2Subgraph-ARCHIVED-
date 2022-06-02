@@ -41,7 +41,7 @@ const {
   AMOUNT_A_MIN,
   AMOUNT_B_MIN,
   TO,
-  DEADLINE
+  DEADLINE,
 } = process.env;
 
 const KEYS = Keys.Ed25519.parseKeyFiles(
@@ -49,13 +49,13 @@ const KEYS = Keys.Ed25519.parseKeyFiles(
   `${MASTER_KEY_PAIR_PATH}secret_key.pem`
 );
 
-const test = async () => {
+const uniswapRouter = new UniswapRouterClient(
+  NODE_ADDRESS!,
+  CHAIN_NAME!,
+  EVENT_STREAM_ADDRESS!
+);
 
-  const uniswapRouter = new UniswapRouterClient(
-    NODE_ADDRESS!,
-    CHAIN_NAME!,
-    EVENT_STREAM_ADDRESS!
-  );
+const test = async () => {
 
   const installDeployHash = await uniswapRouter.install(
     KEYS,

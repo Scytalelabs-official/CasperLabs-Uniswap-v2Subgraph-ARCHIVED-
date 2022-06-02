@@ -62,6 +62,7 @@ const {
 } = require("./pricing");
 
 var bigdecimal = require("bigdecimal");
+var halfUp = bigdecimal.RoundingMode.HALF_UP();
 
 function splitdata(data) {
   var temp = data.split("(");
@@ -840,11 +841,13 @@ const handleSync = {
           id: process.env.FACTORY_CONTRACT,
         });
 
+        console.log("hello:");
         // reset factory liquidity by subtracting only tarcked liquidity
         uniswap.totalLiquidityETH = (
           new bigdecimal.BigDecimal(uniswap.totalLiquidityETH).subtract(new bigdecimal.BigDecimal(pair.trackedReserveETH))
         ).toString();
-
+        
+        console.log("hello2");
         // reset token total liquidity amounts
         token0.totalLiquidity = (
           new bigdecimal.BigDecimal(token0.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve0))
@@ -853,22 +856,30 @@ const handleSync = {
           new bigdecimal.BigDecimal(token1.totalLiquidity).subtract(new bigdecimal.BigDecimal(pair.reserve1))
         ).toString();
 
+        console.log("hello3");
         pair.reserve0 = args.reserve0;
         pair.reserve1 = args.reserve1;
 
         if (pair.reserve1 != ZERO_BD)
+        {
           pair.token0Price = (
-            new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1))
+            new bigdecimal.BigDecimal(pair.reserve0).divide(new bigdecimal.BigDecimal(pair.reserve1),2,halfUp)
           ).toString();
+          console.log("pair.token0Price: ",pair.token0Price);
+        }
         else pair.token0Price = ZERO_BD;
         if (pair.reserve0 != ZERO_BD)
+        {
           pair.token1Price = (
-            new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0))
+            new bigdecimal.BigDecimal(pair.reserve1).divide(new bigdecimal.BigDecimal(pair.reserve0),2,halfUp)
           ).toString();
+          console.log("pair.token1Price: ",pair.token1Price);
+        }
         else pair.token1Price = ZERO_BD;
-
+        console.log("hello4");
         await pair.save();
-        
+        console.log("hello2:");
+
         // update ETH price now that reserves could have changed
         let bundle = await Bundle.findOne({ id: "1" });
         bundle.ethPrice= (await getCSPRPriceInUSD()).toString();
@@ -887,7 +898,7 @@ const handleSync = {
               token0,
               pair.reserve1,
               token1
-            )).divide(new bigdecimal.BigDecimal(bundle.ethPrice));
+            )).divide(new bigdecimal.BigDecimal(bundle.ethPrice),2,halfUp);
         } else {
           trackedLiquidityETH = ZERO_BD;
         }
@@ -1247,7 +1258,7 @@ const handleSwap = {
       let derivedAmountETH =
         ((new bigdecimal.BigDecimal(token1.derivedETH).multiply(amount1Total)).add(
         (new bigdecimal.BigDecimal(token0.derivedETH).multiply(amount0Total)))).divide(
-        new bigdecimal.BigDecimal(2));
+        new bigdecimal.BigDecimal(2),2,halfUp);
       let derivedAmountUSD = derivedAmountETH.multiply(new bigdecimal.BigDecimal(bundle.ethPrice));
 
       // only accounts for volume through white listed tokens
@@ -1263,7 +1274,7 @@ const handleSwap = {
       if (bundle.ethPrice == ZERO_BD) {
         trackedAmountETH = new bigdecimal.BigDecimal(ZERO_BD);
       } else {
-        trackedAmountETH = trackedAmountUSD.divide(new bigdecimal.BigDecimal(bundle.ethPrice));
+        trackedAmountETH = trackedAmountUSD.divide(new bigdecimal.BigDecimal(bundle.ethPrice),2,halfUp);
       }
 
       // update token0 global volume and token liquidity stats
