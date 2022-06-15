@@ -69,8 +69,9 @@ async function findCSPRPerToken(token) {
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST = [
  
-  "861312332a373618c94ce01022ed02370e792c4a7fac356f8c2df05514ee2cd7".toLowerCase(),// WCSPR
-  "b53f21a22742844d3949a14126f19d1b1e64319a6bbfc7e719423eca265585af".toLowerCase(),//WISE
+  "afcaa550ebb63266fb2752b58ecd7e8fcd78e0a75777ecd57045213a013d9813".toLowerCase(),// WCSPR
+  "bdcd8c9844cd2f98c81b3f98ce806f20c5a625f954d7b29bf70626fef060ff1f".toLowerCase(),//COINSTEX
+  "03e3e09b28dc4d41a4507b38073e7a1641becc0b40e79beb72733d2fb022defa".toLowerCase(),//WETH
 
 ];
 

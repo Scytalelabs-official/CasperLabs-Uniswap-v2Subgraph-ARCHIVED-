@@ -44,7 +44,7 @@ var consumeEvent = async function consumerExample() {
   const config = await configFromPath(configPath);
 
   //let seen = 0;
-  let topic = "Graphql";
+  let topic = "CasperSwap";
 
 
 

@@ -14,9 +14,9 @@
     "test:routerinstall": "ts-node JsClients/ROUTER/test/install.ts",
     "test:routerinstalled": "ts-node JsClients/ROUTER/test/installed.ts"
   },
-  "engine": {
+  "engines": {
     "node": "16.14.0",
-    "npm": "8.5.3"
+    "npm": "8.10.0"
   },
   "dependencies": {
     "@datastructures-js/heap": "^4.0.2",

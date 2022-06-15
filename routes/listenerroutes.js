@@ -138,8 +138,7 @@ router.route("/startListener").post(async function (req, res, next) {
 
     await axios
       .post(
-        "http://localhost:3001/listener/initiateListener",
-        // "http://casperswaplistenerbackend-env.eba-rbumbt2m.us-east-1.elasticbeanstalk.com/listener/initiateListener",
+         process.env.AWS+"/listener/initiateListener",
         {
           contractPackageHashes: req.body.contractPackageHashes,
         }
